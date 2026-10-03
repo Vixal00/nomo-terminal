@@ -1,0 +1,1947 @@
+/* Discover: every rule scoped under .v-discover.
+
+   The reference screen's geometry, at 1920 wide, measured off the
+   capture: masthead 80, tape 40, view tabs 56 (hairline under), an
+   empty band, the filter card 56, a 26px gap (where the rank rule sits),
+   then the table card with a 59px head and rows on a 112px pitch, and a
+   49px status strip fixed to the bottom. The cards are 1600 wide and centred (160px gutters at 1920).
+   Columns inside the rows keep the reference's x positions: pair 324,
+   chart 339 (a 262x45 chart), cap 122, liquidity 119, volume 133, trades
+   130, token info 274, action 110.
+
+   Rebranded rather than copied: square where it was round, hairlines
+   where it had soft edges, the blue-violet canvas for its neutral greys,
+   the network's accent (with black ink) in the three places it filled
+   with sage, teal and red for data only, and a faint flat tint under the
+   chart where it had a gradient. Figures are set in Geist Mono with tabular
+   digits (.num), left-aligned per column as the reference sets them.
+
+   Everything here is unlayered, so it beats Tailwind utilities. The
+   .meta and .num classes set their own size and tracking, and are sized
+   by sibling rules below, never by utilities. */
+
+.v-discover {
+  --dc-card: min(1600px, calc(100% - 48px));
+  --dc-pad: 24px;
+  --dc-rowh: 112px;
+  --dc-av: 70px;
+  --dc-fig: 17px;
+  --dc-name: 17px;
+  --dc-l2: 14px;
+  --dc-chart-w: 262px;
+  --dc-chart-h: 45px;
+  --dc-cols: minmax(0, 324fr) minmax(0, 339fr) minmax(0, 122fr) minmax(0, 119fr) minmax(0, 133fr) minmax(0, 130fr) 274px 110px;
+  --dc-status: 49px;
+
+  display: block;
+  min-height: 100vh;
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  padding-bottom: calc(var(--dc-status) + 1px);
+}
+
+.v-discover button {
+  cursor: pointer;
+}
+.v-discover button:disabled,
+.v-discover button[aria-disabled="true"] {
+  cursor: default;
+}
+.v-discover :focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* ============================================================ R1 mast */
+
+.v-discover .dc-mast {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 38px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-discover .dc-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--color-bone);
+  flex: none;
+}
+.v-discover .dc-bull {
+  width: 42px;
+  height: 42px;
+}
+/* The one Republica on the page. .face-sans puts every .display back on
+   the sans, so the wordmark states the face again, one step more
+   specific. One weight: never bolded. */
+.v-discover .dc-brand .display.dc-word {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  transform: translateY(1px);
+}
+.v-discover .dc-nav {
+  display: flex;
+  align-items: center;
+  gap: 39px;
+  min-width: 0;
+}
+.v-discover .dc-nav-item {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-discover .dc-nav-item.is-on {
+  color: var(--color-bone);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+/* Not pages in this build: dim at rest and on hover, so they never look
+   like the working link beside them. The tip says why. */
+.v-discover .dc-nav-item.is-off {
+  color: var(--color-dim);
+  cursor: default;
+}
+.v-discover .dc-mast-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.v-discover .dc-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 290px;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line);
+  color: var(--color-dim);
+}
+.v-discover .dc-search:focus-within {
+  border-color: var(--color-line-bright);
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.v-discover .dc-search-ic {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+/* The field's frame carries the focus ring (.dc-search:focus-within). */
+.v-discover .dc-search input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  font-size: 13px;
+  color: var(--color-bone);
+  outline: none;
+}
+.v-discover .dc-search input::placeholder {
+  color: var(--color-dim);
+}
+.v-discover .dc-search-btn {
+  display: none;
+}
+.v-discover .dc-chain {
+  height: 32px;
+}
+.v-discover .dc-chain .dc-chain-btn {
+  padding: 0 12px;
+  font-size: 11px;
+}
+.v-discover .dc-roundbtn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-line);
+  background: var(--color-elev);
+  color: var(--color-muted);
+}
+.v-discover .dc-roundbtn:hover,
+.v-discover .dc-roundbtn.is-on {
+  color: var(--color-bone);
+  border-color: var(--color-line-bright);
+}
+.v-discover .dc-version {
+  padding-left: 2px;
+}
+
+/* ============================================================ R2 tape */
+
+/* No clip on the tape itself: the source toggles' tips open below it.
+   The moving strip is clipped by its own view. */
+.v-discover .dc-tape {
+  position: relative;
+  z-index: 8;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  background: var(--color-elev);
+  border-bottom: 1px solid var(--color-line);
+}
+/* A hairline after the toggles and the window, so the strip visibly
+   starts behind a divider rather than slicing a chip against the pulse
+   mark. No fade: the system has no gradients. */
+.v-discover .dc-tape-modes {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 100%;
+  padding: 0 12px 0 15px;
+  margin-right: 14px;
+  border-right: 1px solid var(--color-line);
+  flex: none;
+}
+.v-discover .dc-tape-w.num {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--color-muted);
+  cursor: help;
+}
+.v-discover .dc-tape-mode {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: var(--color-dim);
+}
+.v-discover .dc-tape-mode:hover {
+  color: var(--color-muted);
+}
+.v-discover .dc-tape-mode.is-on {
+  color: var(--color-bone);
+}
+.v-discover .dc-tape-view {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.v-discover .dc-tape-track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+}
+.v-discover .dc-tape-view[data-moving] .dc-tape-track {
+  animation: dc-tape var(--dc-dur, 60s) linear infinite;
+}
+.v-discover .dc-tape-view:not([data-moving]) .dc-tape-dup {
+  display: none;
+}
+.v-discover .dc-tape-view:hover .dc-tape-track,
+.v-discover .dc-tape-view:focus-within .dc-tape-track {
+  animation-play-state: paused;
+}
+@keyframes dc-tape {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.v-discover .dc-tape-set {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding-right: 26px;
+  height: 100%;
+}
+.v-discover .dc-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.v-discover .dc-chip-av {
+  width: 18px;
+  height: 18px;
+  object-fit: cover;
+  border: 1px solid var(--color-line);
+  background: var(--color-raised);
+  flex: none;
+}
+.v-discover .dc-chip-t {
+  color: var(--color-bone);
+}
+.v-discover .dc-chip:hover .dc-chip-t {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.v-discover .dc-chip .num {
+  font-size: 12.5px;
+}
+.v-discover .dc-chip-mc {
+  color: var(--color-dim);
+}
+.v-discover .dc-chip-chg[data-sign="pos"] { color: var(--color-pos); }
+.v-discover .dc-chip-chg[data-sign="neg"] { color: var(--color-neg); }
+.v-discover .dc-chip-chg[data-sign="zero"],
+.v-discover .dc-chip-chg[data-sign="null"] { color: var(--color-dim); }
+.v-discover .dc-chip-since .dc-chip-chg {
+  text-decoration: underline dotted var(--color-dim);
+  text-underline-offset: 3px;
+}
+.v-discover .dc-tape-empty {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 13px;
+  color: var(--color-dim);
+  white-space: nowrap;
+}
+
+/* ============================================================ R3 tabs */
+
+.v-discover .dc-tabs {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 22px;
+  border-bottom: 1px solid var(--color-line);
+  gap: 16px;
+}
+.v-discover .dc-tablist {
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  min-width: 0;
+}
+.v-discover .dc-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  font-size: 17px;
+  color: var(--color-dim);
+  white-space: nowrap;
+}
+.v-discover .dc-tab:hover {
+  color: var(--color-muted);
+}
+.v-discover .dc-tab.is-on {
+  color: var(--color-bone);
+}
+.v-discover .dc-tab-ic {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.v-discover .dc-tabs-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.v-discover .dc-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid var(--color-line);
+  font-size: 12px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-discover .dc-pill .num {
+  font-size: 12px;
+}
+.v-discover .dc-tabs-right .dc-recon.meta {
+  font-size: 9.5px;
+}
+.v-discover .dc-tabs-right .dc-recon .num {
+  font-size: 10.5px;
+}
+
+/* =============================================================== page */
+
+.v-discover .dc-page {
+  width: var(--dc-card);
+  margin: 0 auto;
+  padding-top: 38px;
+  padding-bottom: 24px;
+}
+/* The rank rule, in the gap between the filter card and the table card,
+   aligned with "Pair info". Muted, not dim: it is the one statement of
+   how the board is ordered, so it has to be readable. */
+/* Never clipped: where one line doesn't hold it, it wraps, since a cut
+   rule would drop its last clause ("Boosts don't change rank"). */
+.v-discover .dc-rule {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 4px var(--dc-pad);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+.v-discover .dc-qb-note {
+  display: none;
+}
+.v-discover .dc-card {
+  background: var(--color-elev);
+  border: 1px solid var(--color-line);
+}
+
+/* ======================================================= R4 filters */
+
+.v-discover .dc-filters {
+  min-height: 56px;
+}
+/* One line where it fits, as in the reference; where it doesn't, the
+   right-hand group (size, Filter, window) takes a second line rather
+   than running out of the card. */
+.v-discover .dc-filters-in {
+  min-height: 54px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px 20px;
+}
+.v-discover .dc-fl,
+.v-discover .dc-fr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v-discover .dc-fr {
+  margin-left: auto;
+  gap: 9px;
+}
+.v-discover .dc-fl-label {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin-right: 5px;
+  white-space: nowrap;
+}
+.v-discover .dc-fchip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 4px 0 0;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.v-discover .dc-fchip.is-open {
+  background: var(--color-surface);
+  color: var(--color-bone);
+}
+.v-discover .dc-fchip.is-err {
+  border-color: color-mix(in oklab, var(--color-neg) 60%, transparent);
+}
+.v-discover .dc-fchip-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 6px 0 9px;
+  color: inherit;
+}
+.v-discover .dc-fchip-solo {
+  padding: 0 10px 0 9px;
+}
+.v-discover .dc-fchip-head:hover {
+  color: var(--color-bone);
+}
+.v-discover .dc-fic {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+.v-discover .dc-fin {
+  height: 18px;
+  width: 50px;
+  padding: 0 6px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  color: var(--color-bone);
+  font-size: 11px;
+}
+.v-discover .dc-fin::placeholder {
+  color: var(--color-dim);
+}
+.v-discover .dc-fin:focus-visible {
+  border-color: var(--color-line-bright);
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.v-discover .dc-fin[aria-invalid="true"] {
+  border-color: var(--color-neg);
+  color: var(--color-neg);
+}
+.v-discover .dc-fin-wide {
+  width: 128px;
+  font-family: var(--font-sans);
+}
+.v-discover .dc-fsearch {
+  cursor: text;
+}
+.v-discover .dc-bl {
+  position: relative;
+}
+.v-discover .dc-bl .dc-fchip.is-set {
+  color: var(--color-bone);
+}
+.v-discover .dc-bl-n {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-discover .dc-textbtn {
+  font-size: 13px;
+  color: var(--color-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-line-bright);
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.v-discover .dc-textbtn:hover {
+  color: var(--color-bone);
+}
+
+/* Popovers: square, hairline, raised. */
+.v-discover .dc-pop {
+  position: absolute;
+  z-index: 60;
+  width: 300px;
+  padding: 12px;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line-bright);
+  font-size: 12.5px;
+  color: var(--color-muted);
+  white-space: normal;
+}
+/* Placed by script (usePlaced): fixed, under its button, clamped into
+   the viewport, and free of the phone's sideways filter scroller. */
+.v-discover .dc-bl-pop {
+  position: fixed;
+  max-width: calc(100vw - 32px);
+}
+.v-discover .dc-pop-hint {
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--color-rim);
+}
+.v-discover .dc-pop-note {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--color-dim);
+}
+.v-discover .dc-pop-empty {
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.v-discover .dc-pop-title {
+  font-size: 13px;
+  color: var(--color-bone);
+  margin-bottom: 8px;
+}
+.v-discover .dc-bl-list {
+  margin-top: 10px;
+  max-height: 180px;
+  overflow: auto;
+  border-top: 1px solid var(--color-line);
+}
+.v-discover .dc-bl-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-bone);
+}
+.v-discover .dc-bl-list .num {
+  font-size: 12px;
+}
+.v-discover .dc-bl-list button {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--color-dim);
+}
+.v-discover .dc-bl-list button:hover {
+  color: var(--color-bone);
+}
+.v-discover .dc-bl-add {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.v-discover .dc-bl-add input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  color: var(--color-bone);
+  font-size: 12px;
+}
+.v-discover .dc-bl-add input:focus-visible {
+  border-color: var(--color-line-bright);
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.v-discover .dc-bl-add button {
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-bone);
+  font-size: 12.5px;
+}
+.v-discover .dc-bl-add button[aria-disabled="true"] {
+  color: var(--color-dim);
+  border-color: var(--color-line);
+}
+
+/* Quick buy: the reference's "bolt 1.5 mark | P1 P2 P3" group. */
+.v-discover .dc-qb {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 26px;
+  padding: 0 4px 0 9px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.v-discover .dc-qb-bolt {
+  width: 11px;
+  height: 11px;
+  color: var(--color-dim);
+  margin-right: 3px;
+  flex: none;
+}
+.v-discover .dc-qb-set {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+.v-discover .dc-qb-p {
+  height: 20px;
+  padding: 0 5px;
+  color: var(--color-dim);
+}
+.v-discover .dc-qb-p.num {
+  font-size: 12.5px;
+}
+.v-discover .dc-qb-p:hover {
+  color: var(--color-muted);
+}
+.v-discover .dc-qb-p.is-on {
+  color: var(--color-bone);
+}
+.v-discover .dc-qb-mark {
+  width: 13px;
+  height: 13px;
+  margin: 0 4px 0 3px;
+  flex: none;
+}
+.v-discover .dc-qb-set .dc-qb-mark {
+  color: var(--color-muted);
+}
+.v-discover .dc-qb-rule {
+  width: 1px;
+  height: 14px;
+  background: var(--color-line-bright);
+  margin: 0 7px 0 3px;
+}
+.v-discover .dc-qb-tag {
+  padding-right: 6px;
+}
+.v-discover .dc-qb-tag .meta {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  cursor: help;
+}
+
+/* The Filter key: one of the three accent fills the reference has. */
+.v-discover .dc-apply {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  background: var(--color-accent);
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.v-discover .dc-apply:hover:not([aria-disabled="true"]) {
+  background: var(--color-core);
+}
+.v-discover .dc-apply[aria-disabled="true"] {
+  background: color-mix(in oklab, var(--color-accent) 58%, var(--color-elev));
+  color: rgb(0 0 0 / 0.78);
+}
+.v-discover .dc-apply-ic {
+  width: 12px;
+  height: 12px;
+}
+.v-discover .dc-apply-n.num {
+  font-size: 11px;
+  padding: 0 4px;
+  line-height: 16px;
+  background: rgb(0 0 0 / 0.82);
+  color: var(--color-accent);
+}
+.v-discover .dc-win {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.v-discover .dc-win-b {
+  height: 26px;
+  min-width: 36px;
+  padding: 0 9px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  color: var(--color-dim);
+}
+.v-discover .dc-win-b.num {
+  font-size: 12.5px;
+}
+.v-discover .dc-win-b:hover {
+  color: var(--color-muted);
+}
+.v-discover .dc-win-b.is-on {
+  background: var(--color-raised);
+  border-color: var(--color-line-bright);
+  color: var(--color-bone);
+}
+
+/* ========================================================= R5 table */
+
+.v-discover .dc-table {
+  padding: 0 var(--dc-pad);
+}
+.v-discover .dc-grid {
+  display: grid;
+  grid-template-columns: var(--dc-cols);
+  align-items: center;
+}
+/* Above every row cell, lifted ones included: a row scrolled half under
+   the head stays under it. Row tips pick their side when they open
+   (row-tip.tsx), so neither this head nor the status bar covers one. */
+.v-discover .dc-head {
+  position: sticky;
+  top: 0;
+  z-index: 7;
+  height: 59px;
+  background: var(--color-elev);
+  /* The rows' hover wash runs to the card's edges; the head covers the
+     same width when it sticks, so rows can't show at its sides. */
+  margin: 0 calc(-1 * var(--dc-pad));
+  padding: 3px var(--dc-pad) 0;
+}
+.v-discover .dc-head::after {
+  content: "";
+  position: absolute;
+  left: var(--dc-pad);
+  right: var(--dc-pad);
+  bottom: 0;
+  height: 1px;
+  background: var(--color-line);
+}
+.v-discover .dc-h {
+  font-size: 13px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.v-discover .dc-held {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--color-bone);
+  white-space: nowrap;
+  cursor: help;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.v-discover .dc-h-charttip {
+  width: 100%;
+}
+.v-discover .dc-h-blank {
+  display: block;
+  width: var(--dc-chart-w);
+  max-width: 100%;
+  height: 20px;
+  cursor: help;
+}
+.v-discover .dc-h-fixture .meta {
+  font-size: 9.5px;
+}
+
+.v-discover .dc-body {
+  position: relative;
+}
+.v-discover .dc-row {
+  position: relative;
+  height: var(--dc-rowh);
+  border-bottom: 1px solid var(--color-line);
+  cursor: default;
+  outline: none;
+}
+/* The wash spans the card's full width, past the 24px inset the
+   hairline keeps, so a hovered row reads as one band. */
+.v-discover .dc-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(-1 * var(--dc-pad)) -1px;
+  z-index: 0;
+  pointer-events: none;
+}
+.v-discover .dc-row:hover::before {
+  background: var(--color-surface);
+}
+.v-discover .dc-row[aria-selected="true"]::before {
+  background: var(--color-raised);
+  border-left: 2px solid var(--color-accent);
+}
+.v-discover .dc-row:focus-visible::before {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+.v-discover .dc-c {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+/* A cell with an open tip is lifted over its neighbours, so the tip
+   isn't painted under the next row; never over the sticky head. */
+.v-discover .dc-c:hover,
+.v-discover .dc-c:focus-within {
+  z-index: 4;
+}
+.v-discover [role="tooltip"] {
+  white-space: normal;
+}
+
+/* ---- pair info ---- */
+
+.v-discover .dc-c.dc-c-pair {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding-right: 12px;
+}
+.v-discover .dc-av {
+  position: relative;
+  flex: none;
+  width: var(--dc-av);
+  height: var(--dc-av);
+}
+.v-discover .dc-av-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-raised);
+}
+.v-discover .dc-av-letters {
+  display: grid;
+  place-items: center;
+  color: var(--color-accent);
+  font-size: 20px;
+}
+/* The tier, where the reference had the launchpad's pill: a flat glyph
+   in the tier's ink on its plate, overlapping the picture's corner. */
+.v-discover .dc-tierbadge {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  z-index: 2;
+}
+.v-discover .dc-tierplate {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  background: var(--plate);
+  border: 1px solid var(--dc-tier-ink, var(--color-line-bright));
+  box-sizing: border-box;
+}
+.v-discover .dc-tierplate.tier-free { --dc-tier-ink: color-mix(in oklab, var(--tier-free-ink) 55%, transparent); }
+.v-discover .dc-tierplate.tier-fortress { --dc-tier-ink: color-mix(in oklab, var(--tier-gold-ink) 60%, transparent); }
+.v-discover .dc-tierplate.tier-ice { --dc-tier-ink: color-mix(in oklab, var(--tier-ice-ink) 60%, transparent); }
+.v-discover .dc-glyph {
+  display: block;
+  width: 11px;
+  height: 10px;
+  -webkit-mask: var(--glyph) center / contain no-repeat;
+  mask: var(--glyph) center / contain no-repeat;
+}
+.v-discover .tier-free .dc-glyph,
+.v-discover .dc-glyph.tier-free { background-color: var(--tier-free-ink); }
+.v-discover .tier-fortress .dc-glyph,
+.v-discover .dc-glyph.tier-fortress { background-color: var(--tier-gold-ink); }
+.v-discover .tier-ice .dc-glyph,
+.v-discover .dc-glyph.tier-ice { background-color: var(--tier-ice-ink); }
+.v-discover .dc-glyph.tier-merit { background-color: var(--tier-merit-ink); }
+.v-discover .dc-glyph.tier-external { background-color: var(--tier-external-ink); }
+
+.v-discover .dc-pairtext {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.v-discover .dc-l1 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  height: 22px;
+  font-size: var(--dc-name);
+  white-space: nowrap;
+}
+.v-discover .dc-tick {
+  color: var(--color-bone);
+  flex: none;
+}
+.v-discover .dc-name {
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.v-discover .dc-dot {
+  margin-right: 7px;
+  color: var(--color-dim);
+}
+.v-discover .dc-copywrap {
+  display: inline-flex;
+  flex: none;
+}
+.v-discover .dc-copy {
+  width: 15px;
+  height: 15px;
+  color: var(--color-dim);
+  display: block;
+}
+.v-discover .dc-copy:hover:not([aria-disabled="true"]) {
+  color: var(--color-bone);
+}
+.v-discover .dc-copy[aria-disabled="true"] {
+  opacity: 0.45;
+}
+/* Line two on the reference's pitch: glyphs about 20px apart. */
+.v-discover .dc-l2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 20px;
+  min-width: 0;
+  white-space: nowrap;
+  color: var(--color-dim);
+}
+/* The real launch's tag is long; its line wraps under the age rather than
+   running into the chart. */
+.v-discover .dc-l2[data-real] {
+  flex-wrap: wrap;
+  height: auto;
+  row-gap: 4px;
+}
+/* The holder count and boost points, which repeat token-info: a strip
+   that wraps its facts out of sight when there's no room for them, whole
+   facts only. The zero-width first item keeps a fact that doesn't fit
+   from being the first on the line (a first item never wraps, it would
+   be cut instead). */
+.v-discover .dc-l2-more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 20px;
+  margin-left: -8px;
+  overflow: hidden;
+}
+.v-discover .dc-l2-gap {
+  width: 0;
+  height: 20px;
+  flex: none;
+}
+.v-discover .dc-l2-fact {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+  flex: none;
+  color: var(--color-muted);
+  cursor: default;
+}
+.v-discover .dc-l2-fact .num {
+  font-size: 11.5px;
+}
+.v-discover .dc-l2-fact .dc-l2-ic {
+  width: 14px;
+  height: 14px;
+}
+.v-discover .dc-l2-fact .dc-l2-bolt {
+  width: 12px;
+  height: 12px;
+}
+.v-discover .dc-age.num {
+  font-size: var(--dc-l2);
+  color: var(--color-accent);
+}
+.v-discover .dc-l2-ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  display: block;
+}
+.v-discover .dc-creator {
+  color: var(--color-azure);
+}
+.v-discover .dc-seat-tip,
+.v-discover .dc-real-tip,
+.v-discover .dc-creator-tip {
+  flex: none;
+}
+.v-discover .dc-seat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-canvas);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--color-bone);
+}
+.v-discover .dc-seat-z {
+  color: var(--color-muted);
+}
+.v-discover .dc-seat .num {
+  font-size: 10.5px;
+}
+.v-discover .dc-real {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  line-height: 16px;
+  white-space: nowrap;
+  color: var(--color-rim);
+  border: 1px solid color-mix(in oklab, var(--color-rim) 45%, transparent);
+  padding: 0 5px;
+}
+.v-discover .dc-star {
+  width: 15px;
+  height: 15px;
+  margin-left: 1px;
+  color: var(--color-line-bright);
+  flex: none;
+}
+.v-discover .dc-star:hover {
+  color: var(--color-muted);
+}
+.v-discover .dc-star[aria-pressed="true"] {
+  color: var(--color-rim);
+}
+
+/* ---- chart ---- */
+
+.v-discover .dc-c.dc-c-chart {
+  display: flex;
+  align-items: center;
+}
+.v-discover .dc-spark {
+  display: block;
+  width: var(--dc-chart-w);
+  max-width: 100%;
+  height: var(--dc-chart-h);
+  overflow: visible;
+}
+.v-discover .dc-spark-line {
+  fill: none;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke: var(--color-muted);
+}
+.v-discover .dc-spark-line[data-up="true"] { stroke: var(--color-pos); }
+.v-discover .dc-spark-line[data-up="false"] { stroke: var(--color-neg); }
+/* So faint it reads only as a tone under the line, like the reference's
+   fade, and never as a block with an edge at the bottom of the box. */
+.v-discover .dc-spark-area {
+  stroke: none;
+  fill: color-mix(in oklab, var(--color-muted) 3%, transparent);
+}
+.v-discover .dc-spark-area[data-up="true"] { fill: color-mix(in oklab, var(--color-pos) 3%, transparent); }
+.v-discover .dc-spark-area[data-up="false"] { fill: color-mix(in oklab, var(--color-neg) 3%, transparent); }
+.v-discover .dc-spark-none {
+  stroke: var(--color-line-bright);
+  stroke-width: 1px;
+  stroke-dasharray: 2 3;
+}
+
+/* ---- figures ---- */
+
+.v-discover .dc-c.dc-c-mc,
+.v-discover .dc-c.dc-c-txns {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.v-discover .dc-fig.num {
+  font-size: var(--dc-fig);
+  line-height: 20px;
+  color: var(--color-bone);
+  white-space: nowrap;
+}
+.v-discover .dc-fig[data-sign="null"] {
+  color: var(--color-dim);
+}
+.v-discover .dc-sub.num,
+.v-discover .dc-sub .num {
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+.v-discover .dc-chg[data-sign="pos"] { color: var(--color-pos); }
+.v-discover .dc-chg[data-sign="neg"] { color: var(--color-neg); }
+.v-discover .dc-chg[data-sign="zero"],
+.v-discover .dc-chg[data-sign="null"] { color: var(--color-dim); }
+.v-discover .dc-buys { color: var(--color-pos); }
+.v-discover .dc-sells { color: var(--color-neg); }
+.v-discover .dc-buys[data-sign="null"],
+.v-discover .dc-sells[data-sign="null"],
+.v-discover .dc-buys[data-sign="zero"],
+.v-discover .dc-sells[data-sign="zero"] { color: var(--color-dim); }
+.v-discover .dc-slash {
+  color: var(--color-dim);
+}
+.v-discover .dc-chgwrap.is-since .dc-chg {
+  text-decoration: underline dotted var(--color-dim);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.v-discover .dc-volwrap.is-since .dc-fig {
+  text-decoration: underline dotted var(--color-dim);
+  text-underline-offset: 4px;
+  cursor: help;
+}
+
+/* ---- token info ---- */
+
+.v-discover .dc-ti-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.v-discover .dc-ti-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-discover .dc-ti {
+  flex: none;
+}
+.v-discover .dc-ti-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 19px;
+  padding: 0 6px 0 5px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-discover .dc-ti-chip .num {
+  font-size: 11px;
+}
+.v-discover .dc-ti-ic {
+  width: 11px;
+  height: 11px;
+  flex: none;
+}
+.v-discover .dc-ti-check {
+  width: 11px;
+  height: 11px;
+}
+.v-discover .dc-ti-chip[data-tone="ok"] { color: var(--color-pos); }
+.v-discover .dc-ti-chip[data-tone="warn"] { color: var(--color-rim); }
+.v-discover .dc-ti-chip[data-tone="bad"] { color: var(--color-neg); }
+.v-discover .dc-ti-chip[data-tone="count"] { color: var(--color-muted); }
+.v-discover .dc-ti-chip[data-tone="curve"] { color: var(--tier-gold-ink); }
+.v-discover .dc-ti-chip[data-tone="null"],
+.v-discover .dc-ti-chip[data-tone="dim"] { color: var(--color-dim); }
+.v-discover .dc-ti-untrusted {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* ---- action ---- */
+
+.v-discover .dc-c.dc-c-act {
+  display: flex;
+  justify-content: flex-end;
+}
+.v-discover .dc-buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 110px;
+  height: 36px;
+  background: var(--color-accent);
+  color: #000;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.v-discover .dc-buy:hover {
+  background: var(--color-core);
+}
+.v-discover .dc-buy:active {
+  background: var(--color-accent-deep);
+}
+.v-discover .dc-buy:focus-visible {
+  outline: 1px solid var(--color-bone);
+  outline-offset: 2px;
+}
+.v-discover .dc-buy-amt {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.v-discover .dc-buy-amt .num {
+  font-size: 14px;
+  font-weight: 600;
+}
+/* Black ink on the accent, the mark included: the reference sets its
+   Solana glyph in the key's own ink, and the ramp on a green or
+   chartreuse fill would be the one coloured object on the key. */
+.v-discover .dc-buy-mark {
+  width: 14px;
+  height: 14px;
+}
+.v-discover .dc-buy-mark path {
+  fill: currentColor;
+}
+
+/* ---- empty ---- */
+
+.v-discover .dc-empty {
+  height: var(--dc-rowh);
+  display: flex;
+  align-items: center;
+}
+.v-discover .dc-empty-cell {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.v-discover .dc-empty-text {
+  font-size: 15px;
+  color: var(--color-bone);
+}
+.v-discover .dc-empty-sub {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* ======================================================== R6 status */
+
+.v-discover .dc-status {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  min-height: var(--dc-status);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px 0 13px;
+  background: var(--color-canvas);
+  border-top: 1px solid var(--color-line);
+}
+.v-discover .dc-sb-l,
+.v-discover .dc-sb-r {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.v-discover .dc-sb-r {
+  margin-left: auto;
+  gap: 10px;
+}
+/* The lead pill: the simulation's state, where the reference had its
+   preset. Accent fill, black ink, on both networks. */
+.v-discover .dc-simpill {
+  height: 24px;
+  padding: 0 10px 0 9px;
+  background: var(--color-accent);
+  color: #000;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  gap: 7px;
+}
+.v-discover .dc-simpill:hover {
+  background: var(--color-core);
+}
+.v-discover .dc-simpill > span[aria-hidden] {
+  background-color: #000;
+  border-color: #000;
+  width: 7px;
+  height: 7px;
+}
+.v-discover .dc-simpill[aria-pressed="true"] > span[aria-hidden] {
+  background-color: transparent;
+}
+.v-discover .dc-sb-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.v-discover .dc-sb-btn:hover,
+.v-discover .dc-sb-btn.is-on {
+  color: var(--color-bone);
+  border-color: var(--color-line-bright);
+}
+.v-discover .dc-sb-icon {
+  width: 40px;
+  justify-content: center;
+  padding: 0;
+}
+.v-discover .dc-sb-qb-l {
+  color: var(--color-dim);
+}
+.v-discover .dc-sb-bolt {
+  width: 11px;
+  height: 11px;
+  color: var(--color-dim);
+}
+.v-discover .dc-sb-qb-v {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-bone);
+}
+.v-discover .dc-sb-qb-v .num {
+  font-size: 12px;
+}
+.v-discover .dc-sb-mark {
+  width: 13px;
+  height: 13px;
+}
+.v-discover .dc-keys {
+  position: relative;
+}
+.v-discover .dc-keys-pop {
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 320px;
+}
+.v-discover .dc-keys-list > div {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-discover .dc-keys-list dt {
+  width: 56px;
+  flex: none;
+  color: var(--color-bone);
+  font-size: 11.5px;
+  white-space: pre;
+}
+.v-discover .dc-keys-list dd {
+  color: var(--color-muted);
+}
+.v-discover .dc-spots {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-right: 6px;
+  white-space: nowrap;
+  cursor: default;
+}
+.v-discover .dc-spots-set {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.v-discover .dc-spot {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.v-discover .dc-spot .num {
+  font-size: 12.5px;
+  color: var(--color-bone);
+}
+.v-discover .dc-spot-mark {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+.v-discover .dc-spot .dc-spot-mark {
+  color: var(--color-muted);
+}
+.v-discover .dc-spot-tag.meta {
+  font-size: 9.5px;
+  cursor: help;
+}
+.v-discover .dc-disc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line);
+  font-size: 12.5px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-discover .dc-disc-sep {
+  color: var(--color-dim);
+}
+/* The one real link, as an icon in the reference's end slot. */
+.v-discover .dc-sb-x {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 24px;
+  margin-left: 4px;
+  color: var(--color-muted);
+  flex: none;
+}
+.v-discover .dc-sb-x:hover {
+  color: var(--color-bone);
+}
+
+/* ========================================================= reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .v-discover .dc-tape-view {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .v-discover .dc-tape-view[data-moving] .dc-tape-track {
+    animation: none;
+  }
+  .v-discover .dc-tape-dup {
+    display: none;
+  }
+}
+
+/* ====================================================== 1440 (and up to 1679)
+   The reference scaled to the laptop: the chrome at three quarters, rows
+   on a 96px pitch with 60px pictures and a 200x40 chart, so about five
+   rows sit under the chrome on a 1440x789 window, the reference's own
+   density. The cards fill the width with 24px gutters. */
+
+@media (max-width: 1679px) {
+  .v-discover {
+    --dc-rowh: 96px;
+    --dc-av: 60px;
+    --dc-fig: 15px;
+    --dc-name: 15px;
+    --dc-l2: 13px;
+    --dc-chart-w: 200px;
+    --dc-chart-h: 40px;
+    --dc-pad: 20px;
+    --dc-cols: minmax(296px, 300fr) minmax(0, 250fr) minmax(0, 112fr) minmax(0, 104fr) minmax(0, 112fr) minmax(0, 112fr) 262px 100px;
+    --dc-status: 44px;
+  }
+  .v-discover .dc-mast {
+    height: 60px;
+    gap: 36px;
+    padding: 0 16px;
+  }
+  .v-discover .dc-bull {
+    width: 28px;
+    height: 28px;
+  }
+  .v-discover .dc-brand {
+    gap: 10px;
+  }
+  .v-discover .dc-brand .display.dc-word {
+    font-size: 27px;
+  }
+  .v-discover .dc-nav {
+    gap: 28px;
+  }
+  .v-discover .dc-nav-item {
+    font-size: 14.5px;
+  }
+  .v-discover .dc-mast-right {
+    gap: 10px;
+  }
+  .v-discover .dc-search,
+  .v-discover .dc-chain,
+  .v-discover .dc-roundbtn {
+    height: 28px;
+  }
+  .v-discover .dc-roundbtn {
+    width: 28px;
+  }
+  .v-discover .dc-tape {
+    height: 34px;
+  }
+  .v-discover .dc-tape-modes {
+    padding: 0 14px 0 10px;
+  }
+  .v-discover .dc-tabs {
+    height: 44px;
+    padding: 0 16px 0 18px;
+  }
+  .v-discover .dc-tab {
+    font-size: 15px;
+  }
+  .v-discover .dc-tab-ic {
+    width: 13px;
+    height: 13px;
+  }
+  .v-discover .dc-page {
+    padding-top: 20px;
+  }
+  .v-discover .dc-rule {
+    min-height: 24px;
+    font-size: 11.5px;
+  }
+  .v-discover .dc-filters {
+    min-height: 46px;
+  }
+  .v-discover .dc-filters-in {
+    min-height: 44px;
+    padding: 6px 14px;
+    gap: 8px 12px;
+  }
+  .v-discover .dc-fl {
+    gap: 7px;
+  }
+  .v-discover .dc-fr {
+    gap: 7px;
+  }
+  .v-discover .dc-fl-label {
+    font-size: 13px;
+    margin-right: 2px;
+  }
+  .v-discover .dc-fchip,
+  .v-discover .dc-qb,
+  .v-discover .dc-apply,
+  .v-discover .dc-win-b {
+    height: 24px;
+  }
+  .v-discover .dc-fchip,
+  .v-discover .dc-apply {
+    font-size: 12.5px;
+  }
+  .v-discover .dc-fin {
+    width: 44px;
+  }
+  .v-discover .dc-fin-wide {
+    width: 124px;
+  }
+  .v-discover .dc-win {
+    gap: 5px;
+  }
+  .v-discover .dc-win-b {
+    min-width: 32px;
+    padding: 0 7px;
+  }
+  .v-discover .dc-head {
+    height: 42px;
+  }
+  .v-discover .dc-h {
+    font-size: 12.5px;
+  }
+  .v-discover .dc-c-pair {
+    gap: 14px;
+  }
+  .v-discover .dc-l1 {
+    height: 20px;
+  }
+  .v-discover .dc-pairtext {
+    gap: 4px;
+  }
+  .v-discover .dc-ti-line {
+    gap: 3px;
+  }
+  .v-discover .dc-ti-chip {
+    padding: 0 4px;
+    gap: 3px;
+    height: 19px;
+  }
+  .v-discover .dc-ti-chip .num {
+    font-size: 10.5px;
+  }
+  .v-discover .dc-ti-ic {
+    width: 10px;
+    height: 10px;
+  }
+  .v-discover .dc-buy {
+    width: 100px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .v-discover .dc-buy-amt .num {
+    font-size: 13px;
+  }
+  .v-discover .dc-sb-btn,
+  .v-discover .dc-disc {
+    font-size: 12px;
+    height: 22px;
+  }
+  .v-discover .dc-simpill {
+    height: 22px;
+  }
+}
+
+/* The calendar is the first thing the tabs row lets go of. */
+@media (max-width: 999px) {
+  .v-discover .dc-tabs-right .dc-recon {
+    display: none;
+  }
+}
+
+/* ============================================================== 1280 */
+
+@media (max-width: 1379px) {
+  .v-discover {
+    --dc-chart-w: 160px;
+    --dc-cols: minmax(292px, 280fr) minmax(0, 190fr) minmax(0, 104fr) minmax(0, 96fr) minmax(0, 104fr) minmax(0, 104fr) 252px 96px;
+  }
+  .v-discover .dc-nav-launch,
+  .v-discover .dc-nav-portfolio,
+  .v-discover .dc-nav-airdrops {
+    display: none;
+  }
+  .v-discover .dc-buy {
+    width: 96px;
+  }
+}
+
+/* ============================================================== 1024
+   The chart goes, and the filter card takes two lines rather than
+   hiding its right half behind a scroll: the Filter key and the window
+   stay in view. */
+
+@media (max-width: 1199px) {
+  .v-discover {
+    --dc-cols: 292px minmax(0, 74fr) minmax(0, 66fr) minmax(0, 70fr) minmax(0, 94fr) 232px 92px;
+  }
+  .v-discover .dc-c.dc-c-chart,
+  .v-discover .dc-h.dc-c-chart {
+    display: none;
+  }
+  .v-discover .dc-nav-z500 {
+    display: none;
+  }
+  .v-discover .dc-spots {
+    display: none;
+  }
+  .v-discover .dc-fl,
+  .v-discover .dc-fr {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .v-discover .dc-buy {
+    width: 92px;
+    font-size: 13.5px;
+  }
+}
+
+/* =============================================================== 768 */
+
+@media (max-width: 999px) {
+  .v-discover {
+    --dc-card: calc(100% - 32px);
+    --dc-pad: 16px;
+    --dc-cols: minmax(0, 1fr) 100px 100px 96px 92px;
+  }
+  .v-discover .dc-c.dc-c-liq,
+  .v-discover .dc-c.dc-c-info,
+  .v-discover .dc-h.dc-c-liq,
+  .v-discover .dc-h.dc-c-info {
+    display: none;
+  }
+  .v-discover .dc-mast {
+    gap: 24px;
+  }
+  /* The search shrinks to its lens, and opens in the masthead when
+     asked (/ or the button). */
+  .v-discover .dc-search {
+    display: none;
+  }
+  .v-discover .dc-search-btn {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-line);
+    background: var(--color-elev);
+    color: var(--color-muted);
+  }
+  .v-discover[data-search] .dc-search {
+    display: flex;
+    width: 220px;
+  }
+  .v-discover[data-search] .dc-search-btn {
+    display: none;
+  }
+  .v-discover .dc-spots {
+    display: none;
+  }
+  .v-discover .dc-disc {
+    font-size: 11.5px;
+  }
+  .v-discover .dc-sb-x {
+    display: none;
+  }
+}
+
+/* =============================================================== 390
+   Each row becomes a two-line card: the picture and identity with the
+   cap and change on the right, then the trades and a full-size buy key.
+   The filter card scrolls sideways on one line. */
+
+@media (max-width: 739px) {
+  .v-discover {
+    --dc-card: calc(100% - 24px);
+    --dc-pad: 12px;
+    --dc-rowh: auto;
+    --dc-av: 44px;
+    --dc-fig: 14px;
+    --dc-name: 14px;
+    --dc-l2: 12px;
+    --dc-status: 64px;
+  }
+  .v-discover .dc-mast {
+    height: 52px;
+    padding: 0 12px;
+  }
+  .v-discover .dc-bull {
+    width: 30px;
+    height: 30px;
+  }
+  .v-discover .dc-brand .display.dc-word,
+  .v-discover .dc-nav {
+    display: none;
+  }
+  .v-discover .dc-mast-right {
+    gap: 6px;
+  }
+  .v-discover .dc-chain .dc-chain-btn {
+    padding: 0 7px;
+  }
+  .v-discover .dc-search-btn,
+  .v-discover .dc-roundbtn {
+    width: 30px;
+  }
+  .v-discover[data-search] .dc-brand {
+    display: none;
+  }
+  .v-discover[data-search] .dc-search {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+  }
+  .v-discover[data-search] .dc-mast-right {
+    flex: 1;
+    min-width: 0;
+  }
+  .v-discover[data-search] .dc-chain,
+  .v-discover[data-search] .dc-version {
+    display: none;
+  }
+  .v-discover .dc-tape-modes {
+    padding: 0 8px 0 6px;
+  }
+  .v-discover .dc-tabs {
+    padding: 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .v-discover .dc-tablist {
+    gap: 16px;
+  }
+  .v-discover .dc-tab {
+    font-size: 14px;
+  }
+  .v-discover .dc-page {
+    padding-top: 12px;
+  }
+  .v-discover .dc-rule {
+    height: auto;
+    padding: 10px 2px 4px;
+    white-space: normal;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+  .v-discover .dc-qb-note {
+    display: block;
+    padding: 0 2px 8px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+  .v-discover .dc-qb-note .meta {
+    font-size: 9.5px;
+    color: var(--color-rim);
+    margin-right: 4px;
+  }
+  .v-discover .dc-filters-in {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 10px;
+    height: 46px;
+  }
+  .v-discover .dc-fl,
+  .v-discover .dc-fr {
+    flex: none;
+    flex-wrap: nowrap;
+  }
+  .v-discover .dc-fr {
+    margin-left: 0;
+  }
+  .v-discover .dc-head {
+    display: none;
+  }
+  .v-discover .dc-row.dc-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "pair mc"
+      "txns act";
+    align-items: center;
+    row-gap: 10px;
+    padding: 14px 0 12px;
+  }
+  .v-discover .dc-c.dc-c-chart,
+  .v-discover .dc-c.dc-c-liq,
+  .v-discover .dc-c.dc-c-vol,
+  .v-discover .dc-c.dc-c-info {
+    display: none;
+  }
+  .v-discover .dc-c.dc-c-pair {
+    grid-area: pair;
+    gap: 12px;
+    padding-right: 8px;
+  }
+  .v-discover .dc-c.dc-c-mc {
+    grid-area: mc;
+    align-items: flex-end;
+  }
+  .v-discover .dc-c.dc-c-txns {
+    grid-area: txns;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    padding-left: 56px;
+  }
+  .v-discover .dc-c-txns .dc-fig.num {
+    font-size: 13px;
+  }
+  .v-discover .dc-c.dc-c-act {
+    grid-area: act;
+  }
+  .v-discover .dc-buy {
+    width: 112px;
+    height: 36px;
+  }
+  .v-discover .dc-tierbadge {
+    top: -6px;
+    left: -6px;
+  }
+  .v-discover .dc-tierplate {
+    width: 18px;
+    height: 18px;
+  }
+  .v-discover .dc-glyph {
+    width: 8px;
+    height: 7px;
+  }
+  .v-discover .dc-l2 {
+    gap: 4px 8px;
+    height: auto;
+    min-height: 20px;
+    flex-wrap: wrap;
+  }
+  .v-discover .dc-seat {
+    padding: 0 4px;
+    gap: 4px;
+  }
+  .v-discover .dc-creator-tip {
+    display: none;
+  }
+  .v-discover .dc-status {
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 5px 10px;
+    padding: 6px 12px;
+  }
+  .v-discover .dc-sb-qb,
+  .v-discover .dc-keys {
+    display: none;
+  }
+  .v-discover .dc-sb-l {
+    flex: none;
+  }
+  .v-discover .dc-sb-r {
+    margin-left: 0;
+    flex: 1 1 0;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+  }
+  /* The three facts as plain text here: two framed pills stacked under
+     the lead pill made a bar three lines tall. */
+  .v-discover .dc-disc {
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+  .v-discover .dc-disc-a::after {
+    content: "·";
+    margin-left: 6px;
+    color: var(--color-dim);
+  }
+}

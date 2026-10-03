@@ -1,0 +1,1935 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   The Black Bull — tactical telemetry
+   Amber-phosphor terminal, not a marketing site. Everything is a
+   readout: monospace dominates, corners are 90 degrees, surfaces are
+   separated by hairlines rather than elevation. No gradients, no soft
+   shadows, no translucent glass — those read as decoration, and nothing
+   here is decorative.
+------------------------------------------------------------------- */
+@theme {
+  /* A breakpoint between xl and 2xl, for the one row on the site that
+     fits four across at 1400 and not at 1280: the index's doors. A
+     named breakpoint rather than min-[1400px], because Tailwind orders
+     named ones by size and an arbitrary one before them, so md's rule
+     was winning — and in rem like the built-in ones, because a px
+     value cannot be sorted against them and lands first for the same
+     reason. 87.5rem is 1400px. */
+  --breakpoint-wide: 87.5rem;
+  /* Night-city black. Cool-tinted rather than neutral — the key art's
+     shadows all sit blue-violet, and a neutral grey canvas underneath
+     makes the artwork look pasted on. */
+  --color-canvas: #07080c;
+  --color-elev: #0c0e14;
+  --color-surface: #11141c;
+  --color-raised: #191d27;
+  --color-line: #232834;
+  --color-line-bright: #3a4152;
+
+  --color-bone: #e8ecf2;
+  --color-muted: #8d94a3;
+  --color-dim: #5a6070;
+
+  /* Green is three stops here, not one. Sampling the seven key-art
+     references in design/refs put their energy green at hue 123, which
+     is where this token already sat, so the hue needed no correction.
+     What was missing is structure: the references average only 47%
+     saturation but carry a near-white core at #bbfaac. One flat green
+     reads as a colour. The ramp reads as light. See design/STYLE.md. */
+  --color-core: #bbfaac;
+  --color-accent: #4ade50;
+  --color-accent-deep: #2fae37;
+
+  /* The mark's rim light (sampled #ffe26b). Secondary only — edges and
+     highlights, never a second brand colour competing with the green. */
+  --color-rim: #ffd75e;
+  --color-ember: #ff5b2e;
+
+  /* Ice, for the top launch tier. The bright end is sampled from the
+     bull's eyes in the key art, which pool at hue 184. On its own that
+     cyan sits close enough to --color-pos to be mistaken for a gain, so
+     it is paired with a true blue and used as a two-stop ramp, which
+     also reads as the stone the tier is named after. */
+  --color-ice: #7ee5ed;
+  --color-azure: #5aa8ff;
+
+  /* Data only, never chrome. Gains sit in the art's teal-green rather
+     than the horn green: the accent now owns "look here", and a metric
+     that means "up" must not be the same colour as the brand. */
+  --color-pos: #3fe0a8;
+  --color-neg: #ff3b5c;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", SFMono-Regular,
+    Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* The display face, kept as its own token rather than written into
+     the rule that uses it. Two designs put their headings back on the
+     body face, and a token is the one place that decision can be made
+     without either of them reaching into `.display` itself. */
+  --font-display: var(--font-republica), var(--font-sans);
+
+  /* Mechanical rigidity: every corner is 90 degrees. Kept as a token so
+     nothing can quietly reintroduce a radius. */
+  --radius-card: 0px;
+  --radius-inner: 0px;
+}
+
+html {
+  background: var(--color-canvas);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Macro-typography: glyphs pack into solid architectural blocks.
+ *
+ * Republica Minor. It ships one weight, so this asks for 400 rather
+ * than the 800 the body face wanted — a single-weight face asked for
+ * 800 gets a synthetic bold, and on a display face that thickens the
+ * strokes into the counters it was drawn to keep open.
+ *
+ * Tracking is looser than the 800-weight stack needed for the same
+ * reason it was tight before: at -0.045em this face's already narrow
+ * sidebearings collided, and it is drawn semi-expanded, so it holds a
+ * line together without being pulled in. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Opt out of the uppercase for strings that are data rather than
+   headings, such as a coin name, which is whatever its creator typed.
+   This has to live here as a sibling rule: everything below the
+   Tailwind import is unlayered, and unlayered declarations beat every
+   layered utility no matter how specific, so `[text-transform:none]`
+   as a class silently loses. */
+.cased {
+  text-transform: none;
+}
+.display.cased {
+  letter-spacing: -0.005em;
+}
+
+/* Where the display face is not wanted.
+ *
+ * Republica is a poster face: right over artwork, wrong over a price
+ * and wrong at 15px in a masthead. Two places opt out.
+ *
+ * The token detail page, because it is a readout — a name beside a
+ * figure beside a chart — and its ticker, market value and panel heads
+ * were reading as branding rather than as data.
+ *
+ * And the masthead, because a wordmark set in a display face at 15px is
+ * asking the face to do the one thing it is worst at: the joins it is
+ * drawn to keep open close up at that size, and it stops being a
+ * wordmark and starts being a texture.
+ *
+ * What they get back is exactly what `.display` was before the face
+ * arrived: the sans at 800, tracked in, uppercase. Unlayered like
+ * everything else here, so it beats the utilities on the elements
+ * themselves without an !important. */
+.face-sans .display {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* Micro-typography: every label, unit and coordinate on the site.
+   Wide tracking simulates a mechanical character matrix. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Technical metadata — revision stamps, unit IDs, coordinates. */
+.meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The dim is a DEFAULT, so it goes in a layer; everything above is a
+   rule, so it stays unlayered.
+   .meta and .eyebrow used to declare their colour up there with the
+   rest, and unlayered colour beats every Tailwind text-* utility on
+   the same element — so `meta text-accent` rendered dim, silently, in
+   twenty places across the site that each meant to say something in
+   green, teal or red. The face, the size and the tracking are the
+   parts that should win an argument with a utility (see CLAUDE.md §4);
+   the colour is the part a caller is entitled to change. Declared in
+   `base`, it still colours every bare .meta and now loses to a
+   utility, which is the whole point. */
+@layer base {
+  .meta,
+  .eyebrow {
+    color: var(--color-dim);
+  }
+}
+
+.prose-measure {
+  max-width: 65ch;
+  text-wrap: pretty;
+}
+
+/* A token's hover takes its own network's accent.
+   On an index that spans two chains, a Robinhood token turning the
+   platform green on hover says it belongs to the other one. The row
+   hands down --chain-accent and this reads it, falling back to the
+   platform green where no chain is known.
+
+   Unlayered on purpose, and one of the cases CLAUDE.md §4 means by a
+   "sibling unlayered rule": the element carries a text-* utility for
+   its resting colour, and only an unlayered rule can take it on hover
+   without a specificity fight. */
+.chain-link {
+  transition: color 150ms ease;
+}
+.chain-link:hover,
+.chain-link:focus-visible {
+  color: var(--chain-accent, var(--color-accent));
+}
+
+/* ------------------------------------------------------------------
+   Structural devices
+------------------------------------------------------------------- */
+
+/* Razor-thin dividers without per-child border math: the parent's line
+   colour shows through a 1px grid gap. */
+.rule-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--color-line);
+}
+.rule-grid > * {
+  background: var(--color-canvas);
+}
+
+.hairline {
+  border: 1px solid var(--color-line);
+}
+
+/* Crosshair registration marks at grid intersections. */
+.crosshair {
+  position: relative;
+}
+.crosshair::before,
+.crosshair::after {
+  content: "";
+  position: absolute;
+  background: var(--color-line-bright);
+  pointer-events: none;
+}
+.crosshair::before {
+  top: -4px;
+  left: -0.5px;
+  width: 1px;
+  height: 9px;
+}
+.crosshair::after {
+  top: -0.5px;
+  left: -4px;
+  width: 9px;
+  height: 1px;
+}
+
+/* Blueprint substrate. */
+.grid-bg {
+  background-image: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-line) 60%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-line) 60%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+}
+
+.mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+}
+
+/* Barcode rule — vertical tick field used to terminate sections. */
+.barcode {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-line-bright) 0 1px,
+    transparent 1px 4px,
+    var(--color-line-bright) 4px 6px,
+    transparent 6px 11px
+  );
+}
+
+/* ------------------------------------------------------------------
+   Analog degradation — scanlines over grain, both non-interactive.
+   Layered on the root so the whole DOM sits behind the same physical
+   artefacts rather than each surface faking its own.
+------------------------------------------------------------------- */
+.grain::before,
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+/* Electron beam sweep. Lighter than the tactical pass — at full strength
+   it crushes the cel-shaded artwork it now sits over. */
+.grain::before {
+  z-index: 2;
+  opacity: 0.28;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    rgb(0 0 0 / 0.16) 2px 4px
+  );
+}
+/* Static field. */
+.grain::after {
+  z-index: 1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------
+   Emission. The tactical pass banned glow outright; the key art is built
+   from it — the horns read as a light source, not a fill. So accent
+   surfaces emit, but only accent surfaces: everything structural stays
+   matte, which is what keeps the glow meaning something.
+------------------------------------------------------------------- */
+/* Emission, built as the three-stop ramp the key art uses: a near-white
+   core, a saturated middle, then falloff. The previous single-stop glow
+   was one accent-coloured blur, which reads as a coloured object rather
+   than as something giving off light. */
+.emit {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-core) 55%, transparent),
+    0 0 6px -1px color-mix(in oklab, var(--color-core) 45%, transparent),
+    0 0 22px -4px color-mix(in oklab, var(--color-accent) 60%, transparent);
+}
+/* Same ramp, scaled for small elements. A 22px blur is a soft halo on a
+   progress bar and a smear on an 18px badge, so the radius tracks the
+   thing giving off the light rather than being one fixed number. */
+.emit-sm {
+  /* currentColor rather than the accent, so anything emissive glows in
+     its own colour instead of every glow on the site being green. */
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, currentColor 26%, transparent),
+    0 0 9px -3px color-mix(in oklab, currentColor 75%, transparent);
+}
+
+.emit-text {
+  text-shadow:
+    0 0 4px color-mix(in oklab, var(--color-core) 38%, transparent),
+    0 0 20px color-mix(in oklab, var(--color-accent) 45%, transparent);
+}
+
+/* Cel-shaded edge: one hard highlight along the lit side, no gradient
+   ramp. Cel shading steps between flat values — a soft bevel would read
+   as 3D and fight the artwork. */
+.rimlight {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07);
+}
+
+/* Ambient neon wash behind hero art — the bokeh haze of the reference,
+   as two offset radials rather than one even fade. */
+.neon-wash {
+  background:
+    radial-gradient(
+      60% 80% at 18% 0%,
+      color-mix(in oklab, var(--color-accent) 18%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(50% 70% at 92% 20%, rgb(160 60 255 / 0.16) 0%, transparent 60%);
+}
+
+/* Art dissolves into the canvas rather than ending on a seam. A mask
+   fades the pixels to transparent, so one continuous background shows
+   through; a scrim of solid colour over the top would still leave a hard
+   edge wherever the image ends.
+
+   Stacked (mobile), the art fades top and bottom. Beside the copy
+   (desktop), it fades on its inward edge and along the bottom, the two
+   gradients intersecting so both apply at once.
+
+   The ramps are deliberately short at the top. This artwork is already
+   within a point or two of the canvas at every edge, so the mask only has
+   to kill the last hint of a boundary, not blend a bright picture into a
+   dark page. A longer top ramp reads as the horns being sliced off,
+   because they run to the very edge of the source frame. */
+.art-fade {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 6%,
+    #000 74%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 6%,
+    #000 74%,
+    transparent 100%
+  );
+}
+
+@media (min-width: 1024px) {
+  .art-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 42%),
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 2%,
+        #000 58%,
+        transparent 100%
+      );
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0%, #000 42%),
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 2%,
+        #000 58%,
+        transparent 100%
+      );
+    mask-composite: intersect;
+  }
+}
+
+/* The energy field is shaped by a mask rather than by the shader, so the
+   falloff can follow the layout instead of the texture. Two jobs: keep
+   the field off the copy so headline contrast holds, and stop it dead
+   before the section ends, since a rendered surface meeting a section
+   boundary is the same hard seam the artwork mask exists to prevent. */
+.field-fade {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 46%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 46%, transparent 92%);
+}
+
+@media (min-width: 1024px) {
+  .field-fade {
+    /* Fades in by 34%, not 58%. The artwork's own mask reaches full
+       opacity at 42%, so a field that only arrived at 58% was hidden
+       behind the art everywhere it existed and masked away everywhere it
+       would have shown. The energy belongs in the band between the two,
+       which is exactly where the bull dissolves into smoke. */
+    -webkit-mask-image: linear-gradient(to right, transparent 4%, #000 34%),
+      linear-gradient(to bottom, #000 0%, #000 44%, transparent 90%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 4%, #000 34%),
+      linear-gradient(to bottom, #000 0%, #000 44%, transparent 90%);
+    mask-composite: intersect;
+  }
+}
+
+/* A new tape row announces itself and finishes on its own.
+   The highlight used to be cleared when the next row arrived, so it
+   stayed lit for however long the gap happened to be, anywhere from 1.4
+   to 5.2 seconds. On a quiet stretch that read as a stuck row rather than
+   a new one. A keyframe runs to completion regardless of what arrives
+   next, and costs no state and no timer.
+   The tint comes in through a custom property so one keyframe serves both
+   sides of the tape. */
+@keyframes trade-in {
+  from {
+    background-color: var(--trade-flash);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.trade-in {
+  animation: trade-in 820ms ease-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trade-in {
+    animation: none;
+  }
+}
+
+/* Cosmetics for an unlocked coin.
+   Modelled on what a paid profile actually changes elsewhere: a real
+   banner instead of a flat panel, a decoration ring around the avatar, a
+   plate behind the name, a tinted frame around the whole card, and one
+   slow light effect over it. Individually each is small; the point is
+   that they arrive together, so an unlocked coin is different at a
+   glance rather than after reading. */
+
+/* The sweep. Slow and low-contrast on purpose: it is a sheen across a
+   surface, not a shine on a button, and anything faster reads as a
+   loading skimmer. */
+@keyframes plate-sweep {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset-block: -40%;
+  width: 22%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--coin) / 0.16),
+    transparent
+  );
+  animation: plate-sweep 7s ease-in-out infinite;
+}
+
+/* Nameplate. A tinted slab behind the name rather than a border, so it
+   reads as the name being mounted on something rather than boxed in. */
+.plate {
+  background: linear-gradient(
+    100deg,
+    rgb(var(--coin) / 0.22),
+    rgb(var(--coin) / 0.05) 62%,
+    transparent
+  );
+  box-shadow: inset 0 1px 0 rgb(var(--coin) / 0.24);
+}
+
+/* Card frame and body wash. */
+/* The card takes the coin's own colour, not the site's. A member profile
+   accents from the avatar rather than from the app, and six cosmetics in
+   one shared colour on every coin would read as a template, which is the
+   one thing paying to stand out has to avoid. */
+/* Border only. The light on this card used to come from here as well
+   as from .coin-bg — a hard-cornered radial anchored at 0% 0% under a
+   drifting one — and two gradient systems over one surface is what
+   made the join visible. All of it is .coin-bg now. */
+.enhanced-frame {
+  border-color: rgb(var(--coin) / 0.34);
+}
+
+/* Body wash for the panels that sit inside the themed card. */
+.coin-wash {
+  background: linear-gradient(180deg, rgb(var(--coin) / 0.06), transparent 70%);
+}
+
+.coin-rule {
+  border-color: rgb(var(--coin) / 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheen::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Live counters. Green snaps on almost instantly to mark the increment,
+   then decays slowly back to bone, so the colour reads as "this just
+   moved" rather than settling in as the resting state. */
+.stat-live {
+  transition: color 1400ms ease-out;
+}
+.stat-live.is-up {
+  color: var(--color-pos);
+  transition: color 60ms linear;
+}
+
+/* Controls report state through inversion and border, not elevation. */
+.pressable {
+  transition: background-color 120ms linear, border-color 120ms linear,
+    color 120ms linear, transform 120ms linear;
+}
+.pressable:active {
+  transform: translateY(1px);
+}
+
+/* Focus, quietly.
+ *
+ * This was 2px of rim gold held 2px off the element, which is a colour
+ * the interface uses for one thing — a tier — sitting in a halo around
+ * whatever you had just typed in. Loud, and saying the wrong word.
+ *
+ * A hairline of the accent instead, at 55%: still the strongest signal
+ * on a near-black page and still unmistakably a focus ring, but it
+ * reads as the edge lighting up rather than as a box being drawn
+ * around the control.
+ *
+ * In @layer base rather than unlayered, which is the part that matters
+ * for the fields. Every composite input on this site — the trade
+ * panel, the burn form, stake — is a bare input inside a bordered
+ * wrapper that turns accent on focus-within, and each of those inputs
+ * already carries Tailwind's outline-none to say so. Unlayered, this
+ * rule beat that utility and drew a second ring around the input's own
+ * box, which is a different shape from the wrapper: two green
+ * rectangles, one of them stopping short of the unit label. From the
+ * base layer the utility wins, the wrapper's border is the only
+ * indicator, and the ring is left to the controls that have nothing
+ * else — buttons, links, the tab strip.
+ *
+ * Keyboard only, as before: :focus-visible means a mouse press never
+ * leaves a ring behind it. */
+@layer base {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 1px solid color-mix(in oklab, var(--color-accent) 55%, transparent);
+    outline-offset: 2px;
+    border-radius: 0;
+  }
+
+  /* For a field that does want the ring, it sits on the border rather
+     than outside it, so the two read as one slightly brighter edge
+     instead of concentric rectangles. */
+  :where(input, select, textarea):focus-visible {
+    outline-offset: -1px;
+  }
+}
+
+/* Selected text was unreadable, and the reason was a typo rather than a
+   colour choice: both of these named --color-gold, which no theme
+   defines. An invalid var() does not fall back to the declaration it
+   replaced — the whole property resolves to its initial value — so the
+   highlight had no background at all and only the near-black foreground
+   applied, which is why dragging across a paragraph blacked it out. The
+   focus ring above was invisible for the same reason.
+
+   Green, since it had to be picked again: the accent is the one colour
+   on this site that already means "this one". */
+::selection {
+  background: var(--color-accent);
+  color: #04120a;
+}
+
+/* Type painted through background-clip has no colour of its own to
+   invert, so a selection over it would leave a green box with nothing
+   in it. -webkit-text-fill-color outranks the clip. */
+.tag-ink::selection,
+.lime-ink::selection {
+  color: #04120a;
+  -webkit-text-fill-color: #04120a;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-bright) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line-bright);
+  border: 3px solid var(--color-canvas);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* Promoted on purpose.
+ *
+ * The track is around 5700px wide — two copies of up to fourteen cells
+ * — and it is transformed on every frame forever. Left to its
+ * heuristics the compositor promotes a layer that size, then demotes it
+ * when it decides the page is idle, then promotes it again on the next
+ * frame; a strip that vanishes for a few seconds and comes back is what
+ * that looks like from the outside. will-change says keep it. The
+ * texture is 5700x32, well under a megabyte, so keeping it is cheap.
+ *
+ * contain: paint stops the strip's paint from being invalidated by
+ * anything outside it, which is the other half of the same problem. */
+.animate-marquee {
+  animation: marquee 42s linear infinite;
+  will-change: transform;
+  contain: paint;
+}
+
+/* A confirmation arriving. Down and in, because it comes from the top
+   edge — a toast that fades in place reads as something that was
+   already there and you had missed. */
+/* Confirmations.
+
+   A toast is the one panel on this site that is not page furniture: it
+   arrives over the top of whatever is there, says one thing and leaves.
+   So it is the one panel allowed a corner radius and a real shadow —
+   both are what make it read as an object in front of the page rather
+   than a strip that has appeared in it.
+
+   --toast-c is the tone's token, set on the element. The wash runs from the
+   left, behind the mark, and is gone by two thirds across: a tint over
+   the whole card reads as a coloured panel, while a tint under the icon
+   reads as the icon's own light. */
+.toast-card {
+  background-image:
+    linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--toast-c) 13%, transparent),
+      color-mix(in oklab, var(--toast-c) 4%, transparent) 34%,
+      transparent 68%
+    ),
+    linear-gradient(180deg, #101319, #0a0c11);
+  box-shadow:
+    0 20px 55px -20px rgb(0 0 0 / 0.95),
+    0 3px 12px -5px rgb(0 0 0 / 0.7),
+    /* The lit top edge. One pixel of white at 5% is the whole
+       difference between a box and a surface with a light above it. */ inset
+      0 1px 0 rgb(255 255 255 / 0.05);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    /* Down and slightly small, so it reads as coming toward the reader
+       rather than sliding in from somewhere off screen. */
+    transform: translateY(-14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.toast-in {
+  animation: toast-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+}
+.toast-out {
+  animation: toast-out 170ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* The life of the toast, drawn. It answers the question every
+   disappearing panel raises — how long have I got — without a number,
+   and it is why the card can dismiss itself without feeling snatched
+   away. Scale rather than width so it runs on the compositor. */
+@keyframes toast-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.toast-timer {
+  transform-origin: left center;
+  animation: toast-timer var(--toast-life, 4500ms) linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-in,
+  .toast-out {
+    animation-duration: 1ms;
+  }
+  .toast-timer {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* The spinner on a control that is waiting on a wallet. Two thirds of a
+   ring, so the gap is what shows it turning. */
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.spin {
+  animation: spin 700ms linear infinite;
+}
+
+/* New rows arrive: the accent wash decays to nothing so the eye is
+   pulled to the top of the feed without leaving a permanent highlight. */
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+    background-color: color-mix(in oklab, var(--color-accent) 22%, transparent);
+  }
+  60% {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    background-color: transparent;
+  }
+}
+.animate-row-in {
+  animation: row-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.8s steps(2, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .toast-in,
+  .spin,
+  .animate-marquee,
+  .animate-pulse-dot {
+    animation: none;
+  }
+  /* Rows still arrive, they just stop moving to do it. */
+  .animate-row-in {
+    animation: none;
+  }
+  .pressable:active {
+    transform: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Bonding curve.
+------------------------------------------------------------------- */
+
+.curve-fill {
+  /* Dim at the origin, full accent at the leading edge, so the bar reads
+     as travelling rather than as a block of colour that got wider. */
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-accent) 30%, transparent) 0%,
+    color-mix(in oklab, var(--color-accent) 70%, transparent) 55%,
+    var(--color-accent) 100%
+  );
+}
+
+/* Completed curves hold steady. There is nothing pending to signal, and
+   a bar that keeps pulsing after it has finished is just noise. */
+.curve-done {
+  background: var(--color-accent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-core) 30%, transparent),
+    0 0 10px -2px color-mix(in oklab, var(--color-accent) 75%, transparent);
+}
+
+/* A paid tier's curve, in that tier's metal — the same ramp, size and
+   period the tile's ring used to run, moved onto the one element on the
+   card that is already pure signal. --sheen comes from .metal-fortress or
+   .metal-ice on the same element. */
+.curve-metal {
+  background-image: var(--sheen);
+  background-size: 600% 100%;
+  background-position: 0% 50%;
+  animation: metal-flow 22s linear infinite;
+}
+
+/* Migrated, in the tier's own light rather than the accent's. */
+.curve-metal-done {
+  box-shadow: 0 0 10px -2px var(--plate-glow, rgb(255 255 255 / 0.5));
+}
+
+.metal-fortress {
+  --plate-glow: rgb(241 218 126 / 0.55);
+}
+
+.metal-ice {
+  --plate-glow: rgb(193 230 246 / 0.55);
+}
+
+/* ------------------------------------------------------------------
+   Odometer digits.
+
+   Each digit is a window over a strip of numerals. Changing a figure
+   moves the strip rather than swapping the glyph, so a counter reads as
+   a mechanism turning over rather than as text being rewritten.
+
+   The strip carries 0-9 twice. A digit only ever rolls forward, so a
+   carry from 7 to 0 travels down through the second run instead of
+   spinning backwards, and the column is snapped back an octave once the
+   transition finishes.
+------------------------------------------------------------------- */
+
+/* Digits and the characters between them share one box.
+   An overflow:hidden inline-block takes its baseline from its bottom
+   margin edge rather than from the text inside it, so a wheel aligned
+   against ordinary glyphs sat visibly low. Giving the static characters
+   the same display, height and alignment removes the mismatch instead of
+   trying to nudge it out with offsets. */
+.roll-col,
+.roll-static {
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+  vertical-align: bottom;
+}
+
+.roll-col {
+  overflow: hidden;
+}
+
+.roll-strip {
+  display: block;
+  will-change: transform;
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.roll-strip > span {
+  display: block;
+  height: 1em;
+  line-height: 1em;
+}
+
+/* Used to reposition without animating, for the octave snap. */
+.roll-strip.no-anim {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-strip {
+    transition: none;
+  }
+}
+
+/* Emissive bull mark. drop-shadow traces the alpha of the glyph, so the
+   light comes off the horns themselves rather than off a rectangle
+   around them, which is what a box-shadow would give. */
+.bull-lit {
+  filter: drop-shadow(0 0 3px color-mix(in oklab, currentColor 85%, transparent))
+    drop-shadow(0 0 7px color-mix(in oklab, currentColor 55%, transparent));
+}
+
+/* ------------------------------------------------------------------
+   Tier colour.
+
+   Two hues, each with a flat body for tags and a lit crown for edges.
+   The tag is flat and the edge is metal, so they are defined separately
+   rather than one being a filter of the other: the tag's job is to hold
+   white type, the edge's is to catch light, and those want different
+   tones out of the same colour.
+------------------------------------------------------------------- */
+
+:root {
+  /* Tag: ink and plate, no outline. The type and glyph take the hue the
+     border used to carry, and the fill drops far enough under it to hold
+     them — coloured ink on a dark plate needs more separation than white
+     ink did on a mid one, and it has to survive the sheen crossing it.
+     Resting they measure 7.1:1 and 7.2:1, and 4.6:1 and 4.8:1 at the
+     moment the band is over the type. */
+  /* Named for the colour, not the tier. Gold the tier is gone; the amber
+     ramp is worn by Fortress, the middle rung of the ladder, and by the
+     first-place medal on the leaderboard. */
+  --tier-gold-fill: #2e1f06;
+  --tier-gold-ink: #d3a84e;
+  --tier-ice-fill: #12303e;
+  --tier-ice-ink: #a8e2f5;
+
+  /* Free, for the table only. It is the tier every launch already is, so
+     on a wall of tiles a badge saying so would be noise on most of the
+     grid — but a column headed Tier with two thirds of its cells empty
+     reads as missing data rather than as a default. Steel: the same
+     plate and the same moving ink as the other two, in the one hue that
+     does not claim to be a metal worth having. */
+  --tier-free-fill: #191d23;
+  --tier-free-ink: #a0a8b1;
+
+  /* The two routes onto the index that are not a tier. Merit is earned
+     by score, and wears the site's green — the one colour here that
+     means "live" rather than "paid for". External is a token from
+     elsewhere, and wears the violet the canvas is biased toward: of
+     the palette, not of the ladder. Both plates sit far enough under
+     their ink to hold it through the sheen, like the tier pairs. */
+  --tier-merit-fill: #0f2612;
+  --tier-merit-ink: #4ade50;
+  --tier-external-fill: #211a36;
+  --tier-external-ink: #b9a7f0;
+  /* Nothing is read on top of an edge, so these run bright.
+
+     One broad peak per image, shaped as a raised cosine rather than
+     hand-placed stops. Two crowns and a hard-edged crest read as a
+     bright segment chasing around the ring; one long swell reads as
+     light crossing metal.
+
+     The cosine also settles the wrap. Matching the end colours only
+     makes the pattern continuous in value — its slope still flipped
+     there, so the light appeared to reverse. A raised cosine is flat at
+     both ends, so value and direction both carry across the join.
+
+     Their floors are lifted well off black. A ramp that runs from
+     near-black to a crown gives the lit part two visible ends inside
+     one tile, which is the shape people read as a segment travelling
+     rather than as metal catching light. Gold spans L 0.30 to 0.72 and
+     ice 0.60 to 0.86, so the whole ring is always its own colour and
+     only its brightness moves. */
+  --sheen-gold: linear-gradient(
+    104deg,
+    #775b22 0%,
+    #785c23 3.13%,
+    #7e6023 6.25%,
+    #866725 9.38%,
+    #927026 12.5%,
+    #a17c28 15.63%,
+    #b28a29 18.75%,
+    #c59a2a 21.88%,
+    #d6a92e 25%,
+    #ddb43c 28.13%,
+    #e2be4b 31.25%,
+    #e7c659 34.38%,
+    #eacd65 37.5%,
+    #edd370 40.63%,
+    #efd778 43.75%,
+    #f0d97d 46.88%,
+    #f1da7e 50%,
+    #f0d97d 53.13%,
+    #efd778 56.25%,
+    #edd370 59.38%,
+    #eacd65 62.5%,
+    #e7c659 65.63%,
+    #e2be4b 68.75%,
+    #ddb43c 71.88%,
+    #d6a92e 75%,
+    #c59a2a 78.13%,
+    #b28a29 81.25%,
+    #a17c28 84.38%,
+    #927026 87.5%,
+    #866725 90.63%,
+    #7e6023 93.75%,
+    #785c23 96.88%,
+    #775b22 100%
+  );
+
+  /* Holographic rather than merely cool. A stone refracts, so the hue
+     swings as well as the brightness: h = 198 + 34 sin(2 pi t) runs
+     cyan through blue to periwinkle and back, on the same period as
+     the cosine that swells the light. Both terms are periodic in t, so
+     the colour travels through the band instead of the band travelling
+     as a shape — which is the difference between iridescence and a
+     coloured segment sliding past.
+
+     The swing is deliberately narrow and high. A wider one reached
+     green at one end and indigo at the other, and at those hues the
+     ramp's dark half stopped reading as ice at all. Held between L
+     0.60 and 0.86 the whole thing stays light blue, and the holo shows
+     as a tint moving across it. */
+  --sheen-ice: linear-gradient(
+    104deg,
+    #6cabc6 0%,
+    #6da3c6 2.5%,
+    #6e9dc8 5%,
+    #7097ca 7.5%,
+    #7293cc 10%,
+    #7691cf 12.5%,
+    #7a90d3 15%,
+    #7f90d7 17.5%,
+    #8593db 20%,
+    #8b97df 22.5%,
+    #929ce3 25%,
+    #98a3e6 27.5%,
+    #9fabea 30%,
+    #a6b4ed 32.5%,
+    #acbcef 35%,
+    #b2c5f1 37.5%,
+    #b7cdf3 40%,
+    #bbd4f4 42.5%,
+    #bedbf5 45%,
+    #c0e1f6 47.5%,
+    #c1e6f6 50%,
+    #c0eaf6 52.5%,
+    #beeef5 55%,
+    #bbf2f4 57.5%,
+    #b7f3f1 60%,
+    #b2f1eb 62.5%,
+    #acefe5 65%,
+    #a6edde 67.5%,
+    #9fead8 70%,
+    #98e6d2 72.5%,
+    #92e3cd 75%,
+    #8bdfc9 77.5%,
+    #85dbc6 80%,
+    #7fd7c5 82.5%,
+    #7ad3c5 85%,
+    #76cfc6 87.5%,
+    #72ccc9 90%,
+    #70c6ca 92.5%,
+    #6ebcc8 95%,
+    #6db3c6 97.5%,
+    #6cabc6 100%
+  );
+
+  /* The tag's own metal. Same cosine, same period, same direction as
+     the edge — but floored at the resting ink rather than under it, so
+     the type is never dimmer than it was when it was a flat colour.
+     Gold runs L 0.58 to 0.88 and ice 0.79 to 0.94; against the plates
+     below, the worst phase of either still measures over 6:1. */
+  --ink-gold: linear-gradient(
+    104deg,
+    #d6ac51 0%,
+    #d7ad52 3.13%,
+    #d9b055 6.25%,
+    #dcb459 9.38%,
+    #e0b95e 12.5%,
+    #e4bf65 15.63%,
+    #e9c66e 18.75%,
+    #eecd78 21.88%,
+    #f2d482 25%,
+    #f6db8e 28.13%,
+    #f9e199 31.25%,
+    #fbe6a4 34.38%,
+    #fdeaae 37.5%,
+    #feeeb6 40.63%,
+    #fff0bc 43.75%,
+    #fff1c0 46.88%,
+    #fff2c2 50%,
+    #fff1c0 53.13%,
+    #fff0bc 56.25%,
+    #feeeb6 59.38%,
+    #fdeaae 62.5%,
+    #fbe6a4 65.63%,
+    #f9e199 68.75%,
+    #f6db8e 71.88%,
+    #f2d482 75%,
+    #eecd78 78.13%,
+    #e9c66e 81.25%,
+    #e4bf65 84.38%,
+    #e0b95e 87.5%,
+    #dcb459 90.63%,
+    #d9b055 93.75%,
+    #d7ad52 96.88%,
+    #d6ac51 100%
+  );
+
+  --ink-ice: linear-gradient(
+    104deg,
+    #a6daed 0%,
+    #a6d4ed 2.5%,
+    #a7cfee 5%,
+    #a9cbee 7.5%,
+    #abc8f0 10%,
+    #adc5f1 12.5%,
+    #b0c4f3 15%,
+    #b3c4f4 17.5%,
+    #b7c5f6 20%,
+    #bcc8f8 22.5%,
+    #c0cbf9 25%,
+    #c5d0fa 27.5%,
+    #c9d5fc 30%,
+    #cedafd 32.5%,
+    #d2dffd 35%,
+    #d6e4fe 37.5%,
+    #dae9fe 40%,
+    #ddedff 42.5%,
+    #dff1ff 45%,
+    #e0f4ff 47.5%,
+    #e0f7ff 50%,
+    #e0f9ff 52.5%,
+    #dffcff 55%,
+    #ddfeff 57.5%,
+    #dafefd 60%,
+    #d6fefa 62.5%,
+    #d2fdf6 65%,
+    #cefdf3 67.5%,
+    #c9fcf0 70%,
+    #c5faec 72.5%,
+    #c0f9ea 75%,
+    #bcf8e8 77.5%,
+    #b7f6e7 80%,
+    #b3f4e7 82.5%,
+    #b0f3e8 85%,
+    #adf1ea 87.5%,
+    #abf0ec 90%,
+    #a9edee 92.5%,
+    #a7e6ee 95%,
+    #a6e0ed 97.5%,
+    #a6daed 100%
+  );
+
+  /* Green for Merit and violet for External, on the same raised
+     cosine as the metals: the floor is the ink colour itself and the
+     peak is its near-white core, so the whole band stays its own hue
+     and only the brightness moves. */
+  --ink-merit: linear-gradient(
+    104deg,
+    #4ade50 0.0%,
+    #4bde51 3.12%,
+    #4edf54 6.25%,
+    #54e058 9.38%,
+    #5be25d 12.5%,
+    #63e464 15.62%,
+    #6de76c 18.75%,
+    #77e975 21.88%,
+    #82ec7e 25.0%,
+    #8eef87 28.12%,
+    #98f190 31.25%,
+    #a2f498 34.38%,
+    #aaf69f 37.5%,
+    #b1f8a4 40.62%,
+    #b7f9a8 43.75%,
+    #bafaab 46.88%,
+    #bbfaac 50.0%,
+    #bafaab 53.12%,
+    #b7f9a8 56.25%,
+    #b1f8a4 59.38%,
+    #aaf69f 62.5%,
+    #a2f498 65.62%,
+    #98f190 68.75%,
+    #8eef87 71.88%,
+    #82ec7e 75.0%,
+    #77e975 78.12%,
+    #6de76c 81.25%,
+    #63e464 84.38%,
+    #5be25d 87.5%,
+    #54e058 90.62%,
+    #4edf54 93.75%,
+    #4bde51 96.88%,
+    #4ade50 100.0%
+  );
+  --ink-violet: linear-gradient(
+    104deg,
+    #b9a7f0 0.0%,
+    #b9a8f0 3.12%,
+    #bba9f1 6.25%,
+    #bdacf1 9.38%,
+    #c0b0f2 12.5%,
+    #c4b4f3 15.62%,
+    #c8baf5 18.75%,
+    #ccbff6 21.88%,
+    #d1c5f8 25.0%,
+    #d6cbf9 28.12%,
+    #dad0fa 31.25%,
+    #ded6fc 34.38%,
+    #e2dafd 37.5%,
+    #e5defe 40.62%,
+    #e7e1fe 43.75%,
+    #e9e2ff 46.88%,
+    #e9e3ff 50.0%,
+    #e9e2ff 53.12%,
+    #e7e1fe 56.25%,
+    #e5defe 59.38%,
+    #e2dafd 62.5%,
+    #ded6fc 65.62%,
+    #dad0fa 68.75%,
+    #d6cbf9 71.88%,
+    #d1c5f8 75.0%,
+    #ccbff6 78.12%,
+    #c8baf5 81.25%,
+    #c4b4f3 84.38%,
+    #c0b0f2 87.5%,
+    #bdacf1 90.62%,
+    #bba9f1 93.75%,
+    #b9a8f0 96.88%,
+    #b9a7f0 100.0%
+  );
+
+  /* Steel, for Free. Narrow and high: a tier that means "no burn" gets
+     the shape of the effect without a colour that competes with the two
+     that were paid for. */
+  --ink-steel: linear-gradient(
+    104deg,
+    #a0a8b1 0%,
+    #a0a9b2 3.13%,
+    #a2abb3 6.25%,
+    #a5aeb6 9.38%,
+    #a9b2ba 12.5%,
+    #aeb6be 15.63%,
+    #b3bcc3 18.75%,
+    #b9c2c9 21.88%,
+    #c0c8ce 25%,
+    #c6ced4 28.13%,
+    #ccd4d9 31.25%,
+    #d2d9de 34.38%,
+    #d7dee2 37.5%,
+    #dce2e5 40.63%,
+    #dfe4e8 43.75%,
+    #e1e6e9 46.88%,
+    #e1e7ea 50%,
+    #e1e6e9 53.13%,
+    #dfe4e8 56.25%,
+    #dce2e5 59.38%,
+    #d7dee2 62.5%,
+    #d2d9de 65.63%,
+    #ccd4d9 68.75%,
+    #c6ced4 71.88%,
+    #c0c8ce 75%,
+    #b9c2c9 78.13%,
+    #b3bcc3 81.25%,
+    #aeb6be 84.38%,
+    #a9b2ba 87.5%,
+    #a5aeb6 90.63%,
+    #a2abb3 93.75%,
+    #a0a9b2 96.88%,
+    #a0a8b1 100%
+  );
+
+  /* An amount, not a label. The airdrop column is the one figure on the
+     index that a team put there on purpose, so it is lit rather than
+     merely coloured — same cosine, same period, in the accent's own
+     green. */
+  --ink-lime: linear-gradient(
+    104deg,
+    #39d05c 0%,
+    #39d15c 3.13%,
+    #3bd35d 6.25%,
+    #3ed65e 9.38%,
+    #42da5f 12.5%,
+    #47de61 15.63%,
+    #4ce363 18.75%,
+    #53e766 21.88%,
+    #5bec69 25%,
+    #63f06d 28.13%,
+    #6af371 31.25%,
+    #72f675 34.38%,
+    #79f97a 37.5%,
+    #80fa7f 40.63%,
+    #86fc83 43.75%,
+    #8afc86 46.88%,
+    #8bfd87 50%,
+    #8afc86 53.13%,
+    #86fc83 56.25%,
+    #80fa7f 59.38%,
+    #79f97a 62.5%,
+    #72f675 65.63%,
+    #6af371 68.75%,
+    #63f06d 71.88%,
+    #5bec69 75%,
+    #53e766 78.13%,
+    #4ce363 81.25%,
+    #47de61 84.38%,
+    #42da5f 87.5%,
+    #3ed65e 90.63%,
+    #3bd35d 93.75%,
+    #39d15c 96.88%,
+    #39d05c 100%
+  );
+
+  /* Bronze, for third. Gold and silver were already here under other
+     names — the tier tag's gold and Free's steel — so only the third
+     medal needed a ramp of its own. Same cosine, same period, so the
+     three shimmer as one set rather than one of them being still. */
+  --ink-bronze: linear-gradient(
+    104deg,
+    #c78757 0%,
+    #c78857 3.13%,
+    #c98a59 6.25%,
+    #cc8e5d 9.38%,
+    #d09361 12.5%,
+    #d49967 15.63%,
+    #d89f6e 18.75%,
+    #dda776 21.88%,
+    #e2ae7e 25%,
+    #e6b687 28.13%,
+    #eabd90 31.25%,
+    #edc398 34.38%,
+    #f0c99f 37.5%,
+    #f2cda6 40.63%,
+    #f3d1aa 43.75%,
+    #f4d3ad 46.88%,
+    #f4d3ae 50%,
+    #f4d3ad 53.13%,
+    #f3d1aa 56.25%,
+    #f2cda6 59.38%,
+    #f0c99f 62.5%,
+    #edc398 65.63%,
+    #eabd90 68.75%,
+    #e6b687 71.88%,
+    #e2ae7e 75%,
+    #dda776 78.13%,
+    #d89f6e 81.25%,
+    #d49967 84.38%,
+    #d09361 87.5%,
+    #cc8e5d 90.63%,
+    #c98a59 93.75%,
+    #c78857 96.88%,
+    #c78757 100%
+  );
+
+  /* The glyphs as masks rather than as filled shapes. background-clip:
+     text paints the label with the ramp, but it has no equivalent for
+     an SVG: a fill takes one colour, and an SVG gradient cannot be
+     driven by the same background-position keyframe. Masking a span
+     that carries the ramp puts both on identical machinery, which is
+     the only way they stay in step. */
+  --glyph-hex: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 86.6%22%3E%3Cpath d=%22M25 0h50l25 43.3L75 86.6H25L0 43.3Z%22/%3E%3C/svg%3E");
+  /* The crown the Gold tier wore. The tier went; the drawing is the
+     site's own and the ballot's winner earns one, so the glyph stays
+     in the set rather than a second crown being drawn for it. */
+  --glyph-crown: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 137.89 85.02%22%3E%3Cpath d=%22M16.04,85.01c-3.04,0-4.98-2.75-5.43-5.38L.07,16.96c-.26-1.57.29-2.97,1.26-4.09,1.48-1.71,4.09-2.3,6.08-.89l32.82,23.26c2.69,1.9,6.45,1.73,8.16-1.51L64.64,2.89c1.03-1.96,2.91-3.25,5.12-2.8,1.77.36,2.89,1.69,3.72,3.26l16.13,30.52c1.7,3.21,5.48,3.18,8.08,1.33l32.31-22.91c1.68-1.19,3.53-1.5,5.35-.43,1.36.8,2.84,2.67,2.5,4.73l-10.77,63.9c-.41,2.42-2.83,4.53-5.26,4.53H16.04Z%22/%3E%3C/svg%3E");
+  --glyph-keep: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 70%22%3E%3Cpath d=%22M0,70V22h18V0h16v22h32V0h16v22h18v48Z%22/%3E%3C/svg%3E");
+  --glyph-gem: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 588.41 474%22%3E%3Cpath d=%22M523.69,1.36l63.61,130.62c.07.14.12.29.16.44l.86,3.25c.05.2.08.41.08.61v5.66c.01.27-.03.54-.12.8l-.6,1.71c-.1.3-.26.57-.47.8-96.71,109.28-193.24,218.46-289.59,327.55-.26.3-.6.53-.97.66l-1.05.39c-.27.1-.55.15-.84.15h-.48c-.27,0-.54-.05-.79-.13h0c-.39-.14-.74-.37-1.01-.68C194.88,363.21,97.71,253.17.97,143.05c-.18-.21-.33-.44-.43-.7l-.37-.93c-.11-.29-.17-.59-.17-.9v-2.74c0-.4.1-.78.3-1.13.29-.52.54-1.21.74-2.07.04-.16.09-.33.17-.48C21.27,92.47,60.93,12.61,66.54,1.34,66.94.52,67.78,0,68.69,0h452.83c.92,0,1.76.53,2.17,1.35Z%22/%3E%3C/svg%3E");
+  /* A star for Merit — a seat won on the numbers — and an arrow out of
+     the corner for External, a token that came from somewhere else. */
+  --glyph-star: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 95%22%3E%3Cpath d=%22M50,0l14.7,32.4L100,36.3 73.8,60.2 80.9,95 50,77.3 19.1,95l7.1-34.8L0,36.3l35.3-3.9z%22/%3E%3C/svg%3E");
+  --glyph-arrow: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M30,8h62v62H74V38.4L20.9,91.5 8.5,79.1 61.6,26H30z%22/%3E%3C/svg%3E");
+}
+
+/* The podium. Gold, silver and bronze as plate-and-ink pairs on the
+   same machinery as the tier tags: a rank badge and a tier badge sit
+   two columns apart on this site and any difference in how they are
+   built shows up as a difference in how they read.
+
+   --medal-rgb is the row wash underneath, which is what makes the top
+   three visible from across the table rather than only once the eye is
+   on the rank column. */
+.medal-gold {
+  --ink: var(--ink-gold);
+  --plate: var(--tier-gold-fill);
+  --medal-rgb: 211 168 78;
+}
+
+/* Silver's plate is lighter than the other two because silver is not a
+   dark metal. At the tier tag's fill it disappeared into the row and
+   left the number floating where the other two wore a badge. */
+.medal-silver {
+  --ink: var(--ink-steel);
+  --plate: #2a303c;
+  --medal-rgb: 176 186 198;
+}
+
+.medal-bronze {
+  --ink: var(--ink-bronze);
+  --plate: #2b1a0e;
+  --medal-rgb: 201 138 82;
+}
+
+/* The connected wallet's own row, when it did not make the ten above
+   it. Green because green is this site's "this one is yours", and
+   left-weighted for the same reason the medals are: a wash across a
+   whole row reads as a selection rather than as an identity. */
+.you-row {
+  --medal-rgb: 74 222 80;
+  border-top: 1px solid color-mix(in oklab, var(--color-accent) 40%, transparent);
+  background-image: linear-gradient(
+    to right,
+    rgb(74 222 80 / 0.13),
+    rgb(74 222 80 / 0.055) 34%,
+    transparent 66%
+  );
+}
+
+/* Left-weighted, because the rank is on the left and a wash that runs
+   the full width of a row reads as a selection state. */
+.medal-row {
+  background-image: linear-gradient(
+    to right,
+    rgb(var(--medal-rgb) / 0.11),
+    rgb(var(--medal-rgb) / 0.045) 34%,
+    transparent 66%
+  );
+}
+
+.medal-row:hover {
+  background-image: linear-gradient(
+    to right,
+    rgb(var(--medal-rgb) / 0.17),
+    rgb(var(--medal-rgb) / 0.07) 34%,
+    transparent 66%
+  );
+}
+
+.tier-free {
+  --ink: var(--ink-steel);
+  --plate: var(--tier-free-fill);
+  --glyph: var(--glyph-hex);
+}
+
+.metal-fortress,
+.tier-fortress {
+  --sheen: var(--sheen-gold);
+  --ink: var(--ink-gold);
+  --plate: var(--tier-gold-fill);
+  --glyph: var(--glyph-keep);
+}
+
+/* The ballot's winner. Gold, on the ramp the Fortress tag already
+   uses, because winning a week is the one thing on the index that is
+   not a tier and still deserves the metal. Green was the wrong colour
+   for it twice over: the ticker beside it is already the accent, so
+   the mark disappeared into it, and the accent means "live" on this
+   site, which a decided result is not. */
+.tag-crown {
+  --sheen: var(--sheen-gold);
+  --ink: var(--ink-gold);
+  --plate: var(--tier-gold-fill);
+  --glyph: var(--glyph-crown);
+}
+
+.metal-ice,
+.tier-ice {
+  --sheen: var(--sheen-ice);
+  --ink: var(--ink-ice);
+  --plate: var(--tier-ice-fill);
+  --glyph: var(--glyph-gem);
+}
+
+/* The two seat routes that are not tiers, on the tag machinery. No
+   --sheen: nothing metal wears these, only the tag. */
+.tier-merit {
+  --ink: var(--ink-merit);
+  --plate: var(--tier-merit-fill);
+  --glyph: var(--glyph-star);
+}
+
+.tier-external {
+  --ink: var(--ink-violet);
+  --plate: var(--tier-external-fill);
+  --glyph: var(--glyph-arrow);
+}
+
+/* Why the image is 600% wide and the wrap is -120%.
+
+   background-size: auto on a gradient makes the image exactly the size
+   of the box, and percentage positions resolve against
+   (box - image) = 0 — so nothing can move it at all. Sizing the image
+   to kW gives that term room: p% lands at -p(k-1)W/100, so the shift
+   that covers one whole image is p = -100k/(k-1). For k = 6 that is
+   -120%.
+
+   One whole image is the only distance that wraps, because a gradient
+   at 104deg has diagonal iso-colour lines and matches nothing at any
+   other offset. A px shift derived from the gradient's own period gets
+   this wrong: what repeats is the element-sized image, not the period
+   inside it.
+
+   k decides whether it reads as a segment or as a wash, and that is
+   what k is for. The window a tile shows is 1/k of the image, so at
+   k = 3 a tile saw about 40% of the cosine at once — enough for the
+   lit part to have a front and a back edge inside one card, which is
+   exactly what a travelling segment looks like. At k = 6 it sees under
+   a quarter, and the crown is wider than the card it crosses, so the
+   ends are never both on screen. The cycle is unchanged: one whole
+   cosine passes per period whatever k is, because the image always
+   travels exactly its own width. */
+@keyframes metal-flow {
+  to {
+    background-position: -120% 50%;
+  }
+}
+
+/* A tile's edge. A border takes one colour, so the ring is a
+   pseudo-element the size of the border box with a 1px pad, masked so
+   only the pad paints — exclude punches the content box out of it.
+
+   Sized, positioned and animated here rather than on the tile. The
+   gradient is on this pseudo-element, and a background-position
+   animation on the element it hangs off moves nothing: that element's
+   own background is empty. */
+.metal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  pointer-events: none;
+  background-image: var(--sheen);
+  background-size: 600% 100%;
+  background-position: 0% 50%;
+  animation: metal-flow 22s linear infinite;
+  will-change: background-position;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.metal {
+  position: relative;
+}
+
+/* The wash under a tile's figures.
+ *
+ * Nothing at rest. A permanent tint on every card meant the grid was
+ * three flat colours whether or not anyone was looking at one; as a
+ * hover it is the tile answering the cursor, which is the only moment
+ * the colour has a job. The tier is still legible at rest from the tag
+ * and the curve.
+ *
+ * Driven through a registered custom property rather than by swapping
+ * two gradients. background-image does not interpolate — a :hover rule
+ * carrying a second gradient snaps — but a property declared with
+ * @property has a type, and a typed property animates. One number moves
+ * and the gradient is rebuilt from it each frame.
+ */
+@property --tint {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.tint {
+  background-image: linear-gradient(
+    to top,
+    rgb(var(--tint-rgb) / calc(var(--tint) * 0.15)),
+    rgb(var(--tint-rgb) / calc(var(--tint) * 0.05)) 48%,
+    transparent 78%
+  );
+  transition: --tint 260ms ease-out;
+}
+
+.group:hover .tint {
+  --tint: 1;
+}
+
+/* Held on rather than waiting for a cursor, for the one place a tier
+   wash is a state instead of a response: the selected card in the
+   launch picker. */
+.tint-on {
+  --tint: 1;
+}
+
+/* Free lifts without a hue. The accent is the site's "look here", and
+   spending it on the two thirds of the grid that paid nothing made the
+   ordinary tiles the loudest thing on the page under a moving cursor —
+   and read as a tier colour Free does not have. Plain light instead:
+   the same lift, no claim. */
+.tint-free {
+  --tint-rgb: 232 236 242;
+}
+
+.tint-fortress {
+  --tint-rgb: 211 168 78;
+}
+
+.tint-ice {
+  --tint-rgb: 168 226 245;
+}
+
+/* The Diamond-only panels on the create form.
+ *
+ * Same ice as the tier mark and the tile tint, at panel strength. The
+ * sections a Diamond application adds are the only ones on that form
+ * whose presence depends on the tier, and a plain grey fieldset among
+ * plain grey fieldsets gives a reader no way to tell that switching to
+ * Gold would take them away. The frame is the tell. */
+.ice-frame {
+  border-color: rgb(168 226 245 / 0.3);
+  background:
+    radial-gradient(120% 150% at 0% 0%, rgb(168 226 245 / 0.07), transparent 60%),
+    linear-gradient(180deg, rgb(168 226 245 / 0.045), transparent 44%);
+}
+
+.ice-rule {
+  border-color: rgb(168 226 245 / 0.22);
+}
+
+.ice-head {
+  background: rgb(168 226 245 / 0.07);
+}
+
+/* A frame that moves.
+ *
+ * Drawn as an overlay masked to its own border rather than as a border
+ * on the panel, because a gradient cannot be a border-color and the
+ * padding-box/border-box trick would mean rebuilding the panel's own
+ * background inside the same shorthand. Two mask layers, one clipped to
+ * the content box, composited to exclude: what survives is the 1px ring
+ * and nothing else, so the panel keeps whatever background it had.
+ *
+ * The ramp starts and ends on the same green so the loop has no seam,
+ * and 300% wide with a -150% shift is one whole image per cycle: at
+ * background-size kW the wrap distance is -100k/(k-1), which for k = 3
+ * is -150%. */
+.flow-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  padding: 1px;
+  /* One hue, three values. The violet that used to sit at the quarter
+     points made the ring read as a second brand colour arriving; the
+     same green light and dark reads as light travelling round a green
+     frame, which is the only thing it was ever meant to say. */
+  background: linear-gradient(
+    100deg,
+    rgb(47 174 55 / 0.55) 0%,
+    rgb(126 240 131 / 0.95) 25%,
+    rgb(47 174 55 / 0.55) 50%,
+    rgb(126 240 131 / 0.95) 75%,
+    rgb(47 174 55 / 0.55) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: frame-flow 9s linear infinite;
+}
+
+@keyframes frame-flow {
+  to {
+    background-position: -150% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-ring {
+    animation: none;
+  }
+}
+
+/* A tag's sheen: one soft band crossing a flat fill.
+
+   Painted as a background-image over the fill's background-color rather
+   than replacing it, so the colour that was measured against white is
+   still the colour underneath. The band peaks at 7% white, which is
+   what the fills are dark enough to afford under coloured ink.
+
+   Same raised cosine as the edge, so the band has no ends to see, and
+   slower still: a tag is 70px wide, so a band crossing it at the edge's
+   rate would read as a blink. */
+.tag-sheen {
+  background-image: linear-gradient(
+    104deg,
+    rgb(255 255 255 / 0.0) 0.0%,
+    rgb(255 255 255 / 0.0004) 3.12%,
+    rgb(255 255 255 / 0.0015) 6.25%,
+    rgb(255 255 255 / 0.0034) 9.38%,
+    rgb(255 255 255 / 0.0059) 12.5%,
+    rgb(255 255 255 / 0.0089) 15.62%,
+    rgb(255 255 255 / 0.0123) 18.75%,
+    rgb(255 255 255 / 0.0161) 21.88%,
+    rgb(255 255 255 / 0.02) 25.0%,
+    rgb(255 255 255 / 0.0239) 28.12%,
+    rgb(255 255 255 / 0.0277) 31.25%,
+    rgb(255 255 255 / 0.0311) 34.38%,
+    rgb(255 255 255 / 0.0341) 37.5%,
+    rgb(255 255 255 / 0.0366) 40.62%,
+    rgb(255 255 255 / 0.0385) 43.75%,
+    rgb(255 255 255 / 0.0396) 46.88%,
+    rgb(255 255 255 / 0.04) 50.0%,
+    rgb(255 255 255 / 0.0396) 53.12%,
+    rgb(255 255 255 / 0.0385) 56.25%,
+    rgb(255 255 255 / 0.0366) 59.38%,
+    rgb(255 255 255 / 0.0341) 62.5%,
+    rgb(255 255 255 / 0.0311) 65.62%,
+    rgb(255 255 255 / 0.0277) 68.75%,
+    rgb(255 255 255 / 0.0239) 71.88%,
+    rgb(255 255 255 / 0.02) 75.0%,
+    rgb(255 255 255 / 0.0161) 78.12%,
+    rgb(255 255 255 / 0.0123) 81.25%,
+    rgb(255 255 255 / 0.0089) 84.38%,
+    rgb(255 255 255 / 0.0059) 87.5%,
+    rgb(255 255 255 / 0.0034) 90.62%,
+    rgb(255 255 255 / 0.0015) 93.75%,
+    rgb(255 255 255 / 0.0004) 96.88%,
+    rgb(255 255 255 / 0.0) 100.0%
+  );
+  background-size: 600% 100%;
+  background-position: 0% 50%;
+  animation: metal-flow 26s linear infinite;
+  will-change: background-position;
+}
+
+/* The label, painted with the ramp instead of a flat colour.
+
+   background-clip: text turns the element's background into the type's
+   own fill, so the same keyframe that moves the edge moves the letters.
+   The size and the period match the tag's plate exactly, which is why
+   the two do not drift apart over a long session. */
+.tag-ink,
+.lime-ink {
+  background-image: var(--ink);
+  background-size: 600% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: metal-flow 26s linear infinite;
+}
+
+.lime-ink {
+  --ink: var(--ink-lime);
+}
+
+/* The glyph, on the same machinery. Explicit width per shape, because
+   a mask has no intrinsic size to derive one from and the two marks
+   have different proportions — 1.43 for the keep, 1.24 for the stone —
+   so a shared box would letterbox one of them. */
+.tier-glyph {
+  display: block;
+  flex: none;
+  background-image: var(--ink);
+  background-size: 600% 100%;
+  background-position: 0% 50%;
+  animation: metal-flow 26s linear infinite;
+  -webkit-mask: var(--glyph) center / contain no-repeat;
+  mask: var(--glyph) center / contain no-repeat;
+}
+
+/* A small arc across the bolt.
+
+   Two flickers close together and then a long dark, because that is
+   what a spark does; an even pulse reads as a heartbeat. The glow is a
+   drop-shadow on the glyph, so it follows the bolt's own edge rather
+   than lighting a box around it. */
+@keyframes bolt-arc {
+  0%,
+  70%,
+  100% {
+    filter: none;
+  }
+  72% {
+    filter: drop-shadow(0 0 2px rgb(74 222 80 / 0.9));
+  }
+  74% {
+    filter: none;
+  }
+  77% {
+    filter: drop-shadow(0 0 4px rgb(74 222 80 / 0.95))
+      drop-shadow(0 0 8px rgb(74 222 80 / 0.5));
+  }
+  84% {
+    filter: drop-shadow(0 0 1px rgb(74 222 80 / 0.4));
+  }
+}
+
+.bolt-arc {
+  animation: bolt-arc 5.5s ease-out infinite;
+}
+
+/* Up to eighteen moving edges on one screen is exactly what this
+   setting is for. */
+@media (prefers-reduced-motion: reduce) {
+  .tint,
+  .metal::before,
+  .curve-metal,
+  .tag-sheen,
+  .tag-ink,
+  .lime-ink,
+  .tier-glyph,
+  .bolt-arc {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+/* Chromium draws its own clear button inside a type="search" field, and
+   appearance: none does not remove it — it is a shadow pseudo-element,
+   not part of the control's own painting. Every search field on this
+   site brings its own clear affordance, styled like everything else
+   around it, so the native one is a second button in a different design
+   sitting on top of the first.
+   ------------------------------------------------------------------ */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* ==================================================================
+   From here to the end: copied from ansem-v2 for the Trending versions,
+   plus the one token the terminal's toast needed. Version styles do NOT
+   go in this file; each version has app/v/<slug>/<slug>.css, scoped
+   under .v-<slug> and imported by its own route.
+
+   THE NETWORK BLOCK MUST STAY LAST. `html[data-chain="2"]` is an element
+   plus one attribute, the same specificity as any other html-level
+   switch, so source order is the only thing that lets the network win
+   the accent. Anything appended after it can silently take the accent
+   back on network 2.
+=================================================================== */
+
+/* Excluded from scroll anchoring, and everything inside it.
+   The browser picks a node in the viewport and holds it still while
+   the document changes around it, which is right for a page loading
+   images and wrong for a list that rewrites itself on a timer: the
+   anchor moves with the list and the window is scrolled to follow. */
+.no-anchor {
+  overflow-anchor: none;
+}
+
+/* A reserved slot. Hatched at hairline strength so it reads as a frame
+   waiting for its content rather than an empty box, and says so without
+   a word on it. On Trending it also marks a curve the fixtures can't
+   vouch for (components/trending/flat-curve.tsx). */
+.door-art {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 7px,
+    color-mix(in oklab, var(--color-line) 70%, transparent) 7px 8px
+  );
+}
+
+/* Which network's content is painted.
+
+   The network is on <html> before first paint, and a value picked from
+   React state is not: useChain's server snapshot is network 1, so a
+   branch in render paints network 1 for a frame on network 2. The
+   choice is made in the cascade instead, where it is made before
+   anything is drawn. Unlayered, so it beats a `flex` utility on the
+   same element. */
+html:not([data-chain="2"]) .only-chain2,
+html[data-chain="2"] .only-chain1 {
+  display: none;
+}
+
+/* ==================================================================
+   NETWORK — the second chain's ramp. Last in the file on purpose (see
+   above).
+
+   Only the ramp moves. --color-pos and --color-neg stay exactly where
+   they are: a gain is teal rather than the brand green so "up" does not
+   read as "look here", and that argument does not change when the brand
+   moves to chartreuse. Chartreuse is bright enough that black is the
+   only ink that clears contrast on it, so every accent-filled control
+   sets its own text-black.
+=================================================================== */
+
+html[data-chain="2"] {
+  /* The same three-stop construction as the green: a near-white core,
+     the colour itself, and a deep stop for pressed and hovered states,
+     darker in proportion because #ccff00 starts so near the top of the
+     gamut that a shallow step would not read as a state change. */
+  --color-core: #eaff9c;
+  --color-accent: #ccff00;
+  --color-accent-deep: #9bc700;
+}

@@ -1,0 +1,22 @@
+.nomo-index .nm-token-signals.is-compact.is-chips{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;width:max-content;font-size:9px;line-height:1}
+.nomo-index .nm-token-signals.is-chips>.nm-signal-line{display:flex;align-items:center;justify-content:flex-start;gap:4px;min-height:18px}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip{display:inline-flex;align-items:center;justify-content:flex-start;gap:3px;box-sizing:border-box;width:auto;height:18px;min-height:18px;padding:0 4px;border:1px solid #2c2f30;border-radius:4px;background:#171a1a;color:#a0a5ad;white-space:nowrap;cursor:help}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip>svg{flex-shrink:0;width:11px;height:11px;color:inherit;opacity:.9}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip>strong{font-size:9px;font-weight:450;font-variant-numeric:tabular-nums;color:inherit;line-height:1}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip[data-tone="ok"]{background:#152019;border-color:#253b2e;color:#87c7a0}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip[data-tone="bad"]{background:#25191d;border-color:#402a31;color:#d88c9b}
+.nomo-index .nm-token-signals.is-chips .nm-signal-chip[data-tone="unknown"]{background:#18191b;border-color:#292c2f;color:#747984}
+.nomo-index .nm-signal-chip[data-has-card="false"]{cursor:default}
+.nomo-index .nm-signal-chip:focus-visible{outline:1px solid #bccbab;outline-offset:2px}
+.nm-metric-tooltip{position:fixed;z-index:100;display:block;width:max-content;max-width:min(310px,calc(100vw - 20px));padding:10px 12px;border:1px solid #36373a;border-radius:6px;background:#19191b;color:#d4d5d8;box-shadow:0 8px 24px #0005;font:12px/1.55 var(--font-sans),sans-serif;letter-spacing:0;text-align:left;box-sizing:border-box;font-variant-numeric:tabular-nums}
+.nm-metric-tooltip .nm-metric-heading{display:block;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #303033;color:#eceee9;font-size:12px;font-weight:550}
+.nm-metric-tooltip .nm-metric-rows{display:grid;gap:5px;min-width:230px}
+.nm-metric-tooltip .nm-metric-rows>span{display:flex;align-items:center;justify-content:space-between;gap:22px}
+.nm-metric-tooltip .nm-metric-rows>span>span{color:#85868f}
+.nm-metric-tooltip strong{font-weight:450}
+.nm-metric-tooltip small{font-size:11px;opacity:.8}
+.nm-metric-tooltip code{font:11px var(--font-mono),monospace}
+.nm-metric-tooltip time{white-space:nowrap}
+.nm-metric-tooltip .nm-metric-positive{color:#87c7a0}
+.nm-metric-tooltip .nm-metric-negative{color:#d88c9b}
+.nm-metric-tooltip .nm-metric-description{display:block;max-width:272px}

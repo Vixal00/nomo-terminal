@@ -1,0 +1,1540 @@
+/* Open Row: every rule here is scoped under .v-openrow, the class on the
+   screen's root, and this file is imported only by app/v/openrow/page.tsx.
+
+   Unlayered, like everything in globals.css, so a rule here beats any
+   Tailwind utility on the same element. That is how .meta and .num
+   sizes are changed: a sibling rule here (.v-openrow .cell .num { … }),
+   never a text-[…] utility, which silently loses to them.
+
+   Default colours go on containers, never on the figure itself: a
+   figure's own data-sign or data-band rule then wins by being on the
+   element, and a gain can't be painted over by a "default grey" that
+   happened to be more specific.
+
+   The layout is owned here, by media queries, not by script. The
+   server HTML is correct at every width before hydration; JS only
+   decides where the one inspector mounts (components/v/openrow/prefs.ts
+   useWide). */
+
+/* A column on a phone, so a short list leaves its slack inside the body
+   and the status bar still sits at the foot of the screen. */
+.v-openrow {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  min-height: 100dvh;
+}
+.v-openrow .or-body {
+  flex: 1 0 auto;
+}
+
+/* ------------------------------------------------------------------
+   Masthead + controls: one grid, so a phone can reorder its rows
+   (brand, tabs, controls, search) without a second copy of any control.
+   The 1px row gap shows the grid's own line colour through, which is
+   the rule under each row; every cell paints canvas over it.
+------------------------------------------------------------------- */
+.v-openrow .or-mast {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: 44px 40px 40px 40px;
+  grid-template-areas:
+    "brand sp ver chain"
+    "tabs tabs tabs tabs"
+    "ctl ctl ctl ctl"
+    "search search search search";
+  row-gap: 1px;
+  background: var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+}
+.v-openrow .or-mast > * {
+  background: var(--color-canvas);
+  min-width: 0;
+}
+.v-openrow .or-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.v-openrow .or-brand-word {
+  display: none;
+}
+.v-openrow .or-sp {
+  grid-area: sp;
+}
+.v-openrow .or-ver {
+  grid-area: ver;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+.v-openrow .or-chain {
+  grid-area: chain;
+  display: flex;
+  align-items: center;
+  padding-right: 12px;
+}
+.v-openrow .or-tabs {
+  grid-area: tabs;
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  padding: 0 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.v-openrow .or-tabs::-webkit-scrollbar {
+  display: none;
+}
+/* UnderlineTab is drawn for a free-standing strip (py-3). Here it fills
+   its row, so the rule under the word lands on the row's hairline. */
+.v-openrow .or-tab {
+  height: 100%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.v-openrow .or-controls {
+  grid-area: ctl;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 0 12px;
+}
+.v-openrow .or-wsw {
+  gap: 14px;
+}
+.v-openrow .or-vsep {
+  display: none;
+  width: 1px;
+  margin: 9px 0;
+  background: var(--color-line);
+}
+.v-openrow .or-controls .or-pop-anchor:not(.or-d-only) {
+  margin-left: auto;
+}
+.v-openrow .or-search {
+  grid-area: search;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+.v-openrow .or-search-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 30px 0 10px;
+  border: 1px solid var(--color-line);
+  background: var(--color-elev);
+  color: var(--color-bone);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.v-openrow .or-search-input::placeholder {
+  color: var(--color-dim);
+}
+.v-openrow .or-search-key {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+/* A key hint means nothing to a finger. */
+@media (pointer: coarse) {
+  .v-openrow .or-search-key {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .v-openrow .or-brand-word {
+    display: inline;
+  }
+}
+
+/* Hairline segmented control: raised when pressed, never the accent. */
+.v-openrow .or-seg {
+  display: inline-flex;
+  align-self: center;
+  height: 24px;
+  border: 1px solid var(--color-line);
+}
+.v-openrow .or-seg > button {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--color-dim);
+  white-space: nowrap;
+  transition: color 150ms ease;
+}
+.v-openrow .or-seg > button:hover {
+  color: var(--color-muted);
+}
+.v-openrow .or-seg > button[aria-pressed="true"] {
+  background: var(--color-raised);
+  color: var(--color-bone);
+}
+
+/* A plain control in the controls row: Filters, Hidden. */
+.v-openrow .or-ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  white-space: nowrap;
+  transition: color 150ms ease;
+}
+.v-openrow .or-ctl:hover {
+  color: var(--color-muted);
+}
+.v-openrow .or-ctl.is-on {
+  background: var(--color-raised);
+  color: var(--color-bone);
+}
+
+/* Keycaps: hairline, 16px, the same in the search field, the foot and
+   the key help. */
+.v-openrow .or-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.v-openrow .or-key-btn {
+  transition: color 150ms ease;
+}
+.v-openrow .or-key-btn:hover,
+.v-openrow .or-key-btn.is-on {
+  color: var(--color-bone);
+  border-color: var(--color-muted);
+}
+
+/* ------------------------------------------------------------------
+   The list
+------------------------------------------------------------------- */
+.v-openrow .or-list {
+  --or-cols: 24px 26px minmax(0, 1fr) 64px 64px;
+}
+.v-openrow .or-grid {
+  display: grid;
+  grid-template-columns: var(--or-cols);
+  align-items: center;
+  padding-left: 4px;
+}
+.v-openrow .c-vol,
+.v-openrow .c-txn,
+.v-openrow .c-liq,
+.v-openrow .c-risk,
+.v-openrow .c-age {
+  display: none;
+}
+.v-openrow .c-num {
+  padding-right: 8px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.v-openrow .or-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+}
+/* The rule wraps rather than truncating. After the rank sentence it
+   carries what narrowed the list and the key to the dotted change, and
+   a title can't be opened by a finger: cut, those were unreadable on a
+   phone. The head grows a line when it has to; the rows' scroll margins
+   follow its measured height (--or-head, written by screen.tsx). */
+.v-openrow .or-rule {
+  padding: 2px 12px;
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 16px;
+}
+/* The filter echo and the dotted-change key: what the reader has to be
+   able to read, a step brighter than the standing sentence before it. */
+.v-openrow .or-rule-state {
+  color: var(--color-muted);
+}
+.v-openrow .or-heads {
+  height: 28px;
+  white-space: nowrap;
+}
+.v-openrow .or-heads .or-rank {
+  font-size: 10.5px;
+}
+.v-openrow .or-list[data-rank="txns"] .or-heads .c-txn,
+.v-openrow .or-list[data-rank="mc"] .or-heads .c-mc,
+.v-openrow .or-list[data-rank="score"] .or-heads .c-risk {
+  color: var(--color-muted);
+}
+
+.v-openrow .or-row {
+  width: 100%;
+  height: 44px;
+  border-bottom: 1px solid var(--color-line);
+  scroll-margin-top: var(--or-head, 49px);
+  scroll-margin-bottom: calc(var(--or-status, 40px) + 4px);
+  cursor: pointer;
+  text-align: left;
+}
+.v-openrow .or-row .c-num {
+  color: var(--color-muted);
+}
+/* The column the tab ranks by is the brightest figure in the row, so
+   the order can be checked by eye against the rule above it. */
+.v-openrow .or-list[data-rank="txns"] .or-row .c-txn,
+.v-openrow .or-list[data-rank="mc"] .or-row .c-mc {
+  color: var(--color-bone);
+}
+.v-openrow .or-row .num {
+  font-size: 12px;
+}
+.v-openrow .or-rank {
+  padding-right: 6px;
+  color: var(--color-dim);
+  text-align: right;
+}
+.v-openrow .or-row .or-rank {
+  font-size: 11px;
+}
+.v-openrow .or-row.is-open {
+  background: var(--color-surface);
+  border-bottom-color: var(--color-surface);
+}
+.v-openrow .or-row.is-open .or-rank {
+  color: var(--color-accent);
+}
+
+.v-openrow .c-art {
+  display: flex;
+  align-items: center;
+}
+.v-openrow .c-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  column-gap: 6px;
+  row-gap: 2px;
+  min-width: 0;
+  padding-right: 8px;
+  overflow: hidden;
+}
+.v-openrow .or-tk,
+.v-openrow .or-glyph,
+.v-openrow .or-star,
+.v-openrow .or-real {
+  flex: none;
+}
+.v-openrow .or-star {
+  display: flex;
+}
+.v-openrow .or-name {
+  order: 9;
+  flex-basis: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v-openrow .or-dot {
+  margin: 0 2px;
+  color: var(--color-dim);
+}
+/* T's label is printed whole, snapshot caveat included, and is the one
+   thing in the pair cell that never truncates: tighter tracking lets it
+   fit the narrowest pair column beside a one-letter ticker. */
+.v-openrow .or-row .or-real {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+}
+
+/* The buy share under the trade count: teal buys on a half-strength
+   red track. A window with no trades has no share, and goes flat grey
+   rather than reading as all-sell. */
+.v-openrow .or-track {
+  display: block;
+  height: 2px;
+  margin-top: 3px;
+  background: color-mix(in oklab, var(--color-neg) 50%, transparent);
+}
+/* In a row the track hangs under the trade count out of flow, so the
+   count sits on the row's shared figure line with every other figure
+   instead of 2.5px above it. */
+.v-openrow .c-txn {
+  position: relative;
+}
+.v-openrow .c-txn .or-track {
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 8px;
+  width: calc(100% - 16px);
+  margin: 0;
+}
+.v-openrow .or-track[data-null="true"] {
+  background: var(--color-line);
+}
+.v-openrow .or-track > span {
+  display: block;
+  height: 100%;
+  background: var(--color-pos);
+}
+
+.v-openrow .or-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 24px;
+  padding: 0 12px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  white-space: nowrap;
+}
+
+.v-openrow .or-empty {
+  padding: 24px 16px;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Tags in a row are static. The moving sheen belongs to the one tag on
+   the page a reader is looking at on purpose, the inspector's; forty of
+   them drifting down a list read as a shimmer, not a tier. */
+.v-openrow .or-row .tag-sheen,
+.v-openrow .or-row .tier-glyph {
+  animation: none;
+}
+
+.v-openrow .or-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-muted);
+  transition: color 150ms ease;
+}
+.v-openrow .or-btn:hover {
+  color: var(--color-bone);
+}
+.v-openrow .or-btn-strong {
+  border-color: var(--color-muted);
+  color: var(--color-bone);
+}
+
+/* Figures the reader should decode by colour. Signed only where the
+   figure is a change or a flow (.sg): a market cap is positive by
+   nature and must not read as a gain. */
+.v-openrow .sg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-openrow .sg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-openrow .sg[data-sign="zero"],
+.v-openrow [data-sign="null"] {
+  color: var(--color-dim);
+}
+.v-openrow [data-band="warn"] {
+  color: var(--color-rim);
+}
+.v-openrow [data-band="bad"] {
+  color: var(--color-neg);
+}
+.v-openrow [data-band="null"] {
+  color: var(--color-dim);
+}
+.v-openrow [data-part="unit"] {
+  color: var(--color-dim);
+}
+.v-openrow [data-since] {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------
+   Body
+------------------------------------------------------------------- */
+.v-openrow .or-rail {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   The inspector
+------------------------------------------------------------------- */
+.v-openrow .or-inspector {
+  background: var(--color-surface);
+}
+.v-openrow .or-inline {
+  border-bottom: 1px solid var(--color-line);
+  overflow-x: clip;
+}
+.v-openrow .or-block {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-line);
+}
+.v-openrow .or-inspector > .or-block:first-child {
+  border-top: 0;
+}
+.v-openrow .or-inline .or-block {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* The nameplate: the page's one large type and its only Republica. */
+.v-openrow .or-plate-block {
+  padding-top: 16px;
+  padding-bottom: 14px;
+}
+.v-openrow .or-plate-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.v-openrow .or-plate-col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding-top: 2px;
+}
+.v-openrow .or-plate {
+  font-size: 44px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.v-openrow .or-inline .or-plate {
+  font-size: 32px;
+}
+.v-openrow .or-plate-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
+}
+/* The rank stamp follows the tier tag on the name line, as part of the
+   plate. Muted words, the numeral in figures at bone: it is the only
+   place that says where the coin went after a re-rank. */
+.v-openrow .or-stamp {
+  flex: none;
+  margin-left: 4px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-openrow .or-stamp .num {
+  color: var(--color-bone);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.v-openrow .or-close {
+  flex: none;
+  padding-top: 3px;
+  white-space: nowrap;
+}
+.v-openrow .or-door {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--color-line);
+}
+
+.v-openrow .or-ticket {
+  margin-top: 14px;
+}
+/* One 32px line: the size group and the key share a height and a top
+   edge, and only the dollar caption after them wraps. */
+.v-openrow .or-ticket-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.v-openrow .or-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.v-openrow .or-ticket .or-seg {
+  height: 32px;
+}
+.v-openrow .or-ticket .or-seg > button {
+  min-width: 44px;
+  justify-content: center;
+  font-size: 11px;
+}
+.v-openrow .or-usd {
+  white-space: nowrap;
+}
+/* The key's disclaimer is read at the key's strength: muted, not the
+   dim of the reference notes, with the tag in rim ink heading it. */
+.v-openrow .or-qb-note {
+  margin-top: 8px;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.v-openrow .or-qb-tag {
+  margin-right: 4px;
+  color: var(--color-rim);
+}
+/* The Buy key: accent use three of four. Black ink on both networks,
+   because chartreuse clears contrast with nothing else. */
+.v-openrow .or-buy {
+  height: 32px;
+  min-width: 140px;
+  padding: 0 16px;
+  background: var(--color-accent);
+  color: black;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.v-openrow .or-buy:hover {
+  background: var(--color-core);
+}
+.v-openrow .or-buy:active {
+  background: var(--color-accent-deep);
+}
+.v-openrow .or-buy:disabled {
+  background: var(--color-raised);
+  color: var(--color-dim);
+  cursor: not-allowed;
+}
+.v-openrow .or-note {
+  margin-top: 8px;
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.v-openrow .or-note-inline {
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+
+/* Price line and window strip: 14px readouts, the next size down from
+   the nameplate and the largest after it. */
+.v-openrow .or-val .num {
+  font-size: 14px;
+  line-height: 18px;
+}
+.v-openrow .or-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 22px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.v-openrow .or-kv-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* The window strip. Where the strip is wide enough (a container query,
+   since the rail and the inline inspector differ) each cell is one
+   baseline line, "5M  −6.7%", so it reads as a row of the table rather
+   than four tiles. Narrower, the label sits over the figure, because
+   "since launch" and a figure don't share 100px. The since-launch label
+   is never cut: it tracks tighter, and wraps at its space if it must. */
+.v-openrow .or-strip {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-line);
+}
+.v-openrow .or-strip-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  padding: 5px 10px 4px;
+  border-left: 1px solid var(--color-line);
+  border-bottom: 2px solid transparent;
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+@container (min-width: 600px) {
+  .v-openrow .or-strip-cell {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 12px 3px;
+  }
+}
+.v-openrow .or-strip-cell:first-child {
+  border-left: 0;
+}
+.v-openrow .or-strip-cell:hover {
+  background: var(--color-raised);
+}
+.v-openrow .or-strip-cell > .meta {
+  line-height: 14px;
+  white-space: nowrap;
+}
+.v-openrow .or-strip-cell > .meta.is-since {
+  letter-spacing: 0.04em;
+  white-space: normal;
+}
+/* The strip's selected window: accent use two, the same underline as
+   the window switch it mirrors. */
+.v-openrow .or-strip-cell[aria-pressed="true"] {
+  border-bottom-color: var(--color-accent);
+}
+.v-openrow .or-strip-cell[aria-pressed="true"] > .meta {
+  color: var(--color-muted);
+}
+.v-openrow .or-inline .or-strip-cell {
+  padding-left: 8px;
+  padding-right: 6px;
+}
+
+/* The chart. */
+/* Room above and below the box for a price label pinned to a point
+   at the edge of the range. */
+.v-openrow .or-chart-block {
+  padding-top: 18px;
+  padding-bottom: 10px;
+}
+/* Clipped sideways as a last guard: a label is placed to stay inside
+   (chart.tsx), and nothing in the chart may ever widen the page. */
+.v-openrow .or-chart-box {
+  position: relative;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.v-openrow .or-chart-svg {
+  display: block;
+  width: 100%;
+  height: 100px;
+  overflow: visible;
+}
+.v-openrow .or-chart-path {
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+.v-openrow .or-chart-path[data-up="true"] {
+  stroke: var(--color-pos);
+}
+.v-openrow .or-chart-path[data-up="false"] {
+  stroke: var(--color-neg);
+}
+.v-openrow .or-chart-open {
+  stroke: var(--color-line-bright);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.v-openrow .or-chart-null {
+  stroke: var(--color-line);
+  stroke-width: 1;
+}
+/* --nudge is chart.tsx's last resort, sliding an open label left when
+   no side keeps it clear of the last one. */
+.v-openrow .or-chart-label {
+  position: absolute;
+  translate: calc(-1 * var(--nudge, 0px)) 0;
+  padding: 0 3px;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-size: 10.5px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+.v-openrow .or-chart-label[data-pos="above"] {
+  transform: translateY(calc(-100% - 3px));
+}
+.v-openrow .or-chart-label[data-pos="below"] {
+  transform: translateY(3px);
+}
+.v-openrow .or-chart-label[data-pos="mid"] {
+  transform: translateY(-50%);
+}
+.v-openrow .or-caption {
+  margin-top: 6px;
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 14px;
+}
+
+/* Flows and the fixture: self-labelled rule-grid rows. */
+.v-openrow .or-grids {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 14px;
+}
+.v-openrow .or-kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 22px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-openrow .or-col > .or-kv:last-child {
+  border-bottom: 0;
+}
+.v-openrow .or-kv-v {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-bone);
+  white-space: nowrap;
+}
+.v-openrow .or-kv-v .num {
+  font-size: 12px;
+}
+/* The same 22px as a row, so side by side every hairline of the
+   flows column continues one of the fixture column's. */
+.v-openrow .or-kv-head {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-openrow .or-slash {
+  color: var(--color-dim);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.v-openrow .or-track-wide {
+  width: 64px;
+  margin: 0 2px;
+}
+
+/* Curve. */
+.v-openrow .or-curve-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 20px;
+}
+.v-openrow .or-curve-v {
+  font-size: 12px;
+}
+.v-openrow .or-curve .or-note {
+  margin-top: 4px;
+}
+
+/* Seat. */
+.v-openrow .or-seat-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.v-openrow .or-seat-s {
+  margin-top: 8px;
+  line-height: 1.45;
+}
+/* The seat badge's tier tag is the second tag in the inspector, and
+   still: the one moving tag is the nameplate's. */
+.v-openrow .or-seat-row .tag-sheen,
+.v-openrow .or-seat-row .tier-glyph,
+.v-openrow .or-seat-row .tag-ink {
+  animation: none;
+}
+.v-openrow .or-score-bar {
+  position: relative;
+  display: block;
+  width: 72px;
+  height: 3px;
+  background: var(--color-raised);
+}
+.v-openrow .or-score-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--color-line-bright);
+}
+.v-openrow .or-score-bar > i {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--color-dim);
+}
+
+/* Boost: paid placement, so it is stated, not lit. The chip's accent
+   bolt and its arc are turned down here; the accent is spent on four
+   things on this page and a paid slot is not one of them. */
+.v-openrow .or-boost-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v-openrow .or-boost > span {
+  color: var(--color-muted);
+}
+.v-openrow .or-boost .bolt-arc {
+  animation: none;
+}
+
+/* Star, Hide, Copy: under the key's disclaimer, in the nameplate block. */
+.v-openrow .or-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  min-height: 20px;
+  margin-top: 10px;
+}
+.v-openrow .or-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  transition: color 150ms ease;
+}
+.v-openrow .or-act:hover,
+.v-openrow .or-act[aria-pressed="true"] {
+  color: var(--color-bone);
+}
+.v-openrow .or-act .or-key {
+  display: none;
+  margin-left: 2px;
+}
+.v-openrow .or-nopage {
+  margin-left: auto;
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+
+/* The "more below" strip at the foot of the rail (RailMore). The pin is
+   zero height, sticky to the rail's bottom edge; the strip hangs above
+   it over the rail's last line. */
+.v-openrow .or-more-pin {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  height: 0;
+}
+.v-openrow .or-more {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 22px;
+  padding: 0 16px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  transition: color 150ms ease;
+}
+.v-openrow .or-more:hover {
+  color: var(--color-bone);
+}
+
+/* ------------------------------------------------------------------
+   Popovers, the sheet, key help
+------------------------------------------------------------------- */
+.v-openrow .or-pop-anchor {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.v-openrow .or-controls > .or-pop-anchor {
+  align-self: stretch;
+}
+.v-openrow .or-pop {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  z-index: 40;
+  width: 280px;
+  padding: 12px;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-raised);
+}
+.v-openrow .or-pop .or-note {
+  margin-top: 0;
+}
+.v-openrow .or-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px 12px;
+  margin-top: 10px;
+}
+.v-openrow .or-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.v-openrow .or-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  font-size: 12px;
+}
+.v-openrow .or-input::placeholder {
+  color: var(--color-dim);
+}
+.v-openrow .or-input[aria-invalid="true"] {
+  border-color: var(--color-rim);
+}
+.v-openrow .or-err {
+  color: var(--color-rim);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+.v-openrow .or-limits-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+.v-openrow .or-hidden-list {
+  margin-top: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-line);
+}
+.v-openrow .or-hidden-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 28px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-openrow .or-pop-hidden .or-note {
+  margin-top: 8px;
+}
+
+/* Surface, not raised: the Tier and Stage segments in it mark the
+   pressed choice with raised, which would vanish on a raised sheet. */
+.v-openrow .or-sheet {
+  max-height: 88dvh;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--color-line-bright);
+  background: var(--color-surface);
+  color: var(--color-bone);
+}
+.v-openrow .or-sheet::backdrop {
+  background: color-mix(in oklab, var(--color-canvas) 72%, transparent);
+}
+.v-openrow .or-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 16px 22px;
+}
+.v-openrow .or-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.v-openrow .or-sheet-sec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.v-openrow .or-sheet-sec.is-col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.v-openrow .or-sheet .or-limits {
+  padding-top: 14px;
+  border-top: 1px solid var(--color-line);
+}
+
+.v-openrow .or-pop-keys {
+  top: auto;
+  right: 0;
+  bottom: calc(100% + 6px);
+  left: auto;
+  width: 320px;
+}
+.v-openrow .or-keys-list > div {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+.v-openrow .or-keys-list dt {
+  display: flex;
+  gap: 4px;
+}
+.v-openrow .or-keys-list dd {
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+.v-openrow .or-keys-list.is-extra {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-line);
+}
+
+/* ------------------------------------------------------------------
+   Status bar
+------------------------------------------------------------------- */
+.v-openrow .or-status {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+}
+.v-openrow .or-status-l {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.v-openrow .or-disc-cells {
+  display: none;
+}
+.v-openrow .or-disc-line {
+  min-width: 0;
+  line-height: 1.5;
+}
+.v-openrow .or-sim {
+  flex: none;
+}
+.v-openrow .or-status-r,
+.v-openrow .or-pri-help {
+  display: none;
+}
+.v-openrow .or-pri-keys {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------
+   Focus: accent use four, one ring for everything.
+------------------------------------------------------------------- */
+.v-openrow :is(button, a, input, [tabindex]):focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+/* The listbox is the exception. Framed whole, it would be the largest
+   accent object on the page and would turn the wall into an accent
+   line. With a row selected, focus is drawn on that row: a 2px bar on
+   its left edge, leaving its right edge open to the inspector. The
+   frame stays only while nothing is selected, so focus is never
+   invisible. */
+.v-openrow .or-rows:focus-visible:has(.or-row[aria-selected="true"]) {
+  outline: none;
+}
+.v-openrow .or-rows:focus-visible .or-row[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--color-accent);
+}
+.v-openrow .or-buy:focus-visible {
+  outline-offset: 2px;
+}
+/* A rail block takes focus from the "more below" strip. A full-width
+   block keeps the inset ring (outside, the rail's edges would clip it)
+   and its own padding holds it clear of the text; a flows or fixture
+   column has no padding of its own, so its ring goes outside it. */
+.v-openrow .or-col:focus-visible {
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------
+   640 and up: the phone list gains Vol, Txns and Age; the inline
+   inspector puts flows and the fixture side by side.
+------------------------------------------------------------------- */
+@media (min-width: 640px) {
+  .v-openrow .or-list {
+    --or-cols: 24px 26px minmax(150px, 1fr) 60px 64px 60px 60px 56px;
+  }
+  .v-openrow .c-vol,
+  .v-openrow .c-txn,
+  .v-openrow .c-age {
+    display: block;
+  }
+  .v-openrow .or-inline .or-grids {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .v-openrow .or-inline .or-col:first-child {
+    padding-right: 12px;
+  }
+  .v-openrow .or-inline .or-col-fixture {
+    padding-left: 12px;
+    border-left: 1px solid var(--color-line);
+  }
+  .v-openrow .or-status-l {
+    justify-content: flex-start;
+  }
+  .v-openrow .or-sim {
+    margin-left: auto;
+  }
+}
+
+/* Under 1024 the controls row keeps only the window and the Filters
+   button; tier, stage and hidden coins move into the Filters sheet. */
+@media (max-width: 1023.98px) {
+  .v-openrow .or-controls .or-d-only {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   1024 and up: the desktop instrument. One viewport-high grid; the body
+   is the one scroller and holds both columns.
+------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  /* The one column is minmax(0, 1fr), not the implicit auto: an auto
+     column takes the min-content of its widest child, and the status
+     bar's unbroken right group made the whole grid wider than the
+     screen at 1680, where the root's overflow then cut it off. */
+  .v-openrow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) 26px;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .v-openrow .or-mast {
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
+    grid-template-rows: 39px 35px;
+    grid-template-areas:
+      "brand tabs sp search ver chain"
+      "ctl ctl ctl ctl ctl ctl";
+  }
+  .v-openrow .or-brand {
+    padding: 0 16px;
+    border-right: 1px solid var(--color-line);
+  }
+  .v-openrow .or-tabs {
+    padding: 0 16px;
+    overflow: visible;
+  }
+  .v-openrow .or-search {
+    padding: 0 4px 0 12px;
+  }
+  .v-openrow .or-search-input {
+    width: 240px;
+    height: 26px;
+  }
+  .v-openrow .or-search-key {
+    right: 10px;
+  }
+  .v-openrow .or-chain {
+    padding-right: 16px;
+  }
+  .v-openrow .or-controls {
+    gap: 16px;
+    padding: 0 16px;
+  }
+  .v-openrow .or-vsep {
+    display: block;
+  }
+  .v-openrow .or-controls .or-pop-anchor:not(.or-d-only) {
+    margin-left: 0;
+  }
+
+  /* The body. The scrollbar is the body's, so it sits at the far right
+     edge, right of the inspector: nothing sits in the joint between the
+     focused row and the inspector. */
+  .v-openrow .or-body {
+    display: grid;
+    grid-template-columns: minmax(560px, 46%) minmax(0, 1fr);
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overflow-anchor: none;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-bright) transparent;
+  }
+
+  /* The wall between list and inspector is the list's own right edge,
+     in line-bright, and it runs the full height of the pane because the
+     list stretches to the grid row even when it holds two rows. */
+  .v-openrow .or-list {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid var(--color-line-bright);
+    --or-cols: 28px 26px minmax(150px, 1fr) 60px 64px 60px 72px 56px;
+  }
+  .v-openrow .or-grid {
+    padding-left: 0;
+  }
+  .v-openrow .or-rank {
+    padding-right: 8px;
+  }
+  /* The listbox is taller than the pane, so focusing it by keyboard
+     aligns its top edge with the scroller's; the margin is the sticky
+     head's height (20 + 28 + its 1px rule), so that alignment is a no-op instead of hiding the
+     first row under the head. */
+  .v-openrow .or-rows {
+    flex: none;
+    scroll-margin-top: var(--or-head, 49px);
+    scroll-margin-bottom: 24px;
+  }
+  .v-openrow .or-rows:focus-visible {
+    outline-offset: -1px;
+  }
+  .v-openrow .c-vol {
+    display: none;
+  }
+  .v-openrow .c-risk {
+    display: block;
+  }
+  .v-openrow .or-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin-top: auto;
+  }
+
+  .v-openrow .or-rail {
+    display: block;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: calc(100dvh - 102px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--color-surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-bright) transparent;
+  }
+
+  /* A control reached by Tab scrolls clear of the "more below" strip,
+     the strip's own height, instead of stopping under it with its focus
+     ring hidden. A margin on the controls, not scroll padding on the
+     rail: padding would count against the strip too, and the rail would
+     scroll to the bottom the moment the strip took focus, taking the
+     strip away before it could be pressed. */
+  .v-openrow .or-rail .or-inspector :is(a, button, input, [tabindex]) {
+    scroll-margin-bottom: 22px;
+  }
+
+  /* Width from the block, not 100%: a fixed width over-constrains the
+     box and the focused row's negative margin below would be dropped. */
+  .v-openrow .or-row {
+    width: auto;
+    height: 32px;
+    scroll-margin-bottom: 24px;
+  }
+  .v-openrow .c-pair {
+    flex-wrap: nowrap;
+  }
+  .v-openrow .or-name {
+    order: 0;
+    flex: 0 1 auto;
+  }
+
+  /* The joint. The focused row takes the inspector's surface and reaches
+     one pixel over the wall, so the wall breaks exactly there and the
+     row runs straight into the inspector. The extra pixel of padding
+     keeps its cells where every other row's are. */
+  .v-openrow .or-row[aria-selected="true"] {
+    position: relative;
+    z-index: 1;
+    margin-right: -1px;
+    padding-right: 1px;
+    background: var(--color-surface);
+  }
+  .v-openrow .or-row[aria-selected="true"] .num {
+    font-weight: 500;
+  }
+  .v-openrow .or-row[aria-selected="true"] .or-rank {
+    color: var(--color-accent);
+  }
+  .v-openrow .or-row:not([aria-selected="true"]):hover {
+    background: var(--color-elev);
+  }
+
+  .v-openrow .or-chart-svg {
+    height: 96px;
+  }
+  .v-openrow .or-act .or-key {
+    display: inline-flex;
+  }
+  .v-openrow .or-rail .or-col-fixture {
+    padding-top: 0;
+  }
+
+  /* Status bar: one 26px line. The left group never drops; the right
+     group drops from the left as the width runs out, by these queries. */
+  .v-openrow .or-status {
+    position: static;
+    gap: 12px;
+    height: 26px;
+    padding: 0 8px 0 0;
+  }
+  .v-openrow .or-status-l {
+    flex: none;
+    align-self: stretch;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .v-openrow .or-disc-cells {
+    display: flex;
+    align-self: stretch;
+  }
+  .v-openrow .or-disc-cells > li {
+    display: flex;
+    align-items: center;
+  }
+  .v-openrow .or-disc-line {
+    display: none;
+  }
+  .v-openrow .or-sim {
+    margin-left: 0;
+  }
+  /* The right group drops whole items by the room actually left, not
+     by a guessed viewport width: the left group's SIM label changes
+     length (SIM, PAUSED, STOPPED · TAB HIDDEN), and a width query tuned
+     to one of them clips the others. The row runs right to left from a
+     zero-width first item, and wraps: whatever doesn't fit goes to a
+     second line that the 26px height hides. The zero-width item holds
+     line one, so even the first real item can drop whole. */
+  .v-openrow .or-status-r {
+    display: flex;
+    flex: 1;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
+    justify-content: flex-start;
+    column-gap: 14px;
+    height: 26px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .v-openrow .or-status-r::before {
+    content: "";
+    height: 26px;
+    margin-left: -14px;
+  }
+  .v-openrow .or-status-r > * {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: 26px;
+    white-space: nowrap;
+  }
+  .v-openrow .or-pri-help {
+    display: flex;
+  }
+}
+
+@media (min-width: 1280px) {
+  .v-openrow .or-list {
+    --or-cols: 28px 26px minmax(150px, 1fr) 60px 64px 60px 60px 72px 56px;
+  }
+  .v-openrow .c-vol {
+    display: block;
+  }
+  .v-openrow .or-chart-svg {
+    height: 120px;
+  }
+  .v-openrow .or-rail .or-grids {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .v-openrow .or-rail .or-col:first-child {
+    padding-right: 12px;
+  }
+  .v-openrow .or-rail .or-col-fixture {
+    padding-left: 12px;
+    border-left: 1px solid var(--color-line);
+  }
+}
+
+@media (min-width: 1440px) {
+  .v-openrow .or-list {
+    --or-cols: 28px 26px minmax(150px, 1fr) 60px 64px 60px 60px 60px 72px 56px;
+  }
+  .v-openrow .c-liq {
+    display: block;
+  }
+}
+
+/* Wide screens. Extra list width is shared by the figure columns after
+   the first, so it becomes even space between figures instead of one
+   wide gap between a coin's name and its first figure. Two columns
+   don't grow. The pair stops at 180px, the widest pair on the board and
+   a little air: past that, width given to it is only more space before
+   the first figure. The change column keeps its 60px, since a right-
+   aligned figure in a growing column moves away from the name by the
+   whole growth; the column after it takes that width instead, where it
+   reads as the same gap as between any two figures. The rule grids stop
+   growing at a width where a label is still within reach of its value. */
+@media (min-width: 1680px) {
+  .v-openrow .or-list {
+    --or-cols: 28px 26px minmax(150px, 180px) 60px minmax(64px, 1fr) minmax(60px, 1fr) minmax(60px, 1fr)
+      minmax(60px, 1fr) minmax(72px, 1fr) minmax(56px, 1fr);
+  }
+  /* The columns stop growing, not the block, so the block's own rule
+     still runs the rail's full width like every other block's. */
+  .v-openrow .or-rail .or-grids {
+    grid-template-columns: repeat(2, minmax(0, 360px));
+  }
+}
+
+/* Short screens (a 1440 × 900 laptop leaves 789px). The chart gives up
+   height first, so the key, the figures and the curve fit the rail. */
+@media (min-width: 1024px) and (max-height: 860px) {
+  .v-openrow .or-chart-svg {
+    height: 72px;
+  }
+}

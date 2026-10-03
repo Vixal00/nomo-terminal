@@ -1,0 +1,1488 @@
+/* Floor: every rule here is scoped under .v-floor, the class on the
+   screen's root, and this file is imported only by app/v/floor/page.tsx.
+
+   Unlayered, like everything in globals.css, so a rule here beats any
+   Tailwind utility on the same element. That is how .meta and .num
+   sizes are changed: a sibling rule here (.v-floor .cell .num { … }),
+   never a text-[…] utility, which silently loses to them.
+
+   One loud thing on the page: the tickers on the map, set to scale.
+   Everything else is 10.5px labels and 11 to 14px figures on canvas,
+   split by one-pixel hairlines. The accent appears in five places only:
+   the pinned outline, the pinned row's rule, the selected underline,
+   the focus ring and the buy key's fill. */
+
+.v-floor {
+  background: var(--color-canvas);
+  color: var(--color-bone);
+}
+
+/* Shared tags move (a travelling sheen, a sparking bolt). On a board
+   meant to be read they are decoration, and the bolt's spark is a
+   hard-coded green glow that is the wrong colour on network 2. */
+.v-floor .tag-sheen,
+.v-floor .tag-ink,
+.v-floor .tier-glyph,
+.v-floor .bolt-arc {
+  animation: none;
+  filter: none;
+}
+/* Square corners everywhere: SeatBadge and SheenTag carry a 5px
+   rounding utility, and an unlayered rule is how it loses. */
+.v-floor .fl-seat > span,
+.v-floor .tag-sheen {
+  border-radius: 0;
+}
+
+.v-floor :focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.v-floor [data-part="unit"] {
+  color: var(--color-dim);
+}
+
+.v-floor kbd {
+  font-family: var(--font-mono);
+}
+
+/* =============================================================== Frame */
+
+@media (min-width: 1024px) {
+  .v-floor {
+    height: 100dvh;
+    min-height: 640px;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+  .v-floor .fl-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 440px;
+    min-height: 0;
+  }
+  .v-floor .fl-rail {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-left: 1px solid var(--color-line);
+  }
+  .v-floor .fl-listwrap {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .v-floor .fl-list {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .v-floor .fl-body {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+}
+
+/* ============================================================ Masthead */
+
+.v-floor .fl-mast {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.v-floor .fl-brand .meta {
+  color: var(--color-muted);
+}
+.v-floor .fl-brand:hover .meta {
+  color: var(--color-bone);
+}
+.v-floor .fl-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+}
+.v-floor .fl-count {
+  font-size: 10.5px;
+  color: var(--color-muted);
+}
+.v-floor .fl-find {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: center;
+  margin-left: auto;
+  width: 260px;
+  height: 28px;
+  border: 1px solid var(--color-line);
+  background: var(--color-elev);
+}
+/* The input drops its own outline (a ring inside a box inside a box),
+   so the box is the focus ring: accent, one of the five places it
+   appears. line to line-bright was about a 1.4:1 change on canvas. */
+.v-floor .fl-find:focus-within {
+  border-color: var(--color-accent);
+}
+.v-floor .fl-find-k {
+  flex: none;
+  width: 22px;
+  margin-left: 4px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-dim);
+  border-right: 1px solid var(--color-line);
+}
+.v-floor .fl-find input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 8px;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-bone);
+  outline: none;
+}
+.v-floor .fl-find input::placeholder {
+  color: var(--color-dim);
+}
+.v-floor .fl-find.is-miss input {
+  padding-right: 84px;
+}
+.v-floor .fl-nomatch {
+  position: absolute;
+  right: 8px;
+  pointer-events: none;
+  color: var(--color-muted);
+}
+.v-floor .fl-version,
+.v-floor .fl-chain {
+  align-self: center;
+  flex: none;
+}
+
+/* ======================================================= Control strip */
+
+.v-floor .fl-controls-wrap {
+  position: relative;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-controls {
+  display: flex;
+  align-items: stretch;
+  height: 40px;
+  padding: 0 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.v-floor .fl-controls::-webkit-scrollbar {
+  display: none;
+}
+.v-floor .fl-group {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  flex: none;
+  padding: 0 16px;
+  border-left: 1px solid var(--color-line);
+}
+.v-floor .fl-group:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.v-floor .fl-group > .meta {
+  align-self: center;
+  white-space: nowrap;
+}
+/* The window switch is the strip's first group on a desktop. */
+@media (min-width: 1024px) {
+  .v-floor .fl-win {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+.v-floor .fl-qb .num {
+  font-size: 11.5px;
+  letter-spacing: 0;
+}
+.v-floor .fl-qbtag {
+  color: var(--color-muted);
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.v-floor .fl-ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.v-floor .fl-ctl .meta {
+  color: var(--color-muted);
+}
+.v-floor .fl-ctl:hover .meta,
+.v-floor .fl-ctl.is-open .meta {
+  color: var(--color-bone);
+}
+.v-floor .fl-ctl .fl-count {
+  color: var(--color-bone);
+}
+.v-floor .fl-keysgroup {
+  margin-left: auto;
+  border-left: 0;
+  padding-right: 0;
+}
+.v-floor .fl-break {
+  display: none;
+}
+/* The strip's edge keys, below 768 where it scrolls: hard-edged cells
+   over its ends, shown only while there is more that way. A fade would
+   be a gradient; a chevron on canvas says the same and can be clicked. */
+.v-floor .fl-more {
+  display: none;
+}
+@media (max-width: 767px) {
+  .v-floor .fl-more {
+    position: absolute;
+    top: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 40px;
+    background: var(--color-canvas);
+    color: var(--color-muted);
+  }
+  .v-floor .fl-more:hover {
+    color: var(--color-bone);
+  }
+  .v-floor .fl-more.is-l {
+    left: 0;
+    border-right: 1px solid var(--color-line);
+  }
+  .v-floor .fl-more.is-r {
+    right: 0;
+    border-left: 1px solid var(--color-line);
+  }
+}
+.v-floor .fl-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border: 1px solid var(--color-line-bright);
+  font-size: 10.5px;
+  color: var(--color-muted);
+}
+
+/* ============================================================ Popovers */
+
+.v-floor .fl-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 50;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line-bright);
+  padding: 12px;
+}
+.v-floor .fl-filters {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.v-floor .fl-keys {
+  right: 16px;
+  width: 340px;
+  outline: none;
+}
+/* Focused on open so the first key press lands inside it, and not the
+   first tier toggle: a ring on "Free" read as Free being selected, over
+   the hint that none pressed means every tier. The box is already
+   bordered; it needs no ring of its own. */
+.v-floor .fl-filters:focus {
+  outline: none;
+}
+.v-floor .fl-pop-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-f {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.v-floor .fl-in {
+  height: 28px;
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  font-size: 12px;
+  color: var(--color-bone);
+}
+.v-floor .fl-in::placeholder {
+  color: var(--color-dim);
+}
+.v-floor .fl-in[aria-invalid="true"] {
+  border-color: var(--color-neg);
+}
+.v-floor .fl-ta {
+  height: auto;
+  padding: 6px 8px;
+  resize: vertical;
+  line-height: 1.4;
+}
+.v-floor .fl-err {
+  font-size: 11px;
+  color: var(--color-neg);
+}
+.v-floor .fl-hint {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-dim);
+}
+.v-floor .fl-tiers {
+  display: flex;
+  border: 1px solid var(--color-line);
+}
+.v-floor .fl-tier {
+  flex: 1;
+  height: 28px;
+  font-size: 12px;
+  color: var(--color-dim);
+}
+.v-floor .fl-tier + .fl-tier {
+  border-left: 1px solid var(--color-line);
+}
+.v-floor .fl-tier:hover {
+  color: var(--color-muted);
+}
+.v-floor .fl-tier.is-on {
+  background: var(--color-raised);
+  color: var(--color-bone);
+}
+.v-floor .fl-pop-f {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-line);
+}
+.v-floor .fl-btn-q {
+  color: var(--color-muted);
+}
+.v-floor .fl-btn-q:hover {
+  color: var(--color-bone);
+}
+.v-floor .fl-btn {
+  height: 28px;
+  padding: 0 14px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-floor .fl-btn:hover {
+  background: var(--color-raised);
+}
+.v-floor .fl-keylist {
+  margin-top: 6px;
+}
+.v-floor .fl-key {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.v-floor .fl-key kbd {
+  font-size: 11px;
+  color: var(--color-bone);
+  white-space: pre;
+}
+
+/* ============================================================ Map pane */
+
+.v-floor .fl-mappane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+/* The caption's height must not depend on the stamp. The stamp swaps
+   between "SIZES AT hh:mm:ss" and the held-order line while the pointer
+   is on the map; if that swap re-wrapped the rule beside it, the map
+   would change height and re-lay its tiles under the pointer, the one
+   thing the freeze exists to prevent. So the stamp has a line of its
+   own under the rule, one line at every width (its longest text is
+   about 220px). The rule's text only changes with a new drawing. */
+.v-floor .fl-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px 8px;
+}
+.v-floor .fl-rule {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+.v-floor .fl-stampline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 16px;
+}
+.v-floor .fl-stamp {
+  height: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.v-floor .fl-stamp .num {
+  font-size: 10.5px;
+  color: var(--color-muted);
+}
+.v-floor .fl-map {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 0 16px;
+  overflow: hidden;
+  background: var(--color-line);
+  border: 1px solid var(--color-line);
+}
+
+/* A tile: canvas, its tint as a layer beneath, its words above, and
+   its marks (pin, hover, focus) above everything.
+
+   The tile is its own stacking context and the tint sits at z-index -1
+   inside it: above the tile's background, below its words and below its
+   outline. Positioned at z auto, the tint painted after the tile's own
+   outline and covered it, so the pin, the hover and the focus ring were
+   all drawn and none of them showed. */
+.v-floor .fl-tile {
+  position: absolute;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  text-align: left;
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  cursor: pointer;
+}
+/* Three marks, three shapes, so none reads as another. The pin is the
+   map's one accent: 2px on the tile's edge. Hover is a 1px line-bright
+   edge. Keyboard focus is a 1px accent ring 4px in, inside the pin when
+   both apply, drawn on its own layer so neither the hover rule nor the
+   pin rule can override it; on the tile's own outline it looked exactly
+   like a pin. */
+.v-floor .fl-tile:focus-visible {
+  outline: none;
+}
+.v-floor .fl-tile[data-hover="true"] {
+  outline: 1px solid var(--color-line-bright);
+  outline-offset: -1px;
+}
+.v-floor .fl-tile[data-pinned="true"] {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+.v-floor .fl-tile:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: 1;
+  border: 1px solid var(--color-accent);
+  pointer-events: none;
+}
+.v-floor .fl-tile[data-dim="true"] > * {
+  opacity: 0.35;
+}
+
+.v-floor .fl-tk {
+  display: block;
+  max-width: 100%;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.v-floor .fl-ch {
+  display: block;
+  white-space: nowrap;
+}
+.v-floor .fl-tile[data-level="XL"] .fl-ch {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 16px;
+}
+.v-floor .fl-tile[data-level="L"] .fl-ch {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 15px;
+}
+.v-floor .fl-tile[data-level="M"] .fl-ch {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 13px;
+}
+.v-floor .fl-since {
+  margin-left: 8px;
+  color: var(--color-muted);
+}
+.v-floor .fl-since-u > span {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.v-floor .fl-ct {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 13px;
+  color: var(--color-muted);
+}
+.v-floor .fl-tile[data-level="XL"] .fl-ct {
+  margin-top: 2px;
+}
+.v-floor .fl-tile[data-level="L"] .fl-ct {
+  margin-top: 1px;
+}
+.v-floor .fl-stage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 14px;
+  margin-top: auto;
+  white-space: nowrap;
+}
+/* The bare bar, in the bottom padding of a tile too small for the
+   stage row: 4px from the edge, clear of the change line above it. */
+.v-floor .fl-minibar {
+  position: absolute;
+  left: 8px;
+  bottom: 4px;
+  display: block;
+}
+.v-floor .fl-bar {
+  display: block;
+  flex: none;
+}
+.v-floor .fl-cv {
+  font-size: 11px;
+}
+.v-floor .fl-tile > .fl-av {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+/* The fold: a strip across the bottom, on elev with no tint, read as
+   one paragraph: count, share, then the folded tickers in rank order. */
+.v-floor .fl-rest {
+  background: var(--color-elev);
+  padding: 6px 8px 2px;
+}
+.v-floor .fl-rest-p {
+  display: block;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 14px;
+}
+.v-floor .fl-rest-p > * {
+  margin-right: 4px;
+}
+/* A strip under 22px: one line, no padding, centred, clipped by the
+   tile rather than wrapped to a second line nobody would see. */
+.v-floor .fl-rest[data-tight] {
+  padding-block: 0;
+  justify-content: center;
+}
+.v-floor .fl-rest[data-tight] .fl-rest-p {
+  max-height: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+.v-floor .fl-rest-t {
+  margin-right: 0;
+}
+.v-floor .fl-rest-n {
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-floor .fl-rest-s {
+  font-size: 11px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-floor .fl-rest-m {
+  color: var(--color-bone);
+  white-space: nowrap;
+}
+.v-floor .fl-rest-t,
+.v-floor .fl-rest-more {
+  font-size: 10.5px;
+  color: var(--color-muted);
+}
+.v-floor .fl-rest-t.is-match {
+  color: var(--color-bone);
+}
+.v-floor .fl-rest-more {
+  color: var(--color-dim);
+  white-space: nowrap;
+}
+
+/* The change figure on tiles, in the list and in the inspector. Scoped
+   to those cells so data-sign on any other live cell (a count, a cap)
+   stays bone. */
+.v-floor :is(.fl-ch, .fl-d, .fl-ic) [data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-floor :is(.fl-ch, .fl-d, .fl-ic) [data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-floor :is(.fl-ch, .fl-d, .fl-ic) [data-sign="zero"] {
+  color: var(--color-muted);
+}
+.v-floor :is(.fl-ch, .fl-d, .fl-ic) [data-sign="null"] {
+  color: var(--color-dim);
+}
+
+/* Heat: the window's change, in the foundation's four bands. Band 0 is
+   canvas, the darkest, and each band is a steady step lighter from it,
+   so the ramp reads in order both ways. It was elev for band 0 and 4%
+   mixes for ±1, which came out darker than band 0 and too close to it
+   to see (an OKLab distance of 0.008): nine swatches in the legend, five
+   visible steps on the map. 6/11/16/22% keeps every step past a
+   noticeable difference and the tickers still the loudest thing on a
+   tile. Hard steps, no transition: a band is a reading, not a mood.
+
+   The tint stops 1px short of the tile's edge, so every seam reads
+   canvas, line, canvas whatever the bands on either side. The 1px gap
+   in line was the only thing between two tiles, and bands 3 and 4 are
+   within 1.1:1 of it: PYLONX and STATI at +81.7% and +62.6% read as one
+   green slab with two names on it, which is the one thing a map where
+   area is share can't do. */
+.v-floor .fl-tint {
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background-color: var(--color-canvas);
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="pos"][data-band="1"] {
+  background-color: color-mix(in oklab, var(--color-pos) 6%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="pos"][data-band="2"] {
+  background-color: color-mix(in oklab, var(--color-pos) 11%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="pos"][data-band="3"] {
+  background-color: color-mix(in oklab, var(--color-pos) 16%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="pos"][data-band="4"] {
+  background-color: color-mix(in oklab, var(--color-pos) 22%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="neg"][data-band="1"] {
+  background-color: color-mix(in oklab, var(--color-neg) 6%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="neg"][data-band="2"] {
+  background-color: color-mix(in oklab, var(--color-neg) 11%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="neg"][data-band="3"] {
+  background-color: color-mix(in oklab, var(--color-neg) 16%, var(--color-canvas));
+}
+.v-floor :is(.fl-tint, .fl-sw)[data-sign="neg"][data-band="4"] {
+  background-color: color-mix(in oklab, var(--color-neg) 22%, var(--color-canvas));
+}
+
+.v-floor .fl-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  background: var(--color-canvas);
+}
+.v-floor .fl-emptybtn {
+  margin-top: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-muted);
+}
+.v-floor .fl-emptybtn:hover {
+  color: var(--color-bone);
+}
+
+/* Legend */
+.v-floor .fl-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  min-height: 20px;
+  padding: 8px 16px 10px;
+}
+.v-floor .fl-lg-heat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.v-floor .fl-lg-heat > .meta,
+.v-floor .fl-lg-item .meta {
+  white-space: nowrap;
+}
+.v-floor .fl-scale {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-floor .fl-sc {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.v-floor .fl-scale .num {
+  font-size: 10px;
+  color: var(--color-dim);
+}
+.v-floor .fl-sw {
+  display: inline-block;
+  width: 14px;
+  height: 8px;
+  background-color: var(--color-canvas);
+  outline: 1px solid var(--color-line);
+  outline-offset: -1px;
+}
+.v-floor .fl-sw.door-art {
+  background-color: var(--color-canvas);
+}
+.v-floor .fl-lg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-floor .fl-lg-curve {
+  display: none;
+  cursor: help;
+}
+/* Where the legend has the room for it on one line. The bar's own
+   title says the same at every width. */
+@media (min-width: 1440px) {
+  .v-floor .fl-lg-curve {
+    display: flex;
+  }
+}
+
+/* ================================================================ Rail */
+
+.v-floor .fl-insp {
+  padding: 0 12px;
+  background: var(--color-elev);
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-ihead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0 5px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-insp-tk {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.v-floor .fl-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  line-height: 1;
+}
+/* Flex wrappers, so the badges inside set the line's height rather
+   than the inherited 24px line box. */
+.v-floor .fl-seat,
+.v-floor .fl-boost {
+  display: flex;
+}
+/* A boost is paid placement and never moves rank or area, so it
+   doesn't get the accent, which on this page means "look here". The
+   shared chip is accent by default; unlayered beats its utility. */
+.v-floor .fl-boost > span {
+  color: var(--color-muted);
+}
+/* The REAL tag is honesty copy: the one coin that is not a fixture.
+   It keeps the system's 10.5px and reads in muted, not dim. */
+.v-floor .fl-tags .meta {
+  color: var(--color-muted);
+}
+/* The seal carries tier and route together when they agree; the badge
+   lets the pointer through so the wrapper's title, which says so, is
+   the one shown. */
+.v-floor .fl-seat.is-both > span:not(.sr-only) {
+  pointer-events: none;
+}
+.v-floor .fl-x {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: -4px;
+  color: var(--color-muted);
+}
+.v-floor .fl-x:hover {
+  color: var(--color-bone);
+}
+.v-floor .fl-iprice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-ip,
+.v-floor .fl-ic {
+  font-size: 14px;
+}
+.v-floor .fl-spark {
+  flex: none;
+  margin-left: auto;
+  overflow: visible;
+}
+.v-floor .fl-spark path {
+  fill: none;
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke: var(--color-dim);
+}
+.v-floor .fl-spark path[data-up="true"] {
+  stroke: var(--color-pos);
+}
+.v-floor .fl-spark path[data-up="false"] {
+  stroke: var(--color-neg);
+}
+
+.v-floor .fl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+}
+.v-floor .fl-rr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 22px;
+  min-width: 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-rr .num {
+  font-size: 12px;
+}
+.v-floor .fl-rr .fl-v {
+  flex: none;
+  white-space: nowrap;
+}
+.v-floor .fl-rr .fl-stage {
+  margin-top: 0;
+  gap: 6px;
+}
+.v-floor .fl-rr .fl-cv {
+  font-size: 12px;
+}
+.v-floor .fl-bs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 20px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-bs-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--color-line);
+}
+.v-floor .fl-bs-fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: var(--color-pos);
+}
+.v-floor .fl-bs-v {
+  flex: none;
+  min-width: 34px;
+  text-align: right;
+  font-size: 12px;
+}
+.v-floor [data-side="buy"] {
+  color: var(--color-pos);
+}
+.v-floor [data-side="sell"] {
+  color: var(--color-neg);
+}
+.v-floor [data-side="even"] {
+  color: var(--color-muted);
+}
+.v-floor [data-side="null"] {
+  color: var(--color-dim);
+}
+.v-floor .fl-audit-h {
+  display: flex;
+  align-items: flex-end;
+  height: 20px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-seatline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  padding: 4px 0;
+  font-size: 11.5px;
+  line-height: 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-mint {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+.v-floor .fl-mint-1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  min-width: 0;
+}
+.v-floor .fl-mint-1 .num {
+  font-size: 11px;
+  white-space: nowrap;
+}
+/* Wraps rather than truncates: it is the sentence that says the
+   address beside it is not real. So it is set like every other label,
+   10.5px, and in muted (6.3:1 on elev) rather than dim (3.1:1): the
+   disclosure was the faintest line in the rail. */
+.v-floor .fl-mint-note,
+.v-floor .fl-mint .only-chain2 {
+  color: var(--color-muted);
+}
+.v-floor .fl-copy {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 18px;
+  color: var(--color-muted);
+}
+.v-floor .fl-copy:hover {
+  color: var(--color-bone);
+}
+.v-floor .fl-buyblock {
+  padding: 4px 0 6px;
+}
+.v-floor .fl-buy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+}
+.v-floor .fl-buy:not(:disabled):hover {
+  background: var(--color-core);
+}
+.v-floor .fl-buy:disabled {
+  cursor: not-allowed;
+  font-weight: 500;
+}
+.v-floor .fl-buy .num {
+  font-weight: 700;
+}
+.v-floor .fl-buy .fl-buy-usd {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.72;
+}
+.v-floor .fl-buy:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 2px;
+}
+.v-floor .fl-qbnote {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--color-muted);
+}
+.v-floor .fl-nopage {
+  margin-top: 1px;
+  color: var(--color-dim);
+}
+
+/* The ranked list. The trades column is sized for its longest header,
+   "TRADES 24H" (76px), wherever the tab puts it: at 64px "TRADES 5M"
+   ran 4px past the figures under it into the next gap. The other
+   figure columns are sized for their widest figure (7 mono characters,
+   50px), which pays for it without taking room from the coin. */
+.v-floor .fl-list {
+  position: relative;
+}
+.v-floor .fl-lh,
+.v-floor .fl-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 78px 52px 56px 20px;
+  align-items: center;
+  column-gap: 8px;
+  padding: 0 12px 0 8px;
+}
+.v-floor .fl-list[data-tab="top"] :is(.fl-lh, .fl-row) {
+  grid-template-columns: 28px minmax(0, 1fr) 56px 52px 78px 20px;
+}
+/* The 380px rail, 1024 to 1279. With overlay scrollbars the coin got
+   85px, but a classic scrollbar (Windows, Linux, a Mac with a mouse)
+   takes a stable 15px gutter from it, and DRIFTX8 then read "DRIFT…"
+   beside DRIFT1, DRIFTU and DRIFTX. The rank (two digits), the star and
+   the cap (seven characters, 50px) give up the slack they had; the gaps
+   between figures stay 8px, so the coin keeps 84px and seven mono
+   characters beside its avatar either way. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .v-floor .fl-lh,
+  .v-floor .fl-row {
+    grid-template-columns: 22px minmax(0, 1fr) 78px 52px 52px 16px;
+  }
+  .v-floor .fl-list[data-tab="top"] :is(.fl-lh, .fl-row) {
+    grid-template-columns: 22px minmax(0, 1fr) 52px 52px 78px 16px;
+  }
+}
+.v-floor .fl-lrule {
+  display: none;
+}
+.v-floor .fl-star-in {
+  display: none;
+}
+.v-floor .fl-lh {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 28px;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+}
+.v-floor .fl-lh .meta {
+  white-space: nowrap;
+}
+.v-floor .fl-c-r {
+  text-align: right;
+  white-space: nowrap;
+}
+.v-floor .fl-row {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  scroll-margin-top: 28px;
+  text-align: left;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-line) 55%, transparent);
+}
+.v-floor .fl-row .num {
+  font-size: 12px;
+}
+.v-floor .fl-row .fl-rank {
+  font-size: 11px;
+  color: var(--color-dim);
+}
+.v-floor .fl-coin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.v-floor .fl-ltk {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-bone);
+}
+.v-floor .fl-row[data-hover="true"] {
+  background: var(--color-surface);
+}
+.v-floor .fl-row[data-inrest="true"] {
+  background: var(--color-elev);
+}
+.v-floor .fl-row[data-inrest="true"][data-hover="true"] {
+  background: var(--color-surface);
+}
+.v-floor .fl-row[data-pinned="true"] {
+  background: var(--color-surface);
+}
+.v-floor .fl-row[data-pinned="true"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 2px;
+  background: var(--color-accent);
+}
+.v-floor .fl-row[data-dim="true"] > * {
+  opacity: 0.35;
+}
+.v-floor .fl-lempty {
+  padding: 16px 12px;
+  font-size: 12px;
+}
+.v-floor .fl-lempty-more {
+  margin-top: 6px;
+}
+.v-floor .fl-lempty .fl-emptybtn {
+  margin-top: 12px;
+}
+@media (min-width: 1024px) {
+  .v-floor .fl-lempty-more {
+    display: none;
+  }
+}
+
+/* ============================================================== Status */
+
+.v-floor .fl-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 28px;
+  padding: 0 16px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  overflow: hidden;
+}
+.v-floor .fl-status-disc {
+  flex: none;
+}
+.v-floor .fl-status-spot,
+.v-floor .fl-status-recon {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .v-floor .fl-status-spot {
+    display: flex;
+  }
+}
+@media (min-width: 1600px) {
+  .v-floor .fl-status-recon {
+    display: inline;
+    padding-left: 12px;
+    border-left: 1px solid var(--color-line);
+  }
+}
+
+/* ======================================================= Below 1024px */
+
+@media (max-width: 1023px) {
+  /* A column at least a screen tall, with the foot taking whatever is
+     left, so on a short page (Starred with no stars, filters that match
+     nothing) the footer and the status bar sit at the bottom. As a block
+     the page ended mid-screen, and a sticky bar has nothing to stick
+     to when there is nothing to scroll: it sat there with blank canvas
+     under it. */
+  .v-floor {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  .v-floor .fl-foot {
+    margin-top: auto;
+  }
+  .v-floor .fl-mast {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      "brand . version chain"
+      "find find find find";
+    grid-template-rows: 44px 40px;
+    height: auto;
+    gap: 0 16px;
+    padding: 0 16px;
+  }
+  .v-floor .fl-brand {
+    grid-area: brand;
+  }
+  .v-floor .fl-version {
+    grid-area: version;
+  }
+  .v-floor .fl-chain {
+    grid-area: chain;
+  }
+  .v-floor .fl-find {
+    grid-area: find;
+    width: 100%;
+    margin: 0;
+    height: 32px;
+    align-self: start;
+  }
+  .v-floor .fl-tabs-mast {
+    display: none;
+  }
+  .v-floor .fl-keysgroup {
+    margin-left: 0;
+    padding-right: 16px;
+    border-left: 1px solid var(--color-line);
+  }
+  /* The rule over the list, which is shown alone below 1024. */
+  .v-floor .fl-lrule {
+    display: block;
+    padding: 10px 16px 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--color-muted);
+    text-wrap: pretty;
+  }
+  /* While the sheet is open, the page gets its height again at the
+     foot, so the last rows and the footer can scroll clear of it rather
+     than stay under it until the coin is unpinned. */
+  .v-floor[data-sheet="open"] .fl-foot {
+    padding-bottom: calc(16px + var(--fl-sheet-h, 0px));
+  }
+  .v-floor .fl-disclosure-top {
+    padding: 10px 16px 0;
+    line-height: 1.5;
+  }
+  .v-floor .fl-viewswitch {
+    display: flex;
+    gap: 16px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .v-floor[data-view="list"] .fl-mappane,
+  .v-floor[data-view="map"] .fl-listwrap {
+    display: none;
+  }
+  .v-floor .fl-map {
+    flex: none;
+    height: 560px;
+  }
+  .v-floor .fl-lh {
+    height: 32px;
+  }
+  .v-floor .fl-lh,
+  .v-floor .fl-row {
+    padding: 0 16px 0 8px;
+  }
+  .v-floor .fl-row {
+    height: 44px;
+    scroll-margin-top: 32px;
+  }
+
+  /* The inspector is a sheet, shown only while a coin is pinned, so
+     the buy key never targets a coin the reader can't see. */
+  .v-floor .fl-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 32px;
+    z-index: 40;
+    max-height: 62vh;
+    overflow-y: auto;
+    background: var(--color-elev);
+    border-top: 1px solid var(--color-line-bright);
+  }
+  .v-floor[data-sheet="closed"] .fl-sheet {
+    display: none;
+  }
+  .v-floor .fl-insp {
+    padding: 0 16px;
+    border-bottom: 0;
+  }
+
+  .v-floor .fl-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border-top: 1px solid var(--color-line);
+  }
+  .v-floor .fl-foot-disc {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .v-floor .fl-foot-disc > li:first-child {
+    padding-left: 0;
+  }
+  .v-floor .fl-foot-spot {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    min-width: 0;
+    margin-left: -8px;
+  }
+
+  .v-floor .fl-status {
+    position: sticky;
+    bottom: 0;
+    z-index: 41;
+    height: 32px;
+  }
+  .v-floor .fl-status-disc,
+  .v-floor .fl-status-spot,
+  .v-floor .fl-status-recon {
+    display: none;
+  }
+  .v-floor .fl-filters {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+  .v-floor .fl-keys {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .v-floor .fl-lh,
+  .v-floor .fl-row,
+  .v-floor .fl-list[data-tab="top"] :is(.fl-lh, .fl-row) {
+    grid-template-columns: 36px minmax(0, 1fr) 104px 88px 104px 28px;
+    column-gap: 12px;
+  }
+  /* Two rows: board, window and Show over Filters, buy size and Keys,
+     split by a hairline. As one scrolling row the strip was 1201px in a
+     768px box with its scrollbar hidden, and a mouse had no way to
+     reach BUY SIZE or Keys. */
+  .v-floor .fl-controls {
+    flex-wrap: wrap;
+    height: auto;
+    overflow: visible;
+  }
+  .v-floor .fl-group {
+    height: 40px;
+  }
+  .v-floor .fl-break {
+    display: block;
+    flex: 0 0 calc(100% + 32px);
+    height: 0;
+    margin: 0 -16px;
+    border-top: 1px solid var(--color-line);
+  }
+  .v-floor .fl-filtersgroup {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .v-floor .fl-keysgroup {
+    margin-left: auto;
+    padding-right: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .v-floor .fl-map {
+    height: 440px;
+  }
+  /* The list on a phone: no star column (a starred row marks it beside
+     the ticker), narrower figure columns and headers that may take two
+     lines, so the coin column keeps seven characters down to 320. At
+     360 the old grid left it 30px and DRIFTU, DRIFTX8 and DRIFT1 all
+     read "DRI…". */
+  .v-floor .fl-lh,
+  .v-floor .fl-row,
+  .v-floor .fl-list[data-tab="top"] :is(.fl-lh, .fl-row) {
+    grid-template-columns: 24px minmax(0, 1fr) 56px 52px 56px;
+    column-gap: 8px;
+    padding: 0 12px 0 6px;
+  }
+  .v-floor .fl-starcol {
+    display: none;
+  }
+  .v-floor .fl-star-in {
+    display: block;
+  }
+  .v-floor .fl-lh .meta {
+    white-space: normal;
+    line-height: 12px;
+  }
+  /* The footer's spot cells wrap one by one; as a single row they
+     pushed the page 23px wide at 320. */
+  .v-floor .fl-foot-spot > span {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    min-width: 0;
+  }
+  .v-floor .fl-legend {
+    gap: 6px 14px;
+  }
+  .v-floor .fl-grid {
+    column-gap: 14px;
+  }
+}
+
+/* Which chrome each width carries. Last in the file so it outranks the
+   display each piece sets for itself above. */
+@media (min-width: 1024px) {
+  .v-floor .fl-disclosure-top,
+  .v-floor .fl-viewswitch,
+  .v-floor .fl-foot,
+  .v-floor .fl-tabs-ctrl,
+  .v-floor .fl-status-short {
+    display: none;
+  }
+}
+
+/* The narrowest phones: the masthead's first row (brand, Version, the
+   network switch) ran 1px past 320, the heat scale 3px and the
+   countdown line 23px. */
+@media (max-width: 359px) {
+  .v-floor .fl-mast {
+    column-gap: 10px;
+  }
+  .v-floor .fl-scale {
+    gap: 4px;
+  }
+  .v-floor .fl-foot-recon {
+    white-space: normal;
+  }
+}

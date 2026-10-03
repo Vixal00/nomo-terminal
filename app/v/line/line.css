@@ -1,0 +1,2128 @@
+/* The Line: every rule here is scoped under .v-line, the class on the
+   screen's root, and this file is imported only by app/v/line/page.tsx.
+
+   Unlayered, like everything in globals.css, so a rule here beats any
+   Tailwind utility on the same element. That is how .meta and .num
+   sizes are changed: a sibling rule here (.v-line .cell .num { … }),
+   never a text-[…] utility, which silently loses to them. The same
+   trap is used on purpose to take the shared tabs' py-3 off where a
+   strip has a fixed height.
+
+   Two things this file must never do: set `display` on an element that
+   carries .only-chain1/.only-chain2 at a specificity of 0,2,1 or more
+   (it would beat the network switch), or paint the accent anywhere the
+   band, the node, the selected edge, an underline, a focus ring or a
+   buy key's hover doesn't own. */
+
+/* ================================================================ Frame */
+
+/* One column template for the labels strips, every desktop row and the
+   band's axis. Named lines so the band can find the node column whether
+   or not LIQ is showing. */
+.v-line {
+  --line-cols: [pair] minmax(176px, 1.2fr) [chg] 62px [mc] 70px [vol] 70px [txn] 66px [liq] 66px [pre] 152px [node] 14px
+    [post] minmax(240px, 2fr) [buy] 60px [end];
+  --line-gutter: 0px;
+  /* Written by the screen from the measured nodes; these are only the
+     first paint's guess. */
+  --line-status-h: 56px;
+  --line-band-h: 56px;
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  min-height: 100dvh;
+}
+@media (min-width: 1024px) {
+  .v-line {
+    display: grid;
+    grid-template-rows: 44px 40px minmax(0, 1fr) 28px;
+    height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+.v-line .grow {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* The shared underline tabs carry py-3; every strip here has a fixed
+   height, so they stretch to it instead and the 2px rule lands on the
+   strip's hairline. */
+.v-line .ut {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.v-line button:focus-visible,
+.v-line a:focus-visible,
+.v-line [tabindex]:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* ============================================================= Masthead */
+
+.v-line .mast {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  min-width: 0;
+}
+.v-line .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.v-line .brand:hover .meta {
+  color: var(--color-muted);
+}
+.v-line .mrow2 {
+  display: contents;
+}
+.v-line .tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  align-self: stretch;
+  flex: none;
+}
+.v-line .tabs .ut {
+  height: 100%;
+}
+.v-line .tcount {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+.v-line .search {
+  position: relative;
+  width: 280px;
+  flex: none;
+}
+.v-line .search input {
+  display: block;
+  width: 100%;
+  height: 28px;
+  padding: 0 28px 0 8px;
+  border: 1px solid var(--color-line);
+  border-radius: 0;
+  background: var(--color-elev);
+  color: var(--color-bone);
+  font: 12px/1 var(--font-mono);
+}
+.v-line .search input::placeholder {
+  color: var(--color-dim);
+}
+.v-line .search input:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+.v-line .search .kcap {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 4px;
+  border: 1px solid var(--color-line);
+  font: 10px/14px var(--font-mono);
+  color: var(--color-dim);
+  pointer-events: none;
+}
+.v-line .search input:focus + .kcap {
+  display: none;
+}
+.v-line .search .sclear {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-dim);
+}
+.v-line .search .sclear:hover {
+  color: var(--color-bone);
+}
+.v-line .vmenu,
+.v-line .chain {
+  flex: none;
+}
+
+/* ============================================================== Toolbar */
+
+.v-line .tools {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-line);
+  min-width: 0;
+}
+.v-line .tools .sep {
+  align-self: center;
+  flex: none;
+  width: 1px;
+  height: 16px;
+  background: var(--color-line);
+}
+.v-line .chips {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+.v-line .togw {
+  align-items: center;
+}
+.v-line .tog {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.v-line .tog .box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-line .tog:hover .meta {
+  color: var(--color-muted);
+}
+.v-line .tog[aria-pressed="true"] .box {
+  border-color: var(--color-bone);
+}
+.v-line .tog[aria-pressed="true"] .meta {
+  color: var(--color-bone);
+}
+.v-line .tbtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.v-line .tbtn .num {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .tbtn:hover .meta {
+  color: var(--color-muted);
+}
+.v-line .qbs {
+  display: flex;
+  align-items: stretch;
+}
+.v-line .qb {
+  align-items: stretch;
+  gap: 10px;
+}
+.v-line .qb > .meta {
+  align-self: center;
+}
+.v-line .qb .ut.num {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.v-line .qb .qbt {
+  padding-left: 10px;
+  border-left: 1px solid var(--color-line);
+}
+
+.v-line .ge1280i {
+  display: inline;
+}
+.v-line .lt1280i,
+.v-line .only-lt1280,
+.v-line .only-lt1024 {
+  display: none;
+}
+@media (max-width: 1279.98px) {
+  .v-line .tools .ge1280 {
+    display: none;
+  }
+  .v-line .ge1280i {
+    display: none;
+  }
+  .v-line .lt1280i {
+    display: inline;
+  }
+  .v-line .only-lt1280 {
+    display: block;
+  }
+}
+@media (max-width: 1023.98px) {
+  .v-line .tools .ge1024 {
+    display: none;
+  }
+  .v-line .only-lt1024 {
+    display: block;
+  }
+}
+
+/* ================================================================ Board */
+
+.v-line .board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+}
+.v-line .rail {
+  display: none;
+}
+@media (min-width: 1400px) {
+  .v-line .board {
+    grid-template-columns: minmax(0, 1fr) 336px;
+  }
+  .v-line .rail {
+    display: block;
+    min-height: 0;
+    overflow-y: auto;
+    background: var(--color-elev);
+    border-left: 1px solid var(--color-line);
+  }
+}
+.v-line .rail-empty {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+/* The unselected path is a legend, not a coin: step names stay muted
+   rather than dim, since none of them is "later" for anyone. */
+.v-line .legend .path li[data-step="later"] .pname {
+  color: var(--color-muted);
+}
+.v-line .drawer {
+  position: fixed;
+  top: 84px;
+  bottom: 28px;
+  right: 0;
+  z-index: 30;
+  width: 336px;
+  overflow-y: auto;
+  background: var(--color-elev);
+  border-left: 1px solid var(--color-line-bright);
+}
+
+.v-line .stage {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 40px minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+  /* The template follows the stage's width, not the viewport's: the
+     rail and an open drawer both take width from it. */
+  container: stage / inline-size;
+}
+/* A pane that is empty by definition (the curve on Z500) or by filter
+   gives its half to the other: one sentence doesn't need 300px. */
+.v-line .stage[data-empty="curve"] {
+  grid-template-rows: minmax(0, 1fr) 40px auto;
+}
+.v-line .stage[data-empty="grad"],
+.v-line .stage[data-empty="both"] {
+  grid-template-rows: auto 40px minmax(0, 1fr);
+}
+/* Heads and the bar caveat describe rows and bars; with none drawn they
+   would only describe nothing. */
+.v-line .pane[data-empty] .labels,
+.v-line .pane[data-empty] .foot {
+  display: none;
+}
+.v-line .pane[data-empty] .scroll {
+  flex: none;
+}
+
+/* LIQ leaves the rows before the post column would drop under 240. */
+@container stage (max-width: 1059.98px) {
+  .v-line .pane,
+  .v-line .band {
+    --line-cols: [pair] minmax(176px, 1.2fr) [chg] 62px [mc] 70px [vol] 70px [txn] 66px [pre] 152px [node] 14px
+      [post] minmax(240px, 2fr) [buy] 60px [end];
+  }
+  .v-line .c-liq {
+    display: none;
+  }
+}
+/* Past this width the pair and post tracks have all they use, and more
+   would only open holes inside the row that the eye has to jump. The
+   spare width goes to one trailing track after the Buy key instead. */
+@container stage (min-width: 1280px) {
+  .v-line .pane,
+  .v-line .band {
+    --line-cols: [pair] minmax(176px, 260px) [chg] 62px [mc] 70px [vol] 70px [txn] 66px [liq] 66px [pre] 152px [node] 14px
+      [post] minmax(240px, 440px) [buy] 60px [end] minmax(0, 1fr);
+  }
+}
+
+/* The drawer, 1024 to 1399. From 1280 the stage gives it room, so the
+   countdown and the right-hand columns stay in view; below that the
+   grid can't lose 336px, so the drawer overlays and the band and the
+   title strips keep their right-hand content clear of it. */
+@media (min-width: 1280px) {
+  .v-line .board[data-drawer] .stage {
+    margin-right: 336px;
+  }
+}
+/* Pushed to under 1000px, the post column can't hold STATE on one line
+   beside the airdrop. The airdrop goes: it is a roster fixture, and the
+   open drawer prints the selected coin's. */
+@container stage (max-width: 999.98px) {
+  .v-line .board[data-drawer] .pg {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+  .v-line .board[data-drawer] .pg .air,
+  .v-line .board[data-drawer] .pg .air-h {
+    display: none;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .v-line .board[data-drawer] .band .cell {
+    display: none;
+  }
+  .v-line .board[data-drawer] .band .cells {
+    padding-right: 344px;
+  }
+  /* What is left of a title strip beside the drawer can't hold the rank
+     rule, the pane's toggle, a filter echo and the held note on one
+     line, and the first two are the reason for the order. So the strip
+     wraps here rather than clip either, a term at a time, and the held
+     note keeps its place and its length whether or not the order is
+     held, as on cards (see the Stack block). */
+  .v-line .board[data-drawer] .pane .title {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 24px;
+    padding: 3px 344px 3px 12px;
+    row-gap: 2px;
+    white-space: normal;
+  }
+  .v-line .board[data-drawer] .title .rule,
+  .v-line .board[data-drawer] .title .echo {
+    flex: 0 1 auto;
+    white-space: normal;
+  }
+  .v-line .board[data-drawer] .title .held,
+  .v-line .board[data-drawer] .title .held:not([data-on]) {
+    display: inline;
+    margin-left: auto;
+  }
+  .v-line .board[data-drawer] .title .held:not([data-on]) {
+    visibility: hidden;
+  }
+  .v-line .board[data-drawer] .title .held::before {
+    content: attr(data-short);
+  }
+  .v-line .board[data-drawer] .title .held .hl {
+    display: none;
+  }
+}
+
+/* ================================================================ Panes */
+
+.v-line .pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.v-line .pane .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: 24px;
+  padding: 0 8px 0 12px;
+  background: var(--color-elev);
+  border-bottom: 1px solid var(--color-line);
+  min-width: 0;
+  white-space: nowrap;
+}
+.v-line .title .meta {
+  font-size: 10px;
+}
+.v-line .title .tl {
+  color: var(--color-bone);
+}
+.v-line .title .cnt {
+  font-size: 11px;
+  color: var(--color-bone);
+}
+.v-line .title .rule {
+  flex: 0 100 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .title .togw {
+  flex: none;
+}
+.v-line .title .echo {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-muted);
+}
+/* A term never breaks inside itself; lines break between terms. */
+.v-line .title .echo .et {
+  white-space: nowrap;
+}
+.v-line .title .held {
+  flex: none;
+  color: var(--color-muted);
+}
+/* On the one fixed-height line the strip can't grow, so here the note
+   just comes and goes. Where the strip wraps it keeps its place (see
+   the drawer block above and the Stack block). */
+.v-line .title .held:not([data-on]) {
+  display: none;
+}
+
+.v-line .pane .scroll {
+  /* Its own stacking context, so the sticky heads' z-index stays inside
+     the pane and the band's tooltip can drop over it. */
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.v-line .pane .scroll > * {
+  flex-shrink: 0;
+}
+
+.v-line .labels,
+.v-line .lrow {
+  display: grid;
+  grid-template-columns: var(--line-cols);
+  column-gap: 0;
+  padding: 0 8px 0 12px;
+}
+.v-line .labels {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 20px;
+  align-items: stretch;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+}
+/* Every head is centred in the strip by flex, not by a line box: a
+   Tip is an inline-flex, and in a block cell it sat on a 24px strut
+   and pushed its head below the others. Held at 0,1,0 by :where, so
+   every rule that hides a column (LIQ, VOL, TXN) still beats it. */
+:where(.v-line .labels) .lc {
+  display: flex;
+  align-items: center;
+  min-height: 0;
+  line-height: 1;
+}
+:where(.v-line .labels) .lc.fig {
+  justify-content: flex-end;
+}
+.v-line .labels .meta {
+  font-size: 10px;
+}
+/* The head of the figure the tab ranks by. */
+.v-line .labels [data-rank] {
+  color: var(--color-bone);
+}
+.v-line .labels .rkh {
+  margin-left: 4px;
+}
+.v-line .labels .rk {
+  margin-left: 4px;
+  font: 11px/1 var(--font-sans);
+  letter-spacing: 0;
+}
+.v-line .tiph {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+/* The shared Tip sets no white-space of its own, so a tooltip opened
+   from a nowrap strip (the pane title on the desktop strip) inherited
+   it and ran out of its 280px box as one line, over the rows with
+   nothing behind it and past the screen's edge at 1024. The At risk
+   tip is the only place that says the 7d volume floor isn't checked,
+   so it has to be read whole. Set for every tip, not just the title's,
+   because any nowrap container here could host one.
+   LOCAL: candidate for foundation (the Tip's own class list could set
+   whitespace-normal; broadside and heatsheet carry this same rule). */
+.v-line [role="tooltip"] {
+  white-space: normal;
+}
+.v-line .labels .c-post .pg {
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+}
+.v-line .labels .air-h {
+  text-align: right;
+}
+
+.v-line .rows {
+  display: block;
+}
+.v-line .empty {
+  padding: 16px 12px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-muted);
+  max-width: 60ch;
+}
+.v-line .empty .acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 8px;
+}
+.v-line .empty .clr {
+  color: var(--color-bone);
+}
+.v-line .empty .clr:hover {
+  color: var(--color-muted);
+}
+
+/* The printed caveat: always in view under the curve pane, because a
+   hatched bar without its sentence reads as an empty one. */
+.v-line .foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+  height: 20px;
+  padding: 0 8px 0 12px;
+  background: var(--color-elev);
+  border-top: 1px solid var(--color-line);
+  font-size: 11px;
+  color: var(--color-dim);
+  min-width: 0;
+}
+.v-line .foot .fh {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.v-line .foot .ft {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v-line .sw {
+  flex: none;
+  width: 8px;
+  height: 6px;
+}
+.v-line .sw.hatch {
+  background-color: var(--color-raised);
+}
+/* The roster hatch, denser and brighter than the shared one. At 6px
+   tall the shared 8px pitch left one faint stripe per bar, and a track
+   with nothing visible in it reads as a 0% fill beside a printed 74%.
+   Stripes the whole length say "no reading" instead. */
+.v-line .cbar .door-art,
+.v-line .dbar .door-art,
+.v-line .sw.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 2px,
+    color-mix(in oklab, var(--color-muted) 55%, transparent) 2px 3px
+  );
+}
+.v-line .sw.solid {
+  background: var(--tier-gold-ink);
+}
+
+/* ================================================================= Rows */
+
+.v-line .lrow {
+  position: relative;
+  height: 36px;
+  align-items: center;
+  border-bottom: 1px solid var(--color-line);
+  cursor: pointer;
+  scroll-margin: 20px 0;
+}
+.v-line .lrow:hover {
+  background: var(--color-elev);
+}
+.v-line .lrow[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--color-accent);
+}
+.v-line .lrow .hit {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+.v-line .lrow .hit:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+/* Cells sit above the hit button, so their titles show on hover; a
+   click on one bubbles to the row. */
+.v-line .lc {
+  position: relative;
+  min-width: 0;
+}
+/* Row and head figure cells only: the dossier's inline figures carry
+   .fig for colour and would take the padding as a hole in a sentence. */
+.v-line .lc.fig {
+  padding-right: 10px;
+  text-align: right;
+}
+.v-line .lrow .num {
+  font-size: 12px;
+}
+.v-line .lrow .sub,
+.v-line .lrow .sub.num {
+  font-size: 11px;
+}
+.v-line .lrow .c-vol,
+.v-line .lrow .c-txn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.15;
+}
+
+.v-line .c-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+}
+.v-line .pid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.v-line .pid .l1,
+.v-line .pid .l2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  line-height: 1.15;
+}
+.v-line .tk {
+  font: 600 13px var(--font-mono);
+  letter-spacing: -0.01em;
+  color: var(--color-bone);
+  white-space: nowrap;
+}
+.v-line .pid .star {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  color: var(--color-muted);
+}
+.v-line .pid .nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .lrow .age,
+.v-line .lrow .age.num {
+  flex: none;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .pid .since {
+  flex: none;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+}
+
+.v-line [data-part="unit"] {
+  color: var(--color-muted);
+}
+.v-line .sg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-line .sg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-line .sg[data-sign="zero"] {
+  color: var(--color-muted);
+}
+.v-line .num[data-sign="null"],
+.v-line .num[data-sign="null"] [data-part="unit"] {
+  color: var(--color-dim);
+}
+
+/* Buy share under the trade count: teal for the buys, red under it for
+   the sells, flat when the window has no trades to split. */
+.v-line .split {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 44px;
+  height: 2px;
+  background: var(--color-neg);
+}
+.v-line .split > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--color-pos);
+}
+.v-line .split[data-null="true"] {
+  background: var(--color-raised);
+}
+
+/* Pre-node. A curve bar runs to the node column's left edge, so the
+   cell has no right padding. */
+.v-line .lrow .c-pre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-line .labels .c-pre {
+  display: flex;
+  align-items: center;
+}
+.v-line .cpct,
+.v-line .lrow .cpct {
+  flex: none;
+  width: 30px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.v-line .c-pre[data-trusted="true"] .cpct {
+  color: var(--color-bone);
+}
+/* Shown on cards only (see Stack): on the desktop grid the column head
+   and the sticky caveat sit right by every figure. */
+.v-line .ctag {
+  display: none;
+}
+.v-line .cbar {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* The node column: the x where a coin graduates. It is drawn as a
+   hairline through both panes, so the band's square reads as the point
+   where the band crosses it rather than a mark floating on a rule. */
+.v-line .c-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.v-line .lrow .c-node,
+.v-line .labels .c-node {
+  align-self: stretch;
+}
+.v-line .lrow .c-node::before,
+.v-line .labels .c-node::before,
+.v-line .lrow[data-kind="grad"] .c-node::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  background: var(--color-line-bright);
+  pointer-events: none;
+}
+.v-line .lrow .c-node::before,
+.v-line .labels .c-node::before {
+  top: 0;
+  bottom: 0;
+}
+/* A graduated row's tick sits in a gap in the axis, not across it. */
+.v-line .lrow[data-kind="grad"] .c-node::before {
+  bottom: calc(50% + 7px);
+}
+.v-line .lrow[data-kind="grad"] .c-node::after {
+  top: calc(50% + 7px);
+  bottom: 0;
+}
+.v-line .gmark {
+  width: 10px;
+  height: 10px;
+  color: var(--color-muted);
+}
+/* A trusted curve's end, brighter on the axis it ends at. */
+.v-line .tick {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 12px;
+  background: var(--color-muted);
+}
+
+/* Post-node. */
+.v-line .c-post {
+  padding-left: 10px;
+}
+.v-line .pg {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 56px;
+  column-gap: 8px;
+  align-items: center;
+  /* On a wide screen the post column grows past what its three cells
+     need; capped, the airdrop stays beside the state it belongs to. */
+  max-width: 440px;
+}
+.v-line .stand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.v-line .unsc,
+.v-line .lrow .unsc {
+  font-size: 10px;
+  color: var(--color-dim);
+}
+.v-line .state {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 13px;
+}
+.v-line .air,
+.v-line .lrow .air {
+  text-align: right;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.v-line [data-tone="bone"] {
+  color: var(--color-bone);
+}
+.v-line [data-tone="muted"] {
+  color: var(--color-muted);
+}
+.v-line [data-tone="rim"] {
+  color: var(--color-rim);
+}
+.v-line [data-tone="neg"] {
+  color: var(--color-neg);
+}
+.v-line [data-tone="dim"] {
+  color: var(--color-dim);
+}
+
+/* The score: one bar, the exit line at 40 and the entry bar at 50
+   ticked on it, the numeral in the seat's tone. */
+.v-line .sbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-line .sb-track {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 56px;
+  height: 4px;
+  background: var(--color-raised);
+}
+.v-line .sbar[data-size="lg"] .sb-track {
+  width: 200px;
+  height: 6px;
+}
+.v-line .sb-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+.v-line .sb-fill[data-tone="bone"] {
+  background: var(--color-bone);
+}
+.v-line .sb-fill[data-tone="rim"] {
+  background: var(--color-rim);
+}
+.v-line .sb-fill[data-tone="neg"] {
+  background: var(--color-neg);
+}
+.v-line .sb-fill[data-tone="muted"] {
+  background: var(--color-muted);
+}
+.v-line .sb-tick {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+}
+.v-line .sb-tick.exit {
+  left: 40%;
+  background: var(--color-rim);
+}
+.v-line .sb-tick.bar {
+  left: 50%;
+  background: var(--color-line-bright);
+}
+.v-line .sn,
+.v-line .lrow .sn {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Curve rows after graduation: the route's seal, or the Merit gates. */
+.v-line .route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.v-line .route .after {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .gates {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  white-space: nowrap;
+  min-width: 0;
+}
+.v-line .gates .gi {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.v-line .gates .meta {
+  font-size: 10px;
+}
+.v-line .lrow .gates .num {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .gm[data-gate]::after {
+  font: 11px var(--font-mono);
+}
+.v-line [data-gate="ok"]::after {
+  content: "✓";
+  color: var(--color-muted);
+}
+.v-line [data-gate="miss"]::after {
+  content: "✗";
+  color: var(--color-rim);
+}
+.v-line [data-gate="null"]::after {
+  content: "";
+}
+
+/* The buy key: only on the row being looked at, never filled. */
+.v-line .c-buy {
+  display: flex;
+  justify-content: flex-end;
+}
+.v-line .buy {
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+}
+.v-line .lrow .buy {
+  visibility: hidden;
+}
+.v-line .lrow:hover .buy,
+.v-line .lrow:focus-within .buy,
+.v-line .lrow[aria-current="true"] .buy {
+  visibility: visible;
+}
+.v-line .buy:hover,
+.v-line .buy:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* The tag sheen and the boost's arc are frozen on this page: nothing
+   here is live, and eighty moving edges on a board meant to be read is
+   decoration. The tags keep their plate and ink. */
+.v-line .lrow .tag-sheen,
+.v-line .lrow .tag-ink,
+.v-line .lrow .tier-glyph,
+.v-line .dos .tag-sheen,
+.v-line .dos .tag-ink,
+.v-line .dos .tier-glyph,
+.v-line .bolt-arc {
+  animation: none;
+}
+
+/* ================================================================= Band */
+
+/* The one bold object on the page: a 2px accent rule, the word, and the
+   node square sitting on the rule at the node column's x. */
+.v-line .band {
+  position: relative;
+  z-index: 5;
+  container: band / inline-size;
+  height: 40px;
+  border-top: 2px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-elev);
+  overflow-x: clip;
+}
+.v-line .band .axis {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: var(--line-gutter);
+  display: grid;
+  grid-template-columns: var(--line-cols);
+  padding: 0 8px 0 12px;
+  pointer-events: none;
+}
+.v-line .band .ax {
+  grid-column: node / post;
+  position: relative;
+}
+.v-line .node-sq {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent);
+}
+.v-line .band .node-sq {
+  position: absolute;
+  left: calc(50% - 4px);
+  top: -5px;
+}
+.v-line .band .cells {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px 0 12px;
+  min-width: 0;
+}
+.v-line .band .word {
+  flex: none;
+  padding-right: 12px;
+}
+/* 0,3,0 beats .face-sans .display (0,2,0): the band word is the one
+   Republica on the page. */
+.v-line .band .display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-bone);
+}
+.v-line .band .cell {
+  flex: none;
+  padding: 0 12px;
+  border-left: 1px solid var(--color-line);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-line .band .cell .meta {
+  font-size: 10px;
+}
+.v-line .band .count {
+  flex: none;
+}
+.v-line .band .count .num {
+  font-size: 13px;
+  color: var(--color-bone);
+}
+/* Cells drop by how much they tell a trader, least first: the
+   untracked count (nothing to act on), then the seated routes, and last
+   the Merit rule, which is the one 48 of the 62 curve coins face. The
+   two-line phone band is set after the Stack block, which it has to
+   beat. */
+@container band (max-width: 1199.98px) {
+  .v-line .band .cell.c {
+    display: none;
+  }
+}
+@container band (max-width: 899.98px) {
+  .v-line .band .cell.a {
+    display: none;
+  }
+}
+@container band (max-width: 719.98px) {
+  .v-line .band .cell.b {
+    display: none;
+  }
+}
+
+/* ============================================================== Dossier */
+
+.v-line .dos {
+  padding: 0 16px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+.v-line .dos .blk {
+  padding: 14px 0;
+}
+.v-line .dos .blk + .blk {
+  border-top: 1px solid var(--color-line);
+}
+.v-line .dos .num {
+  font-size: 12px;
+}
+.v-line .dos .fig {
+  color: var(--color-bone);
+}
+.v-line .dos .dim {
+  color: var(--color-dim);
+}
+.v-line .dos .rim {
+  color: var(--color-rim);
+}
+.v-line .dos .meta {
+  font-size: 10px;
+}
+
+.v-line .dh {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.v-line .dh .d1 {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.v-line .dh .did {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+.v-line .dh .dtl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.v-line .dh .dt {
+  font: 800 16px/1.1 var(--font-sans);
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+}
+.v-line .dh .nm {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.v-line .dh .dact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.v-line .dbtn {
+  color: var(--color-dim);
+}
+.v-line .dbtn:hover,
+.v-line .dbtn[aria-pressed="true"] {
+  color: var(--color-bone);
+}
+.v-line .dclose {
+  display: flex;
+  color: var(--color-dim);
+}
+.v-line .dclose:hover {
+  color: var(--color-bone);
+}
+.v-line .dh .d2 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.v-line .dh .dp,
+.v-line .dos .dp.num {
+  font-size: 14px;
+  color: var(--color-bone);
+}
+.v-line .dh .dp.sg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-line .dh .dp.sg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-line .dh .dp.sg[data-sign="zero"] {
+  color: var(--color-muted);
+}
+.v-line .dh .dp[data-sign="null"] {
+  color: var(--color-dim);
+}
+.v-line .dh .dseat {
+  margin-left: auto;
+}
+
+/* The path: six steps on one hairline, done steps ticked, the current
+   one marked with the band's own node square. */
+.v-line .path {
+  display: flex;
+  flex-direction: column;
+}
+.v-line .path li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px 20px minmax(0, 1fr);
+  column-gap: 6px;
+  padding-bottom: 12px;
+}
+.v-line .path li:last-child {
+  padding-bottom: 0;
+}
+.v-line .path li::before {
+  content: "";
+  position: absolute;
+  left: 5.5px;
+  top: 12px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--color-line);
+}
+.v-line .path li:last-child::before {
+  display: none;
+}
+.v-line .path .pm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 14px;
+}
+.v-line .path .pchk {
+  width: 10px;
+  height: 10px;
+  color: var(--color-line-bright);
+}
+.v-line .path .pn {
+  line-height: 14px;
+}
+.v-line .path .pname {
+  line-height: 14px;
+  color: var(--color-muted);
+}
+.v-line .path li[data-step="here"] .pname,
+.v-line .path li[data-step="here"] .pn {
+  color: var(--color-bone);
+}
+.v-line .path li[data-step="later"] .pname {
+  color: var(--color-dim);
+}
+.v-line .path .pd {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 3px;
+}
+.v-line .path .dbar {
+  width: 100%;
+  max-width: 200px;
+  margin: 2px 0;
+}
+.v-line .path .srow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v-line .path .gline .gm::after {
+  margin-left: 6px;
+}
+.v-line .path .dscore {
+  margin: 2px 0 2px;
+}
+
+/* Stats: the current window's column in bone. */
+.v-line .stats {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.v-line .stats col.sl {
+  width: 64px;
+}
+.v-line .stats th,
+.v-line .stats td {
+  padding: 2px 0;
+  text-align: right;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+.v-line .stats thead th {
+  padding-bottom: 5px;
+  white-space: normal;
+  line-height: 1.15;
+}
+.v-line .stats tbody th {
+  text-align: left;
+}
+.v-line .stats .num,
+.v-line .dos .stats .num {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-line .stats td.on .num {
+  color: var(--color-bone);
+}
+.v-line .stats th.on {
+  color: var(--color-bone);
+}
+.v-line .stats .num.sg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-line .stats .num.sg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-line .stats .num[data-sign="null"] {
+  color: var(--color-dim);
+}
+/* A dash stays dim wherever a bone rule would otherwise reach it: the
+   current window's column and the dossier's bone figures. */
+.v-line .dos .fig[data-sign="null"],
+.v-line .stats td.on .num[data-sign="null"] {
+  color: var(--color-dim);
+}
+
+/* Ruled rows: label left, figure right. */
+.v-line .rules > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-line .rules > div:last-child {
+  border-bottom: 0;
+}
+.v-line .rules dd .num {
+  color: var(--color-bone);
+}
+.v-line .rules dd .num.sg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-line .rules dd .num.sg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-line .rules dd .num[data-sign="null"],
+.v-line .rules dd .num[data-tone="dim"] {
+  color: var(--color-dim);
+}
+.v-line .rules dd .num[data-tone="rim"] {
+  color: var(--color-rim);
+}
+.v-line .fixture .fxh {
+  margin-bottom: 4px;
+}
+
+.v-line .dos .boost {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v-line .dos .mint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.v-line .dos .mrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.v-line .dos .mrow .num {
+  color: var(--color-bone);
+}
+.v-line .dos .n2 {
+  text-align: right;
+}
+.v-line .icn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-dim);
+}
+.v-line .icn:hover {
+  color: var(--color-bone);
+}
+
+.v-line .dbuy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.v-line .dbr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v-line .dbuyk {
+  flex: 1 1 0;
+  height: 32px;
+  border: 1px solid var(--color-line-bright);
+  font: 600 11px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-bone);
+}
+.v-line .dbuyk:hover,
+.v-line .dbuyk:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.v-line .dfoot {
+  padding: 12px 0 16px;
+  border-top: 1px solid var(--color-line);
+  font-size: 11px;
+  color: var(--color-dim);
+}
+
+/* ======================================================= Filters dialog */
+
+.v-line dialog.lf {
+  margin: 84px 16px auto auto;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 120px);
+  padding: 0;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-elev);
+  color: var(--color-bone);
+}
+.v-line dialog.lf::backdrop {
+  background: color-mix(in oklab, var(--color-canvas) 60%, transparent);
+}
+.v-line .lfb {
+  display: flex;
+  flex-direction: column;
+}
+.v-line .lfh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-line .lfh .lft {
+  color: var(--color-bone);
+}
+.v-line .lfs {
+  padding: 12px 14px 14px;
+}
+.v-line .lfs + .lfs {
+  border-top: 1px solid var(--color-line);
+}
+.v-line .lfs:focus {
+  outline: none;
+}
+.v-line .lfs:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+.v-line .lf .chips {
+  height: 32px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-line .lff {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.v-line .fld {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.v-line .fld input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  border-radius: 0;
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  font: 12px var(--font-mono);
+}
+.v-line .fld input::placeholder {
+  color: var(--color-dim);
+}
+.v-line .fld input:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+.v-line .fld input[aria-invalid="true"] {
+  border-color: var(--color-neg);
+}
+.v-line .fld .err {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--color-neg);
+}
+.v-line .lfa {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.v-line .kbtn {
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+}
+.v-line .kbtn.on {
+  border-color: var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-line .kbtn:hover {
+  border-color: var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-line .lfsh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.v-line .lnk {
+  color: var(--color-muted);
+}
+.v-line .lnk:hover {
+  color: var(--color-bone);
+}
+.v-line .note {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-dim);
+}
+.v-line .hid li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-line .hid li:last-child {
+  border-bottom: 0;
+}
+.v-line .hid .num {
+  font-size: 12px;
+  color: var(--color-bone);
+}
+.v-line .lf .qb {
+  height: 32px;
+  margin-bottom: 10px;
+}
+.v-line .lf .spot {
+  flex-wrap: wrap;
+  row-gap: 6px;
+  margin: 0 -8px;
+}
+@media (max-width: 1023.98px) {
+  .v-line dialog.lf {
+    margin: auto 0 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 85dvh;
+    border-width: 1px 0 0;
+  }
+}
+
+/* =============================================================== Status */
+
+.v-line .status {
+  display: flex;
+  align-items: stretch;
+  height: 28px;
+  padding: 0 8px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  min-width: 0;
+}
+.v-line .status > * {
+  display: flex;
+  align-items: center;
+}
+.v-line .status .dsc-line {
+  display: none;
+}
+.v-line .status .simt {
+  padding: 0 10px;
+  border-left: 1px solid var(--color-line);
+}
+.v-line .status .spot {
+  border-left: 1px solid var(--color-line);
+}
+.v-line .status .khelp {
+  padding: 0 8px;
+}
+.v-line .khtip {
+  width: 260px;
+}
+.v-line .keys {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.v-line .keys .num {
+  display: inline-block;
+  width: 34px;
+  color: var(--color-bone);
+}
+@media (max-width: 1279.98px) {
+  .v-line .status .khelp {
+    display: none;
+  }
+}
+@media (max-width: 1099.98px) {
+  .v-line .status .spot {
+    display: none;
+  }
+}
+
+/* ============================================================== Stack */
+
+/* Below 1024 the page scrolls. The band sticks to the top while the
+   curve cards pass under it, and the disclosure and SIM state stick to
+   the bottom, so neither the line nor the honesty leaves the screen. */
+@media (max-width: 1023.98px) {
+  /* The rows are the masthead's whole height: no row gap, and the tab
+     row stretches to its 40px so the 2px underline lands on the
+     masthead's hairline. The first row's pieces centre themselves. */
+  .v-line .mast {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-rows: 44px 40px;
+    gap: 0 16px;
+    align-items: stretch;
+    height: auto;
+  }
+  .v-line .brand {
+    grid-area: 1 / 1;
+    align-self: center;
+  }
+  .v-line .vmenu {
+    grid-area: 1 / 2;
+    align-self: center;
+  }
+  .v-line .chain {
+    grid-area: 1 / 3;
+    align-self: center;
+  }
+  .v-line .mrow2 {
+    grid-area: 2 / 1 / 3 / 4;
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    min-width: 0;
+  }
+  .v-line .mrow2 > .grow {
+    display: none;
+  }
+  .v-line .tabs {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .v-line .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .v-line .search {
+    flex: 1 1 0;
+    width: auto;
+    max-width: 320px;
+    margin-left: auto;
+    align-self: center;
+  }
+
+  .v-line .tools {
+    gap: 12px;
+  }
+  .v-line .tools .grow {
+    display: none;
+  }
+  .v-line .tools .fbtn {
+    margin-left: auto;
+  }
+
+  .v-line .stage {
+    display: block;
+  }
+  .v-line .pane .title {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 24px;
+    padding: 4px 16px;
+    row-gap: 2px;
+    white-space: normal;
+  }
+  .v-line .title .rule {
+    white-space: normal;
+  }
+  /* The echo takes a line of its own and wraps between its terms, so
+     three limits, a tier and a toggle never push the page sideways. */
+  .v-line .title .echo {
+    flex: 1 1 100%;
+    min-width: 0;
+    white-space: normal;
+  }
+  /* The held note keeps its place whether or not the order is held,
+     and prints its short form, one length whatever the count (the
+     count is in its title). Were it to come, go or lengthen here it
+     would wrap onto a line of its own and push every card below it
+     down while the reader rests on one, which is what the hold is
+     there to stop. */
+  .v-line .title .held,
+  .v-line .title .held:not([data-on]) {
+    display: inline;
+    margin-left: auto;
+  }
+  .v-line .title .held:not([data-on]) {
+    visibility: hidden;
+  }
+  .v-line .title .held::before {
+    content: attr(data-short);
+  }
+  .v-line .title .held .hl {
+    display: none;
+  }
+  /* The page scrolls now, not the pane: the scroller sizes to its
+     rows instead of sharing a fixed frame. */
+  .v-line .pane .scroll {
+    flex: none;
+    min-height: auto;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+  .v-line .foot {
+    position: static;
+    order: -1;
+    flex-wrap: wrap;
+    height: auto;
+    margin-top: 0;
+    padding: 5px 16px;
+    gap: 3px 14px;
+    border-top: 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .v-line .foot .ft {
+    white-space: normal;
+  }
+  .v-line .empty {
+    padding: 16px;
+  }
+
+  /* Sticky both ways: docked above the status bar while the page is
+     still in the graduated cards, so the line and the countdown are on
+     the first screen, then stuck to the top while the curve passes. */
+  .v-line .band {
+    position: sticky;
+    top: 0;
+    bottom: var(--line-status-h);
+    z-index: 20;
+    height: auto;
+    min-height: 40px;
+  }
+  .v-line .band .cells {
+    min-height: 38px;
+    padding: 0 16px;
+  }
+  .v-line .band .axis {
+    display: block;
+    right: 0;
+    padding: 0;
+  }
+  .v-line .band .ax {
+    position: absolute;
+    top: 0;
+    left: calc(16px + (100% - 32px) * 0.56);
+    width: 0;
+  }
+  /* Stuck to the top of the screen, a node centred on the rule would
+     lose its top half past the edge, so here it hangs from the rule. */
+  .v-line .band .node-sq {
+    top: -2px;
+  }
+
+  /* Cards: the same cells, placed by area. The node sits at 16px plus
+     56% of the content width, the same formula the band's node uses.
+     The figure tracks are fixed rather than auto, so every card's
+     figures line up under one labels strip instead of each card sizing
+     its own columns. */
+  .v-line .labels,
+  .v-line .lrow {
+    grid-template-columns: calc(56% - 7px) 14px minmax(0, 1fr) 72px 64px 66px 70px;
+    grid-template-areas:
+      "pair pair . vol txn chg mc"
+      "pre node post post post post post";
+    padding: 4px 16px;
+  }
+  .v-line .lrow {
+    grid-template-rows: 30px 26px;
+    height: auto;
+  }
+  /* Rows scroll clear of what is stuck over them: a graduated card has
+     the docked band and the status bar below it, a curve card the band
+     above and the status bar below. */
+  .v-line .lrow[data-kind="grad"] {
+    scroll-margin: 8px 0 calc(var(--line-status-h) + var(--line-band-h) + 8px);
+  }
+  .v-line .lrow[data-kind="curve"] {
+    scroll-margin: calc(var(--line-band-h) + 4px) 0 calc(var(--line-status-h) + 8px);
+  }
+  .v-line .labels {
+    position: static;
+    grid-template-rows: 20px;
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    grid-template-areas: "pair pair . vol txn chg mc";
+  }
+  .v-line .labels .c-liq,
+  .v-line .labels .c-pre,
+  .v-line .labels .c-node,
+  .v-line .labels .c-post,
+  .v-line .labels .c-buy {
+    display: none;
+  }
+  .v-line .c-pair {
+    grid-area: pair;
+  }
+  .v-line .c-vol {
+    grid-area: vol;
+  }
+  .v-line .c-txn {
+    grid-area: txn;
+  }
+  .v-line .c-chg {
+    grid-area: chg;
+  }
+  .v-line .c-mc {
+    grid-area: mc;
+  }
+  .v-line .c-pre {
+    grid-area: pre;
+  }
+  .v-line .c-node {
+    grid-area: node;
+  }
+  .v-line .c-post {
+    grid-area: post;
+  }
+  .v-line .lrow .lc {
+    line-height: 1.2;
+  }
+  .v-line .lrow .c-liq,
+  .v-line .lrow .c-buy,
+  .v-line .lrow .v-val,
+  .v-line .lrow .sub,
+  .v-line .lrow .split,
+  .v-line .lrow .pid .age,
+  .v-line .lrow .rmark {
+    display: none;
+  }
+  /* Except on the tab that ranks by it: the heads mark AGE as the order,
+     so the figure has to be on the cards. */
+  .v-line .pane[data-metric="age"] .lrow .pid .age {
+    display: inline;
+  }
+  /* The pair keeps its two lines, as on the desktop grid, so a young
+     coin's "since launch" has room beside the name: a card's figures
+     sit under the plain window heads, and without it they would claim
+     a window the coin hasn't lived. */
+  .v-line .lrow .pid {
+    gap: 1px;
+  }
+  .v-line .lrow .ctag {
+    display: inline;
+    flex: none;
+    font-size: 9.5px;
+    color: var(--color-muted);
+  }
+  /* No axis on cards: the node column only exists on a card's second
+     line, and a stub per card reads as dashes, not a line. */
+  .v-line .lrow .c-node::before,
+  .v-line .lrow .c-node::after {
+    display: none;
+  }
+  .v-line .lrow .c-vol,
+  .v-line .lrow .c-txn {
+    flex-direction: row;
+    align-items: center;
+  }
+  .v-line .lrow .c-pre {
+    padding-right: 0;
+  }
+  .v-line .lrow .pg {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .v-line .lrow .sbar {
+    gap: 0;
+  }
+
+  .v-line .inline-dossier {
+    background: var(--color-elev);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .v-line .inline-dossier .dos {
+    padding: 0 16px;
+  }
+
+  .v-line .status {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    height: auto;
+    padding: 6px 16px;
+  }
+  .v-line .status .dsc-cells,
+  .v-line .status .spot,
+  .v-line .status .grow {
+    display: none;
+  }
+  .v-line .status .dsc-line {
+    display: block;
+    line-height: 1.4;
+  }
+  .v-line .status .simt {
+    padding: 0;
+    border-left: 0;
+  }
+}
+
+/* The phone band: two lines, the word then the countdown. After the
+   Stack block, whose band padding it replaces at the same specificity. */
+@container band (max-width: 579.98px) {
+  .v-line .band .cells {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding: 8px 16px 6px;
+  }
+  .v-line .band .display {
+    font-size: 18px;
+  }
+  .v-line .band .grow {
+    display: none;
+  }
+  .v-line .band .count {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 639.98px) {
+  /* The state already says unscored ("Holds while alive", "Under the
+     $250K floor" are unscored states), and a phone card has one line
+     for it. */
+  .v-line .lrow .unsc {
+    display: none;
+  }
+  .v-line .mast {
+    grid-template-rows: 44px 40px 40px;
+  }
+  .v-line .mrow2 {
+    grid-area: 2 / 1 / 4 / 4;
+    display: grid;
+    grid-template-rows: 40px 40px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .v-line .search {
+    order: -1;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+  .v-line .labels,
+  .v-line .lrow {
+    grid-template-columns: calc(56% - 7px) 14px minmax(0, 1fr) 64px 70px;
+    grid-template-areas:
+      "pair pair . chg mc"
+      "pre node post post post";
+  }
+  .v-line .labels {
+    grid-template-areas: "pair pair . chg mc";
+  }
+  .v-line .c-vol,
+  .v-line .c-txn,
+  .v-line .lrow .c-vol,
+  .v-line .lrow .c-txn {
+    display: none;
+  }
+}
+
+/* Under 360, the narrowest phones. Every figure and gate the 390 card
+   carries still fits, by giving up air rather than content: the tabs
+   close up, the two card figures take the width their widest value
+   needs, and the Merit gates tighten their spacing. */
+@media (max-width: 359.98px) {
+  .v-line .tabs {
+    gap: 10px;
+  }
+  .v-line .labels,
+  .v-line .lrow {
+    grid-template-columns: calc(56% - 7px) 14px minmax(0, 1fr) 56px 62px;
+  }
+  .v-line .lrow .c-post {
+    padding-left: 6px;
+  }
+  .v-line .lrow .gates {
+    gap: 8px;
+  }
+  .v-line .lrow .gates .gi {
+    gap: 4px;
+  }
+  .v-line .lrow .gates .meta {
+    letter-spacing: 0.06em;
+  }
+}
+/* The countdown's sentence and its time no longer share a line: the
+   time goes under the sentence rather than past the screen's edge. A
+   grid, not wrapping, so the break is always in the same place and the
+   sticky band doesn't change height as the time's digits do. */
+@container band (max-width: 373.98px) {
+  .v-line .band .count {
+    display: grid;
+    row-gap: 2px;
+  }
+}

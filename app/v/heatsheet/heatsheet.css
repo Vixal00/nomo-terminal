@@ -1,0 +1,1488 @@
+/* Heatsheet: every rule here is scoped under .v-heatsheet, the class on the
+   screen's root, and this file is imported only by app/v/heatsheet/page.tsx.
+
+   Unlayered, like everything in globals.css, so a rule here beats any
+   Tailwind utility on the same element. That is how .meta and .num
+   sizes are changed: a sibling rule here (.v-heatsheet .cell .num { … }),
+   never a text-[…] utility, which silently loses to them.
+
+   Two consequences to keep in mind when editing:
+   - Never set `display` here on an element that also carries
+     .only-chain1/.only-chain2. Those hide with (0,1,2) specificity and a
+     scoped rule is (0,2,0): the scoped rule would paint both networks.
+     Give such elements their display with a utility instead.
+   - Priority hiding (a column, a dock cell, a status cell dropping out at
+     a width) is done with display:none rules, and the element's own
+     display comes from wherever it normally does. The only rules that
+     show a hidden cell again are the phone's column sets and its tier
+     column, and they are written to out-rank the hide they undo. */
+
+/* ================================================================ Frame */
+
+.v-heatsheet {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-canvas);
+  padding-inline: 12px;
+  --hs-row: 22px;
+
+  /* One track per column, named after its key in columns.ts. Each is
+     minmax(W, Wfr): exactly W at the base width, and any spare width is
+     shared in proportion to W, so the sheet stays full-bleed without one
+     column swallowing the slack. #, avatar and tier are fixed. The name
+     is capped: past its longest content, width there is only a gap
+     between a ticker and its figures, where in the figure and heat
+     columns it makes the tints larger. Its floor fits T's whole
+     "REAL LAUNCH · SNAPSHOT". */
+  --w-rank: 28px;
+  --w-r24: minmax(32px, 32fr);
+  --w-av: 20px;
+  --w-tier: 16px;
+  --w-name: minmax(164px, 184px);
+  --w-age: minmax(56px, 56fr);
+  --w-mc: minmax(60px, 60fr);
+  --w-c5m: minmax(48px, 48fr);
+  --w-c1h: minmax(48px, 48fr);
+  --w-c6h: minmax(48px, 48fr);
+  --w-c24h: minmax(48px, 48fr);
+  --w-vol: minmax(56px, 56fr);
+  --w-txn: minmax(60px, 60fr);
+  --w-bs: minmax(44px, 44fr);
+  --w-liq: minmax(56px, 56fr);
+  --w-hld: minmax(48px, 48fr);
+  --w-t10: minmax(40px, 40fr);
+  --w-dev: minmax(40px, 40fr);
+  --w-snp: minmax(40px, 40fr);
+  --w-bnd: minmax(40px, 40fr);
+  /* From 1200px, wide enough for its own head on one line in the
+     label's exact words ("CURVE · ROSTER"), which is the caveat a
+     reader has to see. Under 1200 the head is set on two lines, CURVE in
+     the group line and ROSTER in place of CRV, and the track is a
+     figure's width again: the 104px went to an almost empty lane while
+     the change matrix, the sheet's main element, lost its 6H. */
+  --w-crv: 104px;
+  --w-z: minmax(44px, 44fr);
+
+  /* The heat steps, per sign. Teal and red are not equally bright, so
+     each sign has its own alphas, chosen so a band reaches the same
+     contrast against the canvas for both (about 1.08, 1.16, 1.28, 1.46):
+     a red cell and a teal cell in one band look like one band. Band 1
+     sits clear of the row hover (1.04). */
+  --hs-p1: color-mix(in oklab, var(--color-pos) 6%, transparent);
+  --hs-p2: color-mix(in oklab, var(--color-pos) 10%, transparent);
+  --hs-p3: color-mix(in oklab, var(--color-pos) 15%, transparent);
+  --hs-p4: color-mix(in oklab, var(--color-pos) 20%, transparent);
+  --hs-n1: color-mix(in oklab, var(--color-neg) 10%, transparent);
+  --hs-n2: color-mix(in oklab, var(--color-neg) 17%, transparent);
+  --hs-n3: color-mix(in oklab, var(--color-neg) 23%, transparent);
+  --hs-n4: color-mix(in oklab, var(--color-neg) 31%, transparent);
+}
+
+/* Trending ranked by 24h trades is already the 24H# order. */
+.v-heatsheet[data-no24] {
+  --w-r24: 0px;
+}
+
+.v-heatsheet .hs-break {
+  display: none;
+}
+
+.v-heatsheet :focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+/* ============================================================== Top bar */
+
+.v-heatsheet .tb {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  height: 28px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-heatsheet .tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-bone);
+}
+.v-heatsheet .tb-word {
+  font-size: 12px;
+  line-height: 1;
+}
+/* The page's type runs on four sizes: 9.5 for labels, 11 for figures,
+   names and tabs, 12 for tickers and the line, 18 for the dock's
+   ticker. Foundation parts that bring their own .meta (10.5) are set
+   back onto it here, and the network switch below. */
+.v-heatsheet .tb .meta,
+.v-heatsheet .cl .meta,
+.v-heatsheet .dock .meta,
+.v-heatsheet .hs-dialog .meta {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.v-heatsheet .tb-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding-left: 16px;
+  border-left: 1px solid var(--color-line);
+}
+.v-heatsheet .tb-win {
+  padding-left: 16px;
+  border-left: 1px solid var(--color-line);
+}
+/* UnderlineTab carries py-3 for a taller bar; here the tab is the bar's
+   own height and its -mb-px keeps the 2px rule on the bar's hairline. */
+.v-heatsheet .hs-ut {
+  padding-block: 0;
+  height: 28px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.v-heatsheet .tb-rule {
+  flex: 1 1 0;
+  min-width: 0;
+  align-self: center;
+  font-size: 11px;
+  line-height: 12px;
+  color: var(--color-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.v-heatsheet .tb-menu {
+  display: flex;
+  align-items: center;
+}
+.v-heatsheet .tb-chain {
+  align-self: center;
+}
+/* The switch sets its own 10.5px, a fifth size in the bar; it is a
+   label like the rest, so it takes theirs. */
+.v-heatsheet .tb [aria-label="Network"] button {
+  padding-block: 2px;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+
+/* ========================================================= Command line */
+
+.v-heatsheet .cl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-heatsheet .cl:focus-within {
+  border-bottom-color: var(--color-line-bright);
+}
+.v-heatsheet .cl-prompt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent);
+}
+.v-heatsheet .cl-input {
+  flex: 1 1 240px;
+  min-width: 160px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-bone);
+  caret-color: var(--color-accent);
+}
+/* The caret and the brighter hairline under the line are its focus. A
+   ring around the whole line would be a box on a page that has none. */
+.v-heatsheet .cl-input:focus-visible {
+  outline: none;
+}
+.v-heatsheet .cl-input::placeholder {
+  color: var(--color-dim);
+}
+.v-heatsheet .cl-clear {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+/* The error takes what the line leaves it and is cut only when there
+   is truly no room: its second half is usually the instruction. */
+.v-heatsheet .cl-err {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v-heatsheet .cl-count {
+  white-space: nowrap;
+}
+.v-heatsheet .cl-qb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  flex-shrink: 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.v-heatsheet .qb {
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  line-height: 16px;
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+}
+.v-heatsheet .qb:hover {
+  color: var(--color-bone);
+}
+.v-heatsheet .qb[aria-pressed="true"] {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.v-heatsheet .cl-usd {
+  font-size: 11px;
+  color: var(--color-dim);
+}
+
+/* ============================================================== Board */
+
+.v-heatsheet .hs-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-bright) transparent;
+}
+
+/* Every line of the sheet (head, rows, Σ) is its own grid on the same
+   template, so the columns line up without anything being measured. */
+.v-heatsheet .g {
+  display: grid;
+  grid-template-areas: "rank r24 av tier name age mc c5m c1h c6h c24h vol txn bs liq hld t10 dev snp bnd crv z";
+  grid-template-columns:
+    var(--w-rank) var(--w-r24) var(--w-av) var(--w-tier) var(--w-name) var(--w-age) var(--w-mc)
+    var(--w-c5m) var(--w-c1h) var(--w-c6h) var(--w-c24h) var(--w-vol) var(--w-txn) var(--w-bs) var(--w-liq)
+    var(--w-hld) var(--w-t10) var(--w-dev) var(--w-snp) var(--w-bnd) var(--w-crv) var(--w-z);
+  /* The line's own height, not its content's: a cell mixing a 9.5px
+     label with an 11px figure builds a line box taller than the row,
+     and an auto track would grow with it and spill under the next row. */
+  grid-template-rows: minmax(0, 1fr);
+}
+/* Placed explicitly, so a cell's place never depends on its neighbours
+   being present, and on one grid row, so a span that comes later in the
+   markup than a cell to its right can't be pushed onto a second row. */
+.v-heatsheet .g > * {
+  grid-row: 1;
+  min-width: 0;
+}
+.v-heatsheet .c-rank { grid-area: rank; }
+.v-heatsheet .c-r24 { grid-area: r24; }
+.v-heatsheet .c-av { grid-area: av; }
+.v-heatsheet .c-tier { grid-area: tier; }
+.v-heatsheet .c-name { grid-area: name; }
+.v-heatsheet .c-age { grid-area: age; }
+.v-heatsheet .c-mc { grid-area: mc; }
+.v-heatsheet .c-c5m { grid-area: c5m; }
+.v-heatsheet .c-c1h { grid-area: c1h; }
+.v-heatsheet .c-c6h { grid-area: c6h; }
+.v-heatsheet .c-c24h { grid-area: c24h; }
+.v-heatsheet .c-vol { grid-area: vol; }
+.v-heatsheet .c-txn { grid-area: txn; }
+.v-heatsheet .c-bs { grid-area: bs; }
+.v-heatsheet .c-liq { grid-area: liq; }
+.v-heatsheet .c-hld { grid-area: hld; }
+.v-heatsheet .c-t10 { grid-area: t10; }
+.v-heatsheet .c-dev { grid-area: dev; }
+.v-heatsheet .c-snp { grid-area: snp; }
+.v-heatsheet .c-bnd { grid-area: bnd; }
+.v-heatsheet .c-crv { grid-area: crv; }
+.v-heatsheet .c-z { grid-area: z; }
+.v-heatsheet .gh-id { grid-column: rank-start / mc-end; }
+.v-heatsheet .gh-chg,
+.v-heatsheet .ec-chg { grid-column: c5m-start / c24h-end; }
+.v-heatsheet .gh-flow { grid-column: vol-start / liq-end; }
+.v-heatsheet .gh-token { grid-column: hld-start / bnd-end; }
+.v-heatsheet .gh-crv { grid-area: crv; }
+.v-heatsheet .gh-z { grid-area: z; }
+.v-heatsheet .sg-id { grid-column: rank-start / name-end; }
+
+.v-heatsheet .cell {
+  padding: 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.v-heatsheet .c-name {
+  text-align: left;
+}
+.v-heatsheet .c-av,
+.v-heatsheet .c-tier {
+  padding: 0;
+  text-align: center;
+}
+.v-heatsheet .gh {
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+/* Hairlines between column groups only, running the full height of the
+   sheet: head, rows and Σ carry the same starts. */
+.v-heatsheet .g > :is(.c-age, .c-c5m, .c-vol, .c-hld, .c-crv, .c-z, .gh-chg, .ec-chg, .gh-flow, .gh-token, .gh-crv, .gh-z) {
+  border-left: 1px solid var(--color-line);
+}
+
+/* Tooltips set their own measure (280px, wrapping). Inside a cell they
+   would otherwise inherit its nowrap and run out of their box as one
+   line, to be cut off by the scroller's edge. */
+.v-heatsheet [role="tooltip"] {
+  white-space: normal;
+}
+
+/* ---------------------------------------------------------------- Head */
+
+/* Each line sets the font-size its text is set in, so the line's strut
+   matches its text: a 9.5px label on a 16px strut sits two pixels under
+   one that is wrapped in its own box beside it. */
+.v-heatsheet .hd {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  font-size: 9.5px;
+  background: var(--color-canvas);
+}
+.v-heatsheet .hd .meta {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.v-heatsheet .hd-g {
+  height: 12px;
+  line-height: 12px;
+}
+.v-heatsheet .hd-l {
+  height: 18px;
+  line-height: 18px;
+}
+.v-heatsheet .hd-e {
+  height: 14px;
+  line-height: 13px;
+  border-bottom: 1px solid var(--color-line);
+}
+/* Head cells hold tooltips, which a clipping cell would cut off. */
+.v-heatsheet .hd .cell,
+.v-heatsheet .hd .gh {
+  overflow: visible;
+}
+.v-heatsheet .hd-e :is(.c-name, .c-mc, .c-vol, .c-liq, .c-t10, .c-dev) {
+  overflow: hidden;
+}
+/* A Tip's wrapper is inline-flex, which sits on the baseline and hangs a
+   couple of pixels under a short line. Top-aligned, it is exactly the
+   line's height. */
+.v-heatsheet .g span[aria-describedby] {
+  vertical-align: top;
+}
+.v-heatsheet .gh-tip {
+  max-width: 100%;
+  min-width: 0;
+}
+.v-heatsheet .gh-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v-heatsheet .gh-token {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+/* The heads are what the sheet is read by, so they are muted (6.6:1),
+   not dim; dim is kept for band edges and units. The column the order
+   runs on is bone with its caret; the selected window's column is bone
+   with the window's accent rule under it. */
+.v-heatsheet .hd-g .meta,
+.v-heatsheet .hd-l .hl {
+  color: var(--color-muted);
+}
+.v-heatsheet .hl {
+  white-space: nowrap;
+}
+.v-heatsheet .hd-l .hl-on,
+.v-heatsheet .hd-l .hl-win,
+.v-heatsheet button.hl:hover {
+  color: var(--color-bone);
+}
+.v-heatsheet .hd-l .hl-win {
+  text-decoration: underline 2px var(--color-accent);
+  text-underline-offset: 4px;
+}
+.v-heatsheet .caret {
+  margin-left: 3px;
+  font-size: 9px;
+  color: var(--color-accent);
+  vertical-align: 0;
+}
+
+/* The echo row: filters as typed, under the column each one limits, and
+   the band edges the tints step at where no filter is set. */
+/* Inline, so what doesn't fit is cut at the cell's edge (with an
+   ellipsis) instead of printing over the echoes in the next columns. */
+.v-heatsheet .hd-e .c-name {
+  text-overflow: ellipsis;
+}
+.v-heatsheet .echo {
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.v-heatsheet .echo:first-child {
+  margin-left: 0;
+}
+.v-heatsheet .echo:hover {
+  text-decoration: line-through;
+}
+.v-heatsheet .ec-hidden {
+  margin-left: 6px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-heatsheet .ec-hidden:first-child {
+  margin-left: 0;
+}
+.v-heatsheet .legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.v-heatsheet .lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.v-heatsheet .sw {
+  display: inline-flex;
+  width: 16px;
+  height: 10px;
+}
+/* The since-launch key, readable without a tooltip. It gives way first
+   where the change group is too narrow for it and the four steps. */
+.v-heatsheet .lg-sl {
+  margin-left: 6px;
+}
+.v-heatsheet .lg-sl .meta {
+  color: var(--color-muted);
+}
+.v-heatsheet .sl-key {
+  font-size: 9.5px;
+}
+.v-heatsheet .sw b {
+  flex: 1 1 0;
+}
+
+/* ---------------------------------------------------------------- Rows */
+
+.v-heatsheet .row {
+  position: relative;
+  font-size: 11px;
+  height: var(--hs-row);
+  line-height: var(--hs-row);
+  cursor: default;
+  scroll-margin-top: 44px;
+  scroll-margin-bottom: 22px;
+}
+@media (hover: hover) {
+  .v-heatsheet .row:hover {
+    background: var(--color-elev);
+  }
+}
+.v-heatsheet .row[aria-selected="true"] {
+  background: var(--color-raised);
+}
+/* Absolute, so the selected rule takes no track and moves nothing. */
+.v-heatsheet .row[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: 1;
+  background: var(--color-accent);
+}
+/* A reading guide every fifth row, drawn over the row rather than
+   between rows, so the pitch stays exactly one row height. */
+.v-heatsheet .body > .row:nth-child(5n)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--color-line) 60%, transparent);
+}
+
+.v-heatsheet .row .num,
+.v-heatsheet .sigma .num {
+  font-size: 11px;
+}
+.v-heatsheet [data-part="unit"] {
+  color: var(--color-dim);
+}
+/* # is the board's order, so it is the brighter of the two numerals
+   that open a row; 24H# is a reference beside it, smaller and dim. */
+.v-heatsheet .c-rank {
+  color: var(--color-muted);
+}
+.v-heatsheet .c-r24 {
+  color: var(--color-dim);
+}
+.v-heatsheet .row .c-r24 .num {
+  font-size: 9.5px;
+}
+.v-heatsheet .c-av img,
+.v-heatsheet .c-av > span {
+  display: inline-flex;
+  vertical-align: middle;
+}
+.v-heatsheet .row .tk {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  color: var(--color-bone);
+}
+.v-heatsheet .row .nm {
+  margin-left: 7px;
+  font-size: 11px;
+  color: var(--color-dim);
+}
+.v-heatsheet .row .nm-real {
+  margin-left: 7px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+}
+/* Muted like the star, not the accent: the accent means "look here",
+   and a paid row is the last one this page should point at. */
+.v-heatsheet .hs-bolt {
+  display: inline-block;
+  margin-left: 4px;
+  line-height: 0;
+  vertical-align: 0;
+  color: var(--color-muted);
+}
+.v-heatsheet .hs-star {
+  display: inline-block;
+  margin-left: 4px;
+  line-height: 0;
+  vertical-align: 1px;
+  color: var(--color-muted);
+}
+.v-heatsheet .row .c-z .meta {
+  font-size: 11px;
+}
+.v-heatsheet .hs-check {
+  display: inline-block;
+  line-height: 0;
+  vertical-align: middle;
+  color: var(--color-muted);
+}
+
+/* The since-launch mark is a superscript after its own figure, in room
+   the cell keeps for it on the right. In the left corner it sat closer
+   to the figure in the next column over than to its own. */
+.v-heatsheet .c-chg,
+.v-heatsheet .c-txn,
+.v-heatsheet .g > :is(.c-c5m, .c-c1h, .c-c6h, .c-c24h) {
+  position: relative;
+}
+.v-heatsheet .c-chg.has-sl > .num {
+  padding-right: 11px;
+}
+.v-heatsheet .c-txn.has-sl {
+  padding-right: 11px;
+}
+.v-heatsheet .sl {
+  position: absolute;
+  right: 2px;
+  top: calc(50% - 9px);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+  color: var(--color-muted);
+}
+
+/* A window that only repeats the one to its left: a dot. The figure
+   stays in the markup, hidden, as the node the live cell ticks. Every
+   layout that shows a window also shows the one to its left (all four on
+   a desktop, all four in the phone's Perf set), so the dot always points
+   at its neighbour. */
+.v-heatsheet .c-chg.c-rep > :is(.num, .sl, .sr-only) {
+  display: none;
+}
+.v-heatsheet .rep-dot {
+  display: block;
+  padding: 0 7px;
+  color: var(--color-dim);
+}
+
+/* ------------------------------------------------ Heat: the bold element */
+
+/* Signed heat on the change cells. The tint sits on the cell and the ticking
+   span inside it carries data-sign and data-band, so the foundation's
+   flash (on the span) plays over the tint instead of replacing it. Flat
+   steps, never a ramp: a reader has to be able to say which band a cell
+   is in. */
+.v-heatsheet .c-chg {
+  padding: 0;
+}
+.v-heatsheet .c-chg > .num {
+  display: block;
+  padding: 0 4px;
+}
+.v-heatsheet .c-chg:has(> [data-sign="pos"][data-band="1"]) { --hs-bg: var(--hs-p1); }
+.v-heatsheet .c-chg:has(> [data-sign="pos"][data-band="2"]) { --hs-bg: var(--hs-p2); }
+.v-heatsheet .c-chg:has(> [data-sign="pos"][data-band="3"]) { --hs-bg: var(--hs-p3); }
+.v-heatsheet .c-chg:has(> [data-sign="pos"][data-band="4"]) { --hs-bg: var(--hs-p4); }
+.v-heatsheet .c-chg:has(> [data-sign="neg"][data-band="1"]) { --hs-bg: var(--hs-n1); }
+.v-heatsheet .c-chg:has(> [data-sign="neg"][data-band="2"]) { --hs-bg: var(--hs-n2); }
+.v-heatsheet .c-chg:has(> [data-sign="neg"][data-band="3"]) { --hs-bg: var(--hs-n3); }
+.v-heatsheet .c-chg:has(> [data-sign="neg"][data-band="4"]) { --hs-bg: var(--hs-n4); }
+.v-heatsheet .c-chg {
+  background-color: var(--hs-bg, transparent);
+}
+/* A dot carries no tint: it isn't a figure. */
+.v-heatsheet .c-chg.c-rep {
+  background-color: transparent;
+}
+.v-heatsheet .c-chg > [data-sign="pos"] { color: var(--color-pos); }
+.v-heatsheet .c-chg > [data-sign="neg"] { color: var(--color-neg); }
+.v-heatsheet .c-chg > [data-sign="zero"] { color: var(--color-muted); }
+.v-heatsheet .c-chg > [data-sign="null"] { color: var(--color-dim); }
+/* Contrast at the top step. */
+.v-heatsheet .c-chg > [data-band="4"] { color: var(--color-bone); }
+
+/* The legend draws the same four steps, pos on the left half and neg on
+   the right, so a swatch is exactly what a cell in that band looks like. */
+.v-heatsheet .sw[data-b="1"] b:first-child { background-color: var(--hs-p1); }
+.v-heatsheet .sw[data-b="2"] b:first-child { background-color: var(--hs-p2); }
+.v-heatsheet .sw[data-b="3"] b:first-child { background-color: var(--hs-p3); }
+.v-heatsheet .sw[data-b="4"] b:first-child { background-color: var(--hs-p4); }
+.v-heatsheet .sw[data-b="1"] b:last-child { background-color: var(--hs-n1); }
+.v-heatsheet .sw[data-b="2"] b:last-child { background-color: var(--hs-n2); }
+.v-heatsheet .sw[data-b="3"] b:last-child { background-color: var(--hs-n3); }
+.v-heatsheet .sw[data-b="4"] b:last-child { background-color: var(--hs-n4); }
+
+/* Risk on the token-info figures (static fixture, so the attribute is on
+   the cell). Warn is one channel, rim text: on these fixtures a third of
+   the cells are warn, and a fill as well turned the group into a yellow
+   field. Fill and bright ink together are kept for bad, so the step
+   from warn to bad still shows. */
+.v-heatsheet .c-risk { color: var(--color-muted); }
+.v-heatsheet .c-risk[data-risk="null"] { color: var(--color-dim); }
+.v-heatsheet .c-risk[data-risk="warn"] {
+  color: var(--color-rim);
+}
+.v-heatsheet .c-risk[data-risk="bad"],
+.v-heatsheet[data-devbands="bad"] .c-risk[data-risk="warn"] {
+  color: var(--color-bone);
+  background-color: var(--hs-n4);
+}
+
+/* The selected window's column, framed down the rows and Σ, so moving
+   the window visibly moves the matrix's focus. A rule, not a fill: the
+   fills are the heat. */
+.v-heatsheet[data-w="5m"] :is(.row, .sigma) > .c-c5m::after,
+.v-heatsheet[data-w="1h"] :is(.row, .sigma) > .c-c1h::after,
+.v-heatsheet[data-w="6h"] :is(.row, .sigma) > .c-c6h::after,
+.v-heatsheet[data-w="24h"] :is(.row, .sigma) > .c-c24h::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-inline: 1px solid var(--color-line-bright);
+}
+
+/* Buy share leans: coloured text, never a fill. */
+.v-heatsheet [data-side="buy"] { color: var(--color-pos); }
+.v-heatsheet [data-side="sell"] { color: var(--color-neg); }
+.v-heatsheet [data-side="even"] { color: var(--color-muted); }
+
+/* A missing figure anywhere on a row is the dim dash. */
+.v-heatsheet .row .num[data-sign="null"] { color: var(--color-dim); }
+
+/* The row's Buy key: on the hovered, selected or focused row only, laid
+   over the end of the name cell on the row's own ground, so it needs no
+   column of its own. Hidden also takes it out of the tab order. One
+   accent fill on the page at a time. */
+.v-heatsheet .row .c-name {
+  position: relative;
+}
+.v-heatsheet .rowbuy {
+  position: absolute;
+  right: 3px;
+  top: calc(50% - 8px);
+  visibility: hidden;
+  height: 16px;
+  background: var(--color-elev);
+  padding: 0 6px;
+  vertical-align: middle;
+  font-size: 9.5px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-heatsheet .row:hover .rowbuy,
+.v-heatsheet .row[aria-selected="true"] .rowbuy,
+.v-heatsheet .row:focus-within .rowbuy {
+  visibility: visible;
+}
+.v-heatsheet .row[aria-selected="true"] .rowbuy {
+  background: var(--color-raised);
+}
+.v-heatsheet .rowbuy:focus-visible {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: black;
+}
+/* Only where hover is real: a tap leaves :hover stuck on a touch screen,
+   and the key would stay filled as if it were still being pressed. */
+@media (hover: hover) {
+  .v-heatsheet .rowbuy:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: black;
+  }
+}
+
+/* ------------------------------------------------------------ Tier glyph */
+
+.v-heatsheet .hs-tier {
+  display: inline-block;
+  height: 8px;
+  width: 9px;
+  vertical-align: middle;
+  -webkit-mask: var(--glyph) center / contain no-repeat;
+  mask: var(--glyph) center / contain no-repeat;
+}
+.v-heatsheet .hs-tier.tier-free { background-color: var(--tier-free-ink); }
+.v-heatsheet .hs-tier.tier-fortress { background-color: var(--tier-gold-ink); }
+.v-heatsheet .hs-tier.tier-ice { background-color: var(--tier-ice-ink); }
+
+/* -------------------------------------------------------------- Σ / MED */
+
+.v-heatsheet .sigma-wrap {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: var(--color-canvas);
+  border-top: 1px solid var(--color-line);
+}
+.v-heatsheet .sigma {
+  font-size: 11px;
+  height: 21px;
+  line-height: 21px;
+}
+.v-heatsheet .sigma .cell {
+  color: var(--color-muted);
+}
+.v-heatsheet .sigma .sig {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--color-dim);
+}
+.v-heatsheet .sigma .sg-id .meta {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.v-heatsheet .sigma [data-sign="pos"] { color: var(--color-pos); }
+.v-heatsheet .sigma [data-sign="neg"] { color: var(--color-neg); }
+.v-heatsheet .sigma [data-sign="null"] { color: var(--color-dim); }
+
+/* ---------------------------------------------------------- Empty states */
+
+.v-heatsheet .hs-empty {
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-heatsheet .hs-empty > * {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.v-heatsheet .hs-empty > .hs-empty-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+/* A key, drawn like the dock's: the one action here has to look pressable. */
+.v-heatsheet .hs-key {
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-muted);
+}
+.v-heatsheet .hs-key:hover {
+  color: var(--color-bone);
+}
+
+/* ================================================================= Dock */
+
+.v-heatsheet .dock {
+  flex-shrink: 0;
+  font-size: 11px;
+  border-top: 1px solid var(--color-line);
+}
+.v-heatsheet .dock .num {
+  font-size: 12px;
+}
+.v-heatsheet .dock-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+}
+.v-heatsheet .dk-line {
+  display: flex;
+  align-items: stretch;
+  height: 36px;
+}
+.v-heatsheet .dk-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  border-left: 1px solid var(--color-line);
+}
+.v-heatsheet .dk-cell:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+/* What gives way when the line is short. Only text that can end in an
+   ellipsis may: a rank, a tier or a PLACEHOLDER tag cut mid-glyph reads
+   as a different figure or no caveat at all.
+
+   The coin's own cell is a grid so its name alone can shrink: the name's
+   track is minmax(0, max-content), which counts as nothing in the cell's
+   min-content width and as the whole name in its max-content one, so
+   min-width: min-content holds the ticker, tier, place and Off-screen
+   key whole while the name ellipsizes. T's third item is its REAL
+   LAUNCH label, a caveat, so its track stays max-content. */
+.v-heatsheet .dk-id {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  column-gap: 8px;
+  flex-shrink: 1;
+  min-width: min-content;
+}
+.v-heatsheet .dk-id:has(> .dk-nm) {
+  grid-template-columns: max-content max-content minmax(0, max-content);
+}
+/* On network 1 the mint cell is an address and its PLACEHOLDER tag,
+   neither of which may be cut. On network 2 it is a sentence, and it
+   gives way before the name does: a zero basis takes it out of the
+   shrinking, so it only grows into what the line has left, up to its
+   whole width. Its floor keeps a readable start of the sentence, the
+   rest being in its title. */
+html[data-chain="2"] .v-heatsheet .dk-mint,
+.v-heatsheet .dk-h {
+  flex: 1 1 0;
+  min-width: 96px;
+  max-width: max-content;
+}
+.v-heatsheet .dock .dk-tk {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-bone);
+}
+.v-heatsheet .dk-nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-heatsheet .dock .dk-price {
+  font-size: 12px;
+  color: var(--color-bone);
+}
+.v-heatsheet .dk-icon {
+  display: flex;
+  align-items: center;
+}
+.v-heatsheet .dk-bolt {
+  display: flex;
+  align-items: center;
+  color: var(--color-muted);
+}
+.v-heatsheet .dk-net2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--color-dim);
+}
+/* Also in the ticker's title, so it is the first sentence to give way. */
+.v-heatsheet .dk-nopage {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--color-dim);
+}
+.v-heatsheet .dk-off {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  border: 1px solid var(--color-line);
+}
+@media (hover: hover) {
+  .v-heatsheet .dk-off:hover {
+    border-color: var(--color-line-bright);
+  }
+}
+.v-heatsheet .dk-act {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 10px;
+}
+/* Network 2 has no addresses in the fixtures, so no creator either.
+   Written against the network attribute, because this cell's own
+   display rule would out-rank .only-chain1. */
+html[data-chain="2"] .v-heatsheet .dk-creator {
+  display: none;
+}
+.v-heatsheet .dk-buy {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: auto;
+  height: 24px;
+  padding: 0 12px;
+  white-space: nowrap;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+.v-heatsheet .dk-buy:focus-visible {
+  background: var(--color-accent);
+  color: black;
+}
+@media (hover: hover) {
+  .v-heatsheet .dk-buy:hover:not(:disabled) {
+    background: var(--color-accent);
+    color: black;
+  }
+}
+.v-heatsheet .dk-buy:disabled {
+  border-color: var(--color-line);
+  color: var(--color-dim);
+  cursor: not-allowed;
+}
+.v-heatsheet .dk-chg[data-sign="pos"] { color: var(--color-pos); }
+.v-heatsheet .dk-chg[data-sign="neg"] { color: var(--color-neg); }
+.v-heatsheet .dk-chg[data-sign="zero"] { color: var(--color-muted); }
+.v-heatsheet .dk-chg[data-sign="null"] { color: var(--color-dim); }
+
+/* =============================================================== Status */
+
+.v-heatsheet .st {
+  flex-shrink: 0;
+  font-size: 9.5px;
+  border-top: 1px solid var(--color-line);
+}
+.v-heatsheet .st .meta {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.v-heatsheet .st-line {
+  display: flex;
+  align-items: stretch;
+  height: 22px;
+  line-height: 21px;
+  white-space: nowrap;
+}
+.v-heatsheet .st-disc li:first-child {
+  padding-left: 0;
+}
+.v-heatsheet .st-cell {
+  padding: 0 8px;
+  border-left: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.v-heatsheet .st-order-cell {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.v-heatsheet .st-keys {
+  margin-left: auto;
+  padding-left: 8px;
+  white-space: nowrap;
+}
+
+/* =============================================================== Dialog */
+
+.v-heatsheet .hs-dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: 80dvh;
+  overflow: auto;
+  padding: 14px 18px 18px;
+  background: var(--color-elev);
+  border: 1px solid var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-heatsheet .hs-dialog::backdrop {
+  background: color-mix(in oklab, var(--color-canvas) 78%, transparent);
+}
+.v-heatsheet .hs-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-heatsheet .hs-dialog section {
+  padding-top: 12px;
+}
+.v-heatsheet .hs-dialog h3 {
+  margin-bottom: 6px;
+}
+.v-heatsheet .kd {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 20px;
+}
+.v-heatsheet .kd > div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.v-heatsheet .kd dt {
+  flex: 0 0 52px;
+  font-size: 11px;
+  color: var(--color-bone);
+}
+/* The bolt stands where a key's letters do, not after a ticker. */
+.v-heatsheet .kd .hs-bolt {
+  margin-left: 0;
+}
+.v-heatsheet .kd dd {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.v-heatsheet .kd-wide {
+  grid-template-columns: 1fr;
+}
+.v-heatsheet .kd-wide dt {
+  flex-basis: 168px;
+}
+@media (max-width: 599px) {
+  .v-heatsheet .kd { grid-template-columns: 1fr; }
+  .v-heatsheet .kd-wide dt { flex-basis: 128px; }
+}
+.v-heatsheet .kd-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-dim);
+}
+
+/* ===================================================== Priority: widths */
+
+/* The dock's cells, lowest priority first. Each width is where that cell
+   first fits beside the rest for every coin, measured with the name
+   given way entirely and "Not on this board" in place of the rank, the
+   longest the rest of the line gets (r4/widths.mjs in the scratchpad).
+   The name is what gives way (after the network-2 mint sentence and the
+   no-page sentence); nothing else on the line can shrink.
+
+   A boosted coin's line carries the words "Paid boost" at every width,
+   106px that an unboosted coin's line doesn't, and from 1100 its points
+   too. So the figures after the seat come in later on a boosted coin's
+   line, and only on its line: an unboosted coin keeps them from the
+   widths it always had. */
+@media (max-width: 1919px) {
+  .v-heatsheet .dk-h { display: none; }
+}
+@media (max-width: 1839px) {
+  .v-heatsheet .dk-g { display: none; }
+}
+@media (max-width: 1679px) {
+  .v-heatsheet .st-spot { display: none; }
+}
+@media (max-width: 1559px) {
+  .v-heatsheet .dk-line:has(> .dk-boost) > .dk-f { display: none; }
+}
+@media (max-width: 1439px) {
+  .v-heatsheet .dk-line:has(> .dk-boost) > .dk-e { display: none; }
+}
+@media (max-width: 1399px) {
+  .v-heatsheet .dk-f { display: none; }
+}
+@media (max-width: 1299px) {
+  .v-heatsheet .dk-line:has(> .dk-boost) > .dk-d { display: none; }
+}
+@media (max-width: 1279px) {
+  .v-heatsheet .dk-e { display: none; }
+}
+@media (max-width: 1139px) {
+  .v-heatsheet .dk-d { display: none; }
+}
+@media (max-width: 1099px) {
+  .v-heatsheet .dk-c { display: none; }
+}
+/* The countdown is the label's own sentence or nothing: a shortened
+   "Z500 · 6d" didn't say what the time was until. It fits beside the
+   disclosure and the longest order state from about 1140px. */
+@media (max-width: 1139px) {
+  .v-heatsheet .st-long { display: none; }
+}
+/* The since-launch key needs the change group at its 1440 width; below
+   that it is in ? Keys and the group's tooltip. */
+@media (max-width: 1439px) {
+  .v-heatsheet .lg-sl { display: none; }
+}
+@media (min-width: 1200px) {
+  .v-heatsheet .cl-short,
+  .v-heatsheet .crv-narrow { display: none; }
+}
+@media (max-width: 1199px) {
+  .v-heatsheet {
+    --w-r24: 0px;
+    --w-hld: 0px;
+    --w-snp: 0px;
+    --w-bnd: 0px;
+    --w-crv: minmax(52px, 52fr);
+  }
+  /* Flush right, so CURVE sits over ROSTER and reads as one head. */
+  .v-heatsheet .crv-wide { display: none; }
+  .v-heatsheet .gh-crv { text-align: right; }
+  .v-heatsheet .g > :is(.c-r24, .c-hld, .c-snp, .c-bnd),
+  .v-heatsheet .gh-wide,
+  .v-heatsheet .cl-full,
+  .v-heatsheet .cl-usd { display: none; }
+  .v-heatsheet .g > .c-t10 { border-left: 1px solid var(--color-line); }
+}
+@media (max-width: 1023px) {
+  .v-heatsheet {
+    --w-age: 0px;
+    --w-liq: 0px;
+  }
+  .v-heatsheet .g > :is(.c-age, .c-liq),
+  .v-heatsheet .rowbuy,
+  .v-heatsheet .tb-rule,
+  .v-heatsheet .dk-b { display: none; }
+  .v-heatsheet .g > .c-mc { border-left: 1px solid var(--color-line); }
+}
+.v-heatsheet[data-no24] .g > .c-r24 { display: none; }
+
+/* ================================================= Phone (under 900px) */
+
+@media (max-width: 899px) {
+  .v-heatsheet {
+    --hs-row: 32px;
+    --w-rank: 24px;
+    --w-r24: 0px;
+    --w-av: 20px;
+    --w-tier: 0px;
+    --w-name: minmax(90px, 3fr);
+    --w-age: 0px;
+    --w-mc: 0px;
+    --w-c5m: 0px;
+    --w-c1h: 0px;
+    --w-c6h: 0px;
+    --w-c24h: 0px;
+    --w-vol: 0px;
+    --w-txn: 0px;
+    --w-bs: 0px;
+    --w-liq: 0px;
+    --w-hld: 0px;
+    --w-t10: 0px;
+    --w-dev: 0px;
+    --w-snp: 0px;
+    --w-bnd: 0px;
+    --w-crv: 0px;
+    --w-z: 0px;
+  }
+  /* One set of four columns at a time, switched in the command line. */
+  .v-heatsheet[data-set="perf"] {
+    --w-c5m: minmax(56px, 1fr);
+    --w-c1h: minmax(56px, 1fr);
+    --w-c6h: minmax(56px, 1fr);
+    --w-c24h: minmax(56px, 1fr);
+  }
+  .v-heatsheet[data-set="size"] {
+    --w-mc: minmax(56px, 1fr);
+    --w-vol: minmax(56px, 1fr);
+    --w-txn: minmax(56px, 1fr);
+    --w-liq: minmax(56px, 1fr);
+  }
+  .v-heatsheet[data-set="risk"] {
+    --w-t10: minmax(56px, 1fr);
+    --w-dev: minmax(56px, 1fr);
+    --w-snp: minmax(56px, 1fr);
+    --w-bnd: minmax(56px, 1fr);
+  }
+  .v-heatsheet .g > :is(.c-r24, .c-tier, .c-age, .c-bs, .c-hld, .c-crv, .c-z, .gh-id, .gh-crv, .gh-z),
+  .v-heatsheet:not([data-set="perf"]) .g > :is(.c-c5m, .c-c1h, .c-c6h, .c-c24h, .gh-chg, .ec-chg),
+  .v-heatsheet:not([data-set="size"]) .g > :is(.c-mc, .c-vol, .c-txn, .c-liq, .gh-flow),
+  .v-heatsheet:not([data-set="risk"]) .g > :is(.c-t10, .c-dev, .c-snp, .c-bnd, .gh-token),
+  .v-heatsheet .sigma-wrap,
+  .v-heatsheet .tb-word,
+  .v-heatsheet .tb-rule { display: none; }
+
+  /* The set's own columns come back even where a desktop width rule
+     dropped them (LIQ, SNP, BND are low-priority on a narrow desktop,
+     but a phone shows exactly the four of the set it is on). */
+  .v-heatsheet[data-set="size"] .g > .c-liq,
+  .v-heatsheet[data-set="risk"] .g > :is(.c-snp, .c-bnd) {
+    display: block;
+  }
+
+  /* One hairline, before the set. */
+  .v-heatsheet .g > :is(.c-age, .c-c5m, .c-vol, .c-hld, .c-crv, .c-z, .gh-chg, .ec-chg, .gh-flow, .gh-token, .gh-crv, .gh-z, .c-mc, .c-t10) {
+    border-left: 0;
+  }
+  .v-heatsheet[data-set="perf"] .g > :is(.c-c5m, .gh-chg, .ec-chg),
+  .v-heatsheet[data-set="size"] .g > .c-mc,
+  .v-heatsheet[data-set="risk"] .g > :is(.c-t10, .gh-token) {
+    border-left: 1px solid var(--color-line);
+  }
+  .v-heatsheet .row .num,
+  .v-heatsheet .row .tk {
+    font-size: 12px;
+  }
+  .v-heatsheet .row {
+    scroll-margin-bottom: 0;
+  }
+
+  /* Top bar: row A (mark, tabs, versions), row B (windows, count, network). */
+  .v-heatsheet .tb {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 0 12px;
+  }
+  .v-heatsheet .tb-brand { order: 1; height: 36px; }
+  .v-heatsheet .tb-tabs {
+    order: 2;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 36px;
+    padding-left: 0;
+    border-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .v-heatsheet .tb-tabs::-webkit-scrollbar { display: none; }
+  .v-heatsheet .tb-tabs {
+    gap: 6px;
+  }
+  .v-heatsheet .tb-tabs .hs-ut {
+    height: 36px;
+    margin-bottom: 0;
+    letter-spacing: 0.1em;
+  }
+  .v-heatsheet .tb-menu { order: 3; }
+  .v-heatsheet .tb-break {
+    display: block;
+    order: 4;
+    flex-basis: 100%;
+    height: 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .v-heatsheet .tb-win {
+    order: 5;
+    padding-left: 0;
+    border-left: 0;
+  }
+  .v-heatsheet .tb-win .hs-ut { height: 32px; }
+  .v-heatsheet .tb-count {
+    order: 6;
+    align-self: center;
+    margin-left: auto;
+  }
+  .v-heatsheet .tb-chain { order: 7; }
+
+  /* Command line: row C (line, clear, keys), row D (column set, quick buy). */
+  .v-heatsheet .cl {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 0 8px;
+  }
+  .v-heatsheet .cl-prompt { order: 1; line-height: 36px; }
+  .v-heatsheet .cl-input { order: 2; min-width: 0; height: 36px; }
+  .v-heatsheet .cl-clear { order: 3; }
+  .v-heatsheet .cl-keys {
+    order: 4;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-line);
+  }
+  .v-heatsheet .cl-err {
+    order: 5;
+    flex-basis: 100%;
+    max-width: none;
+    padding-bottom: 6px;
+  }
+  .v-heatsheet .cl .hs-break {
+    display: block;
+    order: 6;
+    flex-basis: 100%;
+    height: 0;
+    border-top: 1px solid var(--color-line);
+  }
+  /* Row D is thumb-sized: the set switch is the phone's only way to the
+     other twelve columns. */
+  .v-heatsheet .cl-set {
+    order: 7;
+    display: flex;
+    align-items: stretch;
+    height: 32px;
+    margin-block: 4px;
+    border: 1px solid var(--color-line);
+  }
+  .v-heatsheet .cl-set button {
+    padding: 0 7px;
+  }
+  .v-heatsheet .cl-set button[aria-pressed="true"] {
+    background: var(--color-raised);
+    color: var(--color-bone);
+  }
+  .v-heatsheet .cl-set .meta,
+  .v-heatsheet .cl-qb .meta {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+  }
+  .v-heatsheet .cl-qb {
+    order: 8;
+    gap: 5px;
+    height: 40px;
+    margin-left: auto;
+    padding-left: 0;
+    border-left: 0;
+  }
+  /* Tight enough that the network-2 sizes (0.002 0.005 0.02 ETH) still
+     share a line with the column set at 390. */
+  .v-heatsheet .qb {
+    height: 32px;
+    min-width: 32px;
+    padding: 0 3px;
+    line-height: 30px;
+  }
+
+  .v-heatsheet .rule-m {
+    flex-shrink: 0;
+    padding: 6px 0;
+    font-size: 11px;
+    line-height: 14px;
+    color: var(--color-muted);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Dock: two lines, the Buy key a full-width touch target. */
+  .v-heatsheet .dk-m { padding: 6px 0 8px; }
+  /* Nothing on the first line may be cut, so what doesn't fit (the
+     place, or "Not on this board", beside T's long caveat on a small
+     phone) wraps onto a line of its own instead. */
+  .v-heatsheet .dk-m1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 6px;
+    min-height: 22px;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .v-heatsheet .dock .dk-m .dk-tk { font-size: 16px; }
+  .v-heatsheet .dk-m .dk-price { font-size: 12px; }
+  .v-heatsheet .dk-m .num { font-size: 12px; }
+  .v-heatsheet .dk-m1 > * { flex-shrink: 0; }
+  .v-heatsheet .dk-m-place { margin-left: auto; }
+  .v-heatsheet .dk-m .dk-off { width: 32px; height: 22px; }
+  .v-heatsheet .dk-m2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin-top: 6px;
+  }
+  .v-heatsheet .dk-m2 .dk-buy {
+    flex: 1 1 0;
+    height: 36px;
+    margin-left: 0;
+  }
+  .v-heatsheet .dk-usd {
+    font-size: 11px;
+    color: var(--color-dim);
+    white-space: nowrap;
+  }
+  .v-heatsheet .dock-empty { height: 44px; }
+
+  /* Status: the disclosure on its own lines, then sim, order, countdown. */
+  .v-heatsheet .st-m { padding: 5px 0 7px; }
+  .v-heatsheet .st-mline {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    line-height: 14px;
+  }
+  .v-heatsheet .st-m3 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 12px;
+    margin-top: 3px;
+  }
+}
+
+/* The name after the ticker, and the tier, once there is room. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .v-heatsheet { --w-tier: 16px; }
+  .v-heatsheet .g > .c-tier { display: block; }
+}
+@media (max-width: 599px) {
+  .v-heatsheet .row .nm { display: none; }
+}
+
+/* A phone zooms into any field under 16px when it takes focus. The
+   placeholder stays at the line's usual size: at 16px, bigger than the
+   tabs, it read as a query in force. */
+@media (pointer: coarse) {
+  .v-heatsheet .cl-input { font-size: 16px; }
+  .v-heatsheet .cl-input::placeholder { font-size: 12px; }
+}
+
+/* Last, so they out-rank every display set above at the same weight. */
+@media (min-width: 900px) {
+  .v-heatsheet .hs-m { display: none; }
+}
+@media (max-width: 899px) {
+  .v-heatsheet .hs-d { display: none; }
+}

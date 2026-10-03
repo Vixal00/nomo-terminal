@@ -1,0 +1,1441 @@
+/* Broadside: every rule here is scoped under .v-broadside, the class on the
+   screen's root, and this file is imported only by app/v/broadside/page.tsx.
+
+   Unlayered, like everything in globals.css, so a rule here beats any
+   Tailwind utility on the same element. That is how .meta and .num
+   sizes are changed: a sibling rule here (.v-broadside .cell .num { … }),
+   never a text-[…] utility, which silently loses to them.
+
+   The layout is owned here at every width, so the server's HTML is
+   already the phone layout at 390 and the workstation at 1440, with no
+   frame of the wrong one before hydration. */
+
+.v-broadside {
+  --bs-navh: 44px;
+  --bs-row-line: color-mix(in oklab, var(--color-line) 50%, transparent);
+  background: var(--color-canvas);
+  color: var(--color-bone);
+  min-height: 100dvh;
+}
+.v-broadside :focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+/* The tag ramps travel on the rest of the site; on a board meant to be
+   read they are still. The ramp still paints, it just doesn't move. */
+.v-broadside .tag-sheen,
+.v-broadside .tag-ink,
+.v-broadside .tier-glyph,
+.v-broadside .bolt-arc {
+  animation: none;
+}
+/* Paid placement is not a "look here": BoostChip inks itself in the
+   accent, which on this page is reserved for six things. */
+.v-broadside .bs-boost > * {
+  color: var(--color-muted);
+}
+.v-broadside .bs-textbtn {
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.v-broadside .bs-textbtn:hover {
+  color: var(--color-bone);
+}
+
+/* Data colour: the sign as printed, on change figures only. Every other
+   figure is a size, and a size is not a gain. */
+.v-broadside .bs-chg[data-sign="pos"] {
+  color: var(--color-pos);
+}
+.v-broadside .bs-chg[data-sign="neg"] {
+  color: var(--color-neg);
+}
+.v-broadside [data-sign="null"],
+.v-broadside .bs-chg[data-sign="zero"],
+.v-broadside [data-part="unit"] {
+  color: var(--color-dim);
+}
+
+/* ================================================================ nav */
+
+.v-broadside .bs-nav {
+  display: flex;
+  align-items: center;
+  column-gap: 16px;
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-canvas);
+}
+.v-broadside .bs-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  color: var(--color-bone);
+}
+.v-broadside .bs-word {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.v-broadside .bs-navdiv {
+  width: 1px;
+  height: 16px;
+  background: var(--color-line);
+}
+.v-broadside .bs-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 240px;
+  height: 30px;
+  border: 1px solid var(--color-line);
+  background: var(--color-elev);
+}
+.v-broadside .bs-search kbd {
+  position: absolute;
+  left: 9px;
+  pointer-events: none;
+}
+.v-broadside .bs-search input {
+  width: 100%;
+  height: 100%;
+  padding: 0 8px 0 26px;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-bone);
+}
+.v-broadside .bs-search input::placeholder {
+  color: var(--color-dim);
+}
+.v-broadside .bs-searchbtn {
+  display: none;
+}
+
+/* ============================================================= poster */
+
+.v-broadside .bs-poster .display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+}
+.v-broadside .bs-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 12px;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+}
+.v-broadside .bs-ra,
+.v-broadside .bs-rb {
+  display: flex;
+  gap: 16px;
+}
+.v-broadside .bs-ra {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.v-broadside .bs-headline {
+  min-width: 0;
+  margin: 0;
+  color: var(--color-bone);
+}
+.v-broadside .bs-headline-text {
+  display: block;
+  font-size: 22px;
+  line-height: 0.95;
+}
+.v-broadside .bs-stamp {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 7px;
+  background: var(--color-accent);
+  color: #000;
+  line-height: 1.35;
+}
+.v-broadside .bs-stamp.meta {
+  letter-spacing: 0.12em;
+  font-size: 9.5px;
+}
+.v-broadside .bs-rule {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+.v-broadside .bs-foldbtn {
+  display: none;
+  flex: none;
+  white-space: nowrap;
+}
+.v-broadside .bs-foldbtn.meta {
+  color: var(--color-muted);
+}
+.v-broadside .bs-foldbtn.meta:hover {
+  color: var(--color-bone);
+}
+
+.v-broadside .bs-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 58fr) 42fr;
+  row-gap: 12px;
+  padding: 16px 16px 20px;
+  border-bottom: 1px solid var(--color-line);
+  overflow: hidden;
+}
+.v-broadside .bs-art {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 42%;
+  pointer-events: none;
+  z-index: 0;
+}
+.v-broadside .bs-art img {
+  object-position: 50% 0%;
+}
+/* The credit sits on the picture it credits: inside the art's width,
+   bottom right, over the part the mask has already faded. */
+.v-broadside .bs-caption {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  z-index: 1;
+  max-width: calc(42% - 16px);
+  text-align: right;
+  line-height: 1.4;
+}
+.v-broadside .bs-caption.meta {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+.v-broadside .bs-zone {
+  --cap: 64px;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  container-type: inline-size;
+  grid-column: 1;
+}
+.v-broadside .bs-num {
+  display: block;
+  white-space: nowrap;
+  line-height: 0.86;
+  font-size: min(var(--cap), calc(100cqi / var(--em) * 0.98));
+}
+.v-broadside .bs-num[data-face="rep"] {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variant-numeric: normal;
+}
+.v-broadside .bs-num[data-face="sans"] {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+/* What qualifies the numeral, on the numeral: since launch, and the
+   time it was read. One line tall even while empty (on the server, and
+   on Z500 below 1024), so the numeral never moves when the time arrives.
+   Z500's is empty whatever the time, so the workstation drops it. */
+.v-broadside .bs-asof {
+  min-height: 1.35em;
+  margin-top: 6px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+/* The labels a reader needs to read the poster are muted, not dim: dim
+   on the canvas is about 3.2:1, too faint for 10.5px type. */
+.v-broadside .bs-asof.meta,
+.v-broadside .bs-unit.meta,
+.v-broadside .bs-seatline.meta,
+.v-broadside .bs-fold-sum .meta {
+  color: var(--color-muted);
+}
+/* .meta uppercases, and an age inherits it: "26M" beside "$2.29K" reads
+   as a size in a terminal where M means million. Figures keep the case
+   the formatter gave them, as they do in the table. */
+.v-broadside .bs-seatline .num {
+  text-transform: none;
+}
+.v-broadside .bs-cap {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.v-broadside .bs-ident {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.v-broadside .bs-ptick {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--color-bone);
+}
+.v-broadside .bs-pname {
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-mint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-dim);
+}
+.v-broadside .bs-mint:hover {
+  color: var(--color-bone);
+}
+.v-broadside .bs-sentence {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+.v-broadside .bs-sentence b {
+  font-weight: inherit;
+  color: var(--color-bone);
+}
+.v-broadside .bs-sentence > span {
+  white-space: nowrap;
+}
+.v-broadside .bs-fold {
+  display: none;
+}
+
+/* ============================================================ controls */
+
+.v-broadside .bs-controls {
+  position: sticky;
+  top: var(--bs-navh);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-canvas);
+}
+.v-broadside .bs-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  height: 40px;
+  padding: 0 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-broadside .bs-tabs::-webkit-scrollbar {
+  display: none;
+}
+/* In a scroller the pulled-down underline would be clipped to half, so
+   below 1024 it sits on top of the hairline instead of over it. */
+.v-broadside .bs-tabs [role="tab"] {
+  margin-bottom: 0;
+  padding-block: 0;
+}
+.v-broadside .bs-win > button {
+  padding-block: 0;
+}
+.v-broadside .bs-r2 {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  height: 36px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-broadside .bs-div {
+  flex: none;
+  align-self: center;
+  width: 1px;
+  height: 16px;
+  background: var(--color-line);
+}
+.v-broadside .bs-div-lg,
+.v-broadside .bs-qbwrap {
+  display: none;
+}
+.v-broadside .bs-filters {
+  display: flex;
+  align-items: center;
+}
+.v-broadside .bs-hidden {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.v-broadside .bs-reset-short {
+  display: none;
+}
+.v-broadside .bs-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 16px;
+  right: 16px;
+  z-index: 40;
+  max-width: 360px;
+  padding: 12px;
+  border: 1px solid var(--color-line-bright);
+  background: var(--color-elev);
+  font-family: var(--font-sans);
+}
+.v-broadside .bs-toggle {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.v-broadside .bs-toggle.meta {
+  color: var(--color-muted);
+}
+.v-broadside .bs-toggle[aria-pressed="true"] {
+  background: var(--color-raised);
+  border-color: var(--color-line-bright);
+  color: var(--color-bone);
+}
+.v-broadside .bs-field {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  font-size: 12px;
+  color: var(--color-bone);
+}
+.v-broadside .bs-field::placeholder {
+  color: var(--color-dim);
+}
+.v-broadside .bs-field[aria-invalid="true"] {
+  border-color: var(--color-neg);
+}
+.v-broadside .bs-apply {
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line-bright);
+}
+.v-broadside .bs-apply.meta {
+  color: var(--color-bone);
+}
+.v-broadside .bs-apply:hover {
+  background: var(--color-raised);
+}
+.v-broadside .bs-qbtn {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--color-line);
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-qbtn:hover {
+  color: var(--color-bone);
+}
+.v-broadside .bs-qbtn[aria-pressed="true"] {
+  background: var(--color-raised);
+  border-color: var(--color-line-bright);
+  color: var(--color-bone);
+}
+
+/* ============================================================== board */
+
+.v-broadside .bs-board {
+  position: relative;
+}
+.v-broadside .bs-grid {
+  display: grid;
+  align-items: center;
+}
+.v-broadside .bs-thead {
+  position: sticky;
+  top: calc(var(--bs-navh) + 76px);
+  z-index: 15;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-line);
+}
+/* The heads are what the figures mean, so they are muted, not dim, and
+   never under 10px. Where a head is wider than its column, the head is
+   shortened or untracked, not shrunk. */
+.v-broadside .bs-thead .meta {
+  font-size: 10px;
+  line-height: 12px;
+  white-space: nowrap;
+  color: var(--color-muted);
+}
+.v-broadside .bs-agehead {
+  display: none;
+}
+.v-broadside .bs-thead .bs-c-pair {
+  line-height: 12px;
+}
+.v-broadside .bs-thead .is-rank {
+  color: var(--color-bone);
+}
+.v-broadside .bs-row {
+  position: relative;
+  scroll-margin-top: calc(var(--bs-navh) + 100px);
+  border-bottom: 1px solid var(--bs-row-line);
+}
+/* Hover a step up from the canvas, selection a step above that: elev
+   was 1.04:1 on the canvas and the hovered row, whose Buy key sits a
+   screen's width from its ticker, barely showed. The spine still marks
+   the selection. */
+.v-broadside .bs-row:hover {
+  background: var(--color-surface);
+}
+.v-broadside .bs-row[aria-selected="true"] {
+  background: var(--color-raised);
+}
+.v-broadside .bs-row[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+}
+.v-broadside .bs-row:focus-visible {
+  outline-offset: -1px;
+}
+.v-broadside .bs-c-rank.num {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-fig {
+  min-width: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+.v-broadside .bs-row .bs-fig {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-row .bs-fig.is-rank {
+  color: var(--color-bone);
+  font-weight: 500;
+}
+/* Buys and sells each get a slot as wide as the window's widest count,
+   right-aligned, so buys line up with buys down the column and the slash
+   stays put when a sells figure loses a digit. A min-width, not a width:
+   a count that outgrows its slot mid-session pushes its own row, it
+   isn't cut. */
+.v-broadside .bs-board {
+  --bs-flow-ch: 5ch;
+}
+.v-broadside .bs-board[data-w="6h"] {
+  --bs-flow-ch: 6ch;
+}
+.v-broadside .bs-board[data-w="24h"] {
+  --bs-flow-ch: 7ch;
+}
+.v-broadside .bs-flow-n {
+  display: inline-flex;
+  align-items: baseline;
+}
+.v-broadside .bs-flow-n > :not(.bs-slash) {
+  display: inline-block;
+  min-width: var(--bs-flow-ch);
+  text-align: right;
+}
+.v-broadside .bs-slash {
+  padding-inline: 0.4ch;
+  color: var(--color-dim);
+}
+.v-broadside .bs-seatno.meta {
+  color: var(--color-muted);
+}
+
+/* PAIR: one line on the workstation, two on a phone. */
+.v-broadside .bs-c-pair {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-rows: 18px 18px;
+  column-gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.v-broadside .bs-c-pair > :first-child {
+  grid-row: 1 / 3;
+  align-self: center;
+}
+.v-broadside .bs-id {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.v-broadside .bs-tick {
+  flex: none;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--color-bone);
+}
+.v-broadside .bs-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+/* Line two keeps whole items or none: one that doesn't fit wraps onto
+   a second line the box doesn't show, rather than being cut. Cut, a
+   seat label "Z500 #13" read as "Z500 #1". */
+.v-broadside .bs-l2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  height: 18px;
+  min-width: 0;
+  overflow: hidden;
+}
+.v-broadside .bs-l2 > * {
+  flex: none;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+}
+.v-broadside .bs-seat.meta {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-real.meta {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.v-broadside .bs-real-short {
+  display: none;
+}
+.v-broadside .bs-age {
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.v-broadside .bs-sl {
+  margin-left: 1px;
+  color: var(--color-bone);
+}
+.v-broadside .bs-row .bs-boost,
+.v-broadside .bs-c-curve,
+.v-broadside .bs-c-act,
+.v-broadside .bs-split {
+  display: none;
+}
+
+.v-broadside .bs-c-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.v-broadside .bs-split {
+  position: relative;
+  width: 64px;
+  height: 2px;
+  overflow: hidden;
+}
+.v-broadside .bs-split-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+.v-broadside .bs-c-curve {
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.v-broadside .bs-curvebar {
+  display: block;
+  flex: none;
+  width: 40px;
+}
+.v-broadside .bs-curve-n {
+  min-width: 30px;
+  text-align: right;
+}
+.v-broadside .bs-c-act {
+  justify-content: flex-end;
+  align-items: center;
+}
+.v-broadside .bs-buy {
+  height: 24px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line-bright);
+  visibility: hidden;
+}
+.v-broadside .bs-buy.meta {
+  color: var(--color-bone);
+}
+.v-broadside .bs-row:hover .bs-buy,
+.v-broadside .bs-row[aria-selected="true"] .bs-buy,
+.v-broadside .bs-row:focus-within .bs-buy {
+  visibility: visible;
+}
+.v-broadside .bs-buy:hover,
+.v-broadside .bs-buy:focus-visible,
+.v-broadside .bs-sheet-buy:hover,
+.v-broadside .bs-sheet-buy:active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #000;
+}
+
+.v-broadside .bs-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--bs-row-line);
+}
+.v-broadside .bs-empty-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+.v-broadside .bs-empty-cell p.meta {
+  color: var(--color-muted);
+}
+
+/* Phone: rank, pair on two lines, then trades over mcap and change
+   over volume. The cells are the workstation's own, placed by area. */
+@media (max-width: 639px) {
+  .v-broadside .bs-grid {
+    grid-template-columns: 22px minmax(0, 1fr) 80px 64px;
+    column-gap: 8px;
+    padding: 0 16px;
+  }
+  .v-broadside .bs-row {
+    height: 52px;
+    grid-template-rows: 18px 18px;
+    align-content: center;
+  }
+  .v-broadside .bs-thead {
+    height: 28px;
+    grid-template-rows: 12px 12px;
+    align-content: center;
+  }
+  .v-broadside .bs-row {
+    scroll-margin-top: calc(var(--bs-navh) + 104px);
+  }
+  .v-broadside .bs-c-rank {
+    grid-area: 1 / 1 / 3 / 2;
+  }
+  .v-broadside .bs-c-pair {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+  .v-broadside .bs-c-trades {
+    grid-area: 1 / 3;
+  }
+  .v-broadside .bs-c-mc {
+    grid-area: 2 / 3;
+  }
+  .v-broadside .bs-c-chg {
+    grid-area: 1 / 4;
+  }
+  .v-broadside .bs-c-vol {
+    grid-area: 2 / 4;
+  }
+  .v-broadside .bs-c-flow {
+    display: none;
+  }
+}
+
+/* Below the workstation the heads stack as the rows do: the pair's
+   head is "Pair" over "Age", the age being the first figure on each
+   row's second line. The tracking gives before any head is cut. */
+@media (max-width: 1023px) {
+  .v-broadside .bs-thead .meta {
+    letter-spacing: 0.06em;
+  }
+  .v-broadside .bs-thead .bs-c-pair {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  /* The row's avatar rule centres the pair's first child; in the head
+     that child is the word "Pair". */
+  .v-broadside .bs-thead .bs-c-pair > :first-child {
+    align-self: flex-start;
+  }
+  .v-broadside .bs-agehead {
+    display: flex;
+  }
+  /* The note is the only key to the rows' "*", and here "Age" sits at the
+     head's left edge under "Pair": a tip anchored at its right end would
+     open off the screen. It opens rightward, across the table instead. */
+  .v-broadside .bs-agehead [role="tooltip"] {
+    left: 0;
+    right: auto;
+  }
+  /* The real launch's tag goes first on line two, so it is never the
+     item that wraps out of sight: without it that row reads as a fixture
+     under a notice that says every row is one. Line two is a container
+     so the tag can choose its form by the room it actually has. */
+  .v-broadside .bs-l2 {
+    container: bs-l2 / inline-size;
+  }
+  .v-broadside .bs-row .bs-real {
+    order: -1;
+  }
+}
+
+/* Under 208px the full tag, the tier glyph and the age don't fit on one
+   line: the tag takes its short form and the glyph steps out, so the age
+   under its head survives down to about 380. The sheet prints the full
+   tag and the tier. */
+@container bs-l2 (max-width: 207px) {
+  .v-broadside .bs-real-full {
+    display: none;
+  }
+  .v-broadside .bs-real-short {
+    display: inline;
+  }
+  .v-broadside .bs-l2:has(> .bs-real) > .bs-tierg {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .v-broadside .bs-grid {
+    grid-template-columns: 28px minmax(0, 1fr) 84px 120px 72px 84px 84px;
+    padding: 0 16px;
+  }
+  .v-broadside .bs-row {
+    height: 44px;
+  }
+  .v-broadside .bs-thead {
+    height: 24px;
+  }
+}
+
+/* ========================================================= status bar */
+
+.v-broadside .bs-status {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+  padding: 6px 16px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-canvas);
+}
+.v-broadside .bs-status .meta {
+  font-size: 9.5px;
+}
+.v-broadside .bs-st-keys,
+.v-broadside .bs-st-recon,
+.v-broadside .bs-st-spot {
+  display: none;
+}
+.v-broadside .bs-keystip {
+  width: 300px;
+  max-width: 300px;
+}
+/* A note is prose wherever it opens. The shared tip sets no white-space
+   of its own, so the one under the Curve % head took the figure column's
+   nowrap and ran on as a single line out of its own box and past the
+   board's edge: the board cut it off mid-sentence, before the Fortress
+   rule, and grew a sideways scroll while it was open. The keys note
+   sits in the nowrap status strip and only fitted by luck of its copy. */
+.v-broadside [role="tooltip"] {
+  white-space: normal;
+}
+
+/* ============================================================== sheet */
+
+.v-broadside .bs-sheet::backdrop {
+  background: rgb(7 8 12 / 0.72);
+}
+.v-broadside .bs-sheet-tick {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+.v-broadside .bs-sheet-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  padding-block: 4px;
+  border-bottom: 1px solid var(--color-line);
+}
+.v-broadside .bs-sheet-line dd {
+  font-size: 13px;
+  color: var(--color-bone);
+  white-space: nowrap;
+}
+/* Only the note: a wider ".meta" rule here also caught the mint's copy
+   button, made it a block and dropped its icon onto a line of its own,
+   and outranked the shared network hide on the note itself. */
+.v-broadside .bs-sheet-note {
+  display: block;
+  white-space: normal;
+  text-align: right;
+}
+.v-broadside .bs-sheet-note.meta {
+  font-size: 9.5px;
+}
+.v-broadside .bs-sheet-caveat {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+.v-broadside .bs-sheet-mint .num {
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.v-broadside .bs-sheet-buy {
+  height: 36px;
+  width: 100%;
+  border: 1px solid var(--color-line-bright);
+}
+.v-broadside .bs-sheet-buy.meta {
+  color: var(--color-bone);
+}
+.v-broadside .bs-sheet-buy.meta:hover,
+.v-broadside .bs-sheet-buy.meta:active {
+  color: #000;
+}
+
+/* ====================================================== narrow widths */
+
+@media (max-width: 1023px) {
+  .v-broadside .bs-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  /* Row 2 scrolls sideways inside its own box, as the tabs above it do,
+     rather than widening the page: a hidden coin adds a chip that at 390
+     pushed Reset past the edge. It never wraps, because the sticky head
+     below is placed on its 36px. Static, so the Filters popover is
+     placed by the sticky controls around it and isn't clipped by this
+     scroller. */
+  .v-broadside .bs-r2 {
+    position: static;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .v-broadside .bs-r2::-webkit-scrollbar {
+    display: none;
+  }
+  .v-broadside .bs-r2 > * {
+    flex: none;
+  }
+  .v-broadside .bs-win > button {
+    margin-bottom: 0;
+  }
+  /* The art's inward edge is faded here too: the shared mask fades only
+     top and bottom when stacked, and this crop cuts through the middle
+     of the picture rather than at its edge. */
+  .v-broadside .bs-art.art-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 45%),
+      linear-gradient(to bottom, transparent 0%, #000 6%, #000 70%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0%, #000 45%),
+      linear-gradient(to bottom, transparent 0%, #000 6%, #000 70%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
+
+@media (max-width: 767px) {
+  .v-broadside .bs-nav {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 44px;
+  }
+  .v-broadside .bs-search {
+    display: none;
+  }
+  .v-broadside[data-search="open"] {
+    --bs-navh: 84px;
+  }
+  .v-broadside[data-search="open"] .bs-search {
+    display: flex;
+    order: 10;
+    flex: 1 0 100%;
+    width: auto;
+    height: 32px;
+    margin-bottom: 8px;
+  }
+  .v-broadside .bs-searchbtn {
+    display: block;
+    height: 44px;
+  }
+}
+
+@media (max-width: 639px) {
+  .v-broadside .bs-word,
+  .v-broadside .bs-navdiv,
+  .v-broadside .bs-navtab {
+    display: none;
+  }
+}
+
+/* A phone: row 2 sheds its dividers and some air, and Reset becomes a
+   cross, so windows, Filters and a two-digit Hidden chip fit at 360
+   without the row having to scroll. */
+@media (max-width: 479px) {
+  .v-broadside .bs-r2 {
+    gap: 12px;
+  }
+  .v-broadside .bs-r2 > .bs-div {
+    display: none;
+  }
+  .v-broadside .bs-win {
+    gap: 8px;
+  }
+  .v-broadside .bs-reset-long {
+    display: none;
+  }
+  .v-broadside .bs-reset-short {
+    display: inline;
+    font-size: 14px;
+    line-height: 1;
+    padding-inline: 4px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .v-broadside .bs-body {
+    padding: 20px 16px 24px;
+  }
+  .v-broadside .bs-search {
+    width: 232px;
+  }
+}
+
+@media (min-width: 768px) {
+  .v-broadside .bs-zone {
+    --cap: 72px;
+  }
+  .v-broadside .bs-headline-text {
+    font-size: 26px;
+  }
+}
+
+/* ================================================ the workstation, 1024+ */
+
+@media (min-width: 1024px) {
+  .v-broadside {
+    display: grid;
+    /* minmax(0, 1fr), not the implicit auto: a nowrap strip's min-content
+       would otherwise widen the one column past the viewport. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 44px auto 40px minmax(0, 1fr) 28px;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  .v-broadside .bs-search {
+    width: 240px;
+  }
+
+  /* Poster: 68px headline strip over a 112px body. */
+  .v-broadside .bs-poster {
+    height: 180px;
+  }
+  .v-broadside .bs-head {
+    height: 68px;
+    gap: 2px;
+    justify-content: center;
+    padding: 0 24px;
+  }
+  .v-broadside .bs-ra {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    height: 28px;
+  }
+  .v-broadside .bs-rb {
+    align-items: center;
+    height: 20px;
+  }
+  .v-broadside .bs-headline {
+    flex: 1;
+    container-type: inline-size;
+  }
+  .v-broadside .bs-headline-text {
+    white-space: nowrap;
+    font-size: min(24px, calc(100cqi / var(--em) * 0.98));
+  }
+  .v-broadside .bs-stamp {
+    flex: none;
+    height: 20px;
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+  .v-broadside .bs-stamp.meta {
+    font-size: 10.5px;
+  }
+  .v-broadside .bs-rule {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .v-broadside .bs-foldbtn {
+    display: block;
+  }
+  /* Caption, then the numeral set flush right against the art's faded
+     edge, then the art: the figure and the bull's lit eyes meet, as they
+     do on a phone, instead of the numeral floating at the left with the
+     width of the page between them. Flush right, a two-digit score sits
+     against the art too, not alone in an empty field.
+
+     The zone is reserved at the figure's own width at its cap (--zem is
+     set on the body by Poster; the 0.98 is .bs-num's fitting margin),
+     up to --bs-zmax, and the caption takes what it needs to set its
+     lines whole before the rest goes to the zone. A fixed share gave a
+     two-digit score a zone four times its width and wrapped the
+     caption's sentence beside the empty part. The zone's ceiling is its
+     old fr share (38fr here, 41fr from 1280) as a percentage, so a long
+     figure fitted to its zone is never set smaller than it was and the
+     caption is never narrower; the art track is the old 26fr the same
+     way, so the digits end where they did, clear of the eyes.
+
+     What is left over still goes before the figure. Its height is held
+     by the 112px body, so from 1440 a short figure leaves room that no
+     share of the width can fill without pulling it off the art. */
+  .v-broadside .bs-body {
+    --bs-cap: 80px;
+    --bs-zmax: calc(38% - 18px);
+    /* The qualifier line is nowrap under the figure, and a short figure's
+       width is less than "SINCE LAUNCH · AT 00:00:00" (197px): the zone
+       is never reserved narrower than that line. */
+    --bs-qmin: 204px;
+    height: 112px;
+    grid-template-columns:
+      minmax(0, max-content)
+      minmax(min(var(--bs-zmax), max(var(--bs-qmin), calc(var(--bs-cap) * var(--zem, 0) / 0.98))), 1fr)
+      calc(26% - 12px);
+    column-gap: 24px;
+    align-items: center;
+    padding: 0 24px;
+  }
+  .v-broadside .bs-zone {
+    --cap: var(--bs-cap);
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+  /* A Z500 score has no qualifier line under it (see Poster), so the
+     empty line steps out and the score is set taller, filling more of a
+     zone a two-digit figure otherwise leaves mostly empty. */
+  .v-broadside .bs-body[data-noq] {
+    --bs-cap: 96px;
+    --bs-qmin: 0px;
+  }
+  .v-broadside .bs-body[data-noq] .bs-asof {
+    display: none;
+  }
+  .v-broadside .bs-cap {
+    grid-column: 1;
+    grid-row: 1;
+    gap: 4px;
+  }
+  .v-broadside .bs-cap > .meta {
+    line-height: 1.3;
+  }
+  .v-broadside .bs-sentence {
+    line-height: 1.35;
+  }
+  /* Kept inside the art's last column, so it never runs on from the
+     numeral's time line into one sentence. */
+  .v-broadside .bs-caption {
+    bottom: 7px;
+    max-width: min(300px, 24%);
+  }
+
+  .v-broadside .bs-fold {
+    align-items: center;
+    gap: 16px;
+    height: 36px;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .v-broadside .bs-fold .bs-rule {
+    flex: 1;
+  }
+  .v-broadside .bs-fold-sum {
+    flex: none;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .v-broadside .bs-fold-sum .meta {
+    margin-left: 4px;
+  }
+  /* The reader's choice is on <html> before the first paint (see
+     POSTER_SCRIPT in store.ts); no attribute means not chosen. */
+  html[data-bs-poster="folded"] .v-broadside .bs-poster {
+    display: none;
+  }
+  html[data-bs-poster="folded"] .v-broadside .bs-fold {
+    display: flex;
+  }
+
+  /* Controls: one 40px row. */
+  .v-broadside .bs-controls {
+    position: relative;
+    top: auto;
+    z-index: 25;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 16px;
+    height: 40px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .v-broadside .bs-tabs,
+  .v-broadside .bs-r2 {
+    height: auto;
+    padding: 0;
+    border-bottom: 0;
+    overflow: visible;
+  }
+  .v-broadside .bs-tabs {
+    gap: 12px;
+  }
+  .v-broadside .bs-tabs [role="tab"] {
+    margin-bottom: -1px;
+  }
+  .v-broadside .bs-div-lg {
+    display: block;
+  }
+  .v-broadside .bs-r2 {
+    position: static;
+  }
+  .v-broadside .bs-filters {
+    position: relative;
+  }
+  .v-broadside .bs-pop {
+    top: calc(100% + 1px);
+    left: 0;
+    right: auto;
+    width: 320px;
+    max-width: none;
+  }
+  .v-broadside .bs-qbwrap {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* Board: its own scroller, the head sticky inside it, so the head and
+     the rows share one width with the scrollbar gutter reserved on
+     both, and the columns line up. */
+  .v-broadside .bs-board {
+    min-height: 0;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-bright) transparent;
+  }
+  .v-broadside .bs-grid {
+    /* Measured at 1024, where every track sits at its minimum: a pair
+       with a seat, a boost and an age needs 300px, a two-digit rank 36
+       and the Buy key 64, which still leaves the other six their room. */
+    --bs-cols: 36px minmax(300px, 2.4fr) minmax(84px, 1fr) minmax(136px, 1.4fr) minmax(72px, 0.8fr)
+      minmax(84px, 1fr) minmax(84px, 1fr) minmax(104px, 1fr) 64px;
+    grid-template-columns: var(--bs-cols);
+    padding-inline: 16px 8px;
+  }
+  .v-broadside .bs-thead {
+    top: 0;
+    z-index: 2;
+    height: 28px;
+  }
+  .v-broadside .bs-thead .meta {
+    font-size: 10px;
+  }
+  .v-broadside .bs-row {
+    height: 36px;
+    scroll-margin-top: 28px;
+  }
+  /* One flex line, clipped at its own edge so nothing can run on into
+     the TRADES track (the grid has no column gap). The ticker never
+     shrinks; the name gives way, down to a few letters; then the
+     since-launch tag is cut, as one piece; the age stays whole. */
+  .v-broadside .bs-c-pair {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .v-broadside .bs-id,
+  .v-broadside .bs-l2 {
+    display: contents;
+  }
+  .v-broadside .bs-c-pair .bs-name {
+    flex: 0 1 auto;
+    min-width: 4ch;
+  }
+  /* The age is last on the line, under its own head, clear of the
+     seat, and never cut: the name gives way before it does. */
+  .v-broadside .bs-c-pair .bs-age {
+    order: 1;
+    flex: none;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+  /* The head's pair holds two words, so nothing in it can run on; left
+     clipped like a row's, it cut the Age note off at the head's own
+     bottom edge, and the note is the only key to the rows' "*". */
+  .v-broadside .bs-thead .bs-c-pair {
+    justify-content: space-between;
+    overflow: visible;
+  }
+  .v-broadside .bs-agehead {
+    display: flex;
+  }
+  .v-broadside .bs-mig-sm {
+    display: none;
+  }
+  .v-broadside .bs-row .bs-boost {
+    display: inline-flex;
+  }
+  .v-broadside .bs-c-curve,
+  .v-broadside .bs-c-act {
+    display: flex;
+  }
+  .v-broadside .bs-thead .bs-c-curve {
+    display: flex;
+  }
+  .v-broadside .bs-split {
+    display: block;
+  }
+
+  .v-broadside .bs-status {
+    position: static;
+    flex-wrap: nowrap;
+    gap: 12px;
+    height: 28px;
+    padding: 0 16px;
+    white-space: nowrap;
+  }
+  .v-broadside .bs-status .meta {
+    font-size: 10.5px;
+  }
+  .v-broadside .bs-st-keys {
+    display: inline-flex;
+  }
+}
+
+/* A name cut to one letter and an ellipsis spends the width and shows
+   nothing. Where a row also carries a boost, the since-launch mark or
+   the real launch's tag, the name steps out below 1440; the ticker
+   carries it as its title. */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .v-broadside .bs-row:has(.bs-boost) .bs-name,
+  .v-broadside .bs-row:has(.bs-real) .bs-name,
+  .v-broadside .bs-row[data-since] .bs-name {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .v-broadside .bs-usd {
+    display: none;
+  }
+  /* Every column is at its minimum here, and the tracked labels are
+     wider than the figures under them: the tracking gives, the size
+     doesn't. */
+  .v-broadside .bs-thead .meta {
+    letter-spacing: 0.04em;
+  }
+  .v-broadside .bs-c-pair {
+    gap: 6px;
+  }
+}
+
+/* Short windows start folded when the reader hasn't chosen, decided
+   here so the first paint is already the folded one. */
+@media (min-width: 1024px) and (max-height: 699px) {
+  html:not([data-bs-poster]) .v-broadside .bs-poster {
+    display: none;
+  }
+  html:not([data-bs-poster]) .v-broadside .bs-fold {
+    display: flex;
+  }
+}
+
+/* From 1280 the figure is held by its cap, the body's height, rather
+   than by its zone, so the zone may reserve more of the width. */
+@media (min-width: 1280px) {
+  .v-broadside .bs-body {
+    --bs-cap: 96px;
+    --bs-zmax: calc(41% - 20px);
+  }
+  .v-broadside .bs-body[data-noq] {
+    --bs-cap: 108px;
+  }
+  .v-broadside .bs-st-recon {
+    display: inline;
+    margin-left: auto;
+  }
+  .v-broadside .bs-art img {
+    object-position: 50% 3%;
+  }
+}
+
+/* The spot strip joins at 1440. While the order is held, the held label
+   needs the countdown's room, so the countdown steps out and the spot
+   strip keeps its place at the right edge: nothing else moves. */
+@media (min-width: 1440px) {
+  .v-broadside .bs-st-spot {
+    display: flex;
+  }
+  .v-broadside .bs-status[data-held] .bs-st-recon {
+    display: none;
+  }
+  .v-broadside .bs-status[data-held] .bs-st-spot {
+    margin-left: auto;
+  }
+}
+
+@media (min-width: 1600px) {
+  .v-broadside .bs-art img {
+    object-position: 50% 6%;
+  }
+  .v-broadside {
+    max-width: 1600px;
+    margin-inline: auto;
+    border-inline: 1px solid var(--color-line);
+  }
+}

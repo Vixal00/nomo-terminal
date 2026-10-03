@@ -1,0 +1,84 @@
+.nomo-index .nb-workspace{width:min(100%,1040px);min-height:calc(100svh - 124px);margin:0 auto;padding:36px 28px 48px}
+.nomo-index .nb-title-row{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px}
+.nomo-index .nb-title-row h1{font-size:26px;font-weight:550;letter-spacing:-1px;line-height:1.2}
+.nomo-index .nb-title-row p{margin-top:8px;color:#919196;font-size:12px}
+.nomo-index .nb-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:22px;align-items:start}
+.nomo-index .nb-panel{min-width:0;background:#171719;border:1px solid #303033;border-radius:9px;padding:24px}
+.nomo-index .nb-field-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#a5a5ac;line-height:1.4}
+.nomo-index .nb-field-heading h2{font-size:12px;font-weight:500;color:#d8dad5}
+.nomo-index .nb-wallet-link{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#a0a0a8}
+.nomo-index .nb-wallet-link:hover{color:#e3e4df}
+.nomo-index .nb-networks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:13px 0 20px}
+.nomo-index .nb-network{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:100px;gap:6px;padding:13px 4px 11px;border:1px solid #37373c;border-radius:7px;background:#1c1c1f;color:#b7b9b3}
+.nomo-index .nb-network:hover{border-color:#60625b;background:#222325}
+.nomo-index .nb-network.is-active{border-color:#4d8145;background:#202a20}
+.nomo-index .nb-network strong{font-weight:550;font-size:13px;line-height:1}
+.nomo-index .nb-network.is-active strong{color:#c5cfb5}
+.nomo-index .nb-network>span:last-of-type{color:#91969a;font-size:9px;line-height:1.2;white-space:nowrap}
+.nomo-index .nb-network .nb-network-check{position:absolute;right:6px;top:6px;color:#9fc597}
+.nomo-index .nb-robinhood-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;background:#c9ff00;color:#141e03}
+.nomo-index .nb-robinhood-icon svg{width:57%;height:72%}
+.nomo-index .nb-amount-box{padding:16px 17px 13px;border:1px solid #36363b;background:#1c1c1f;border-radius:7px}
+.nomo-index .nb-amount-box:focus-within{border-color:#707269}
+.nomo-index .nb-amount-box.has-error{border-color:#a56871}
+.nomo-index .nb-asset{display:inline-flex;align-items:center;gap:6px;color:#dce0d7;font-size:11px;font-weight:500;white-space:nowrap}
+.nomo-index .nb-amount-input{display:block;width:100%;height:43px;margin:6px 0 1px;padding:0;border:0;border-radius:0;outline:none;background:none;color:#e3e6df;font-family:inherit;font-size:31px;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.nomo-index .nb-amount-input:focus-visible{outline:none}
+.nomo-index .nb-amount-input::placeholder{color:#55555d;opacity:1}
+.nomo-index .nb-amount-caption{display:block;color:#797982;font-size:9px;line-height:1.5}
+.nomo-index .nb-direction{display:flex;align-items:center;justify-content:center;height:30px;color:#73737d}
+.nomo-index .nb-receive-box{background:#1a1c1b;border-color:#303731}
+.nomo-index .nb-receive-amount{display:block;min-height:43px;margin:6px 0 1px;color:#c5cfb5;font-size:29px;letter-spacing:-1px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nomo-index .nb-destination{margin-top:22px}
+.nomo-index .nb-meteor-link{display:inline-flex;align-items:center;gap:6px;color:#b4c9a7;font-size:10px}
+.nomo-index .nb-meteor-link:hover{color:#d8eace}
+.nomo-index .nb-destination input{display:block;width:100%;height:43px;margin-top:10px;padding:0 12px;border:1px solid #38383e;border-radius:5px;background:#1c1c1f;color:#dededb;font-size:11px;letter-spacing:-.1px}
+.nomo-index .nb-destination input::placeholder{color:#74747e}
+.nomo-index .nb-destination input[aria-invalid=true]{border-color:#a56871}
+.nomo-index .nb-address-help{margin-top:7px;font-size:9px;line-height:1.5;color:#7c7c87}
+.nomo-index .nb-error{margin:7px 0 0;color:#e99da9;font-size:10px;line-height:1.5}
+.nomo-index .nb-primary{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:23px;border:1px solid transparent;border-radius:5px;background:#c5cfb5;color:#20261a;font-size:12px;font-weight:600}
+.nomo-index .nb-primary:hover{background:#d4dcc7}
+.nomo-index .nb-wallet-notice{display:flex;align-items:flex-start;gap:8px;margin-top:15px;padding:11px;border:1px solid #46463c;border-radius:5px;background:#26271f;color:#c7c9b1;font-size:10px;line-height:1.65}
+.nomo-index .nb-wallet-notice svg{flex-shrink:0;margin-top:1px}
+.nomo-index .nb-sidebar{display:flex;flex-direction:column;gap:20px;min-width:0}
+.nomo-index .nb-meteor-card{padding:21px 18px;border:1px solid #34343a;border-radius:8px;background:#19191c}
+.nomo-index .nb-meteor-heading{display:flex;align-items:center;gap:11px}
+.nomo-index .nb-meteor-heading h2{font-size:13px;font-weight:550;line-height:1.4}
+.nomo-index .nb-meteor-heading span{font-size:9px;color:#a4c992}
+.nomo-index .nb-meteor-card p{margin-top:15px;color:#96969e;font-size:11px;line-height:1.8}
+.nomo-index .nb-meteor-actions{display:flex;align-items:center;gap:16px;margin-top:19px}
+.nomo-index .nb-meteor-actions>button{height:31px;padding:0 15px;border:1px solid #45454c;border-radius:5px;background:#232326;color:#d6d8d2;font-size:11px}
+.nomo-index .nb-meteor-actions>button:hover{border-color:#77796d}
+.nomo-index .nb-meteor-actions>a{display:flex;align-items:center;gap:5px;color:#93939b;font-size:10px}
+.nomo-index .nb-meteor-actions>a:hover{color:#dbddd7}
+.nomo-index .nb-route-info{padding:4px 5px}
+.nomo-index .nb-route-info h2{font-size:11px;font-weight:500;color:#b9bbb5;margin-bottom:18px}
+.nomo-index .nb-route-stops>span{display:flex;align-items:center;gap:9px;font-size:11px;color:#c8cac5}
+.nomo-index .nb-route-stops small{margin-left:auto;font-size:9px;color:#777781}
+.nomo-index .nb-route-path{display:flex;align-items:center;gap:7px;padding:14px 0 14px 8px;color:#64646e;font-size:9px}
+.nomo-index .nb-route-path>span{height:1px;width:14px;background:#37373b}
+.nomo-index .nb-route-info dl{margin-top:23px;padding-top:15px;border-top:1px solid #2e2e32}
+.nomo-index .nb-route-info dl>div{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:10px;line-height:1.6;margin-bottom:8px}
+.nomo-index .nb-route-info dt{color:#80808a;flex-shrink:0}
+.nomo-index .nb-route-info dd{margin:0;color:#c2c4bd;text-align:right;font-variant-numeric:tabular-nums}
+.nomo-index .nb-route-info>p{margin-top:17px;color:#6f6f7a;font-size:9px;line-height:1.8}
+.nomo-index .nb-back{display:inline-flex;align-items:center;gap:6px;margin-bottom:23px;font-size:10px;color:#94949e}
+.nomo-index .nb-back:hover{color:#dfdfdb}
+.nomo-index .nb-review h2{font-size:24px;font-weight:500;line-height:1.3;letter-spacing:-.7px;outline:none}
+.nomo-index .nb-review-intro{margin-top:9px;max-width:420px;font-size:11px;line-height:1.8;color:#95959e}
+.nomo-index .nb-review-route{display:flex;align-items:center;justify-content:center;gap:29px;margin:25px 0;padding:22px 12px;border:1px solid #373b34;border-radius:7px;background:#20231f;color:#8c9884}
+.nomo-index .nb-review-route>span{display:flex;align-items:center;gap:8px}
+.nomo-index .nb-review-route strong{font-size:12px;font-weight:500;color:#c7d1bd}
+.nomo-index .nb-review-route>svg{transform:rotate(-90deg)}
+.nomo-index .nb-review-details{margin:0}
+.nomo-index .nb-review-details>div{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #2d2d32;font-size:11px}
+.nomo-index .nb-review-details dt{color:#94949e}
+.nomo-index .nb-review-details dd{margin:0;color:#d2d5cc;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nomo-index .nb-review-details .nb-recipient-row{flex-direction:column;align-items:flex-start;gap:8px}
+.nomo-index .nb-recipient-row dd{text-align:left;font-size:12px;max-width:100%}
+.nomo-index .nb-review-note{display:flex;align-items:flex-start;gap:8px;margin-top:19px;color:#989c91;font-size:10px;line-height:1.7}
+.nomo-index .nb-review-note>svg{margin-top:1px;flex-shrink:0}
+.nomo-index .nb-receipt-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px 0 18px;border:1px solid #4b5543;border-radius:8px;background:#252b22;color:#b9cdaa}
+@media(max-width:900px){.nomo-index .nb-workspace{max-width:710px;padding-top:27px}.nomo-index .nb-layout{grid-template-columns:minmax(0,1fr)}.nomo-index .nb-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:24px}.nomo-index .nb-route-info{padding:5px 0}.nomo-index .nb-route-info h2{margin-bottom:13px}.nomo-index .nb-route-info dl{margin-top:15px}.nomo-index .nb-route-info>p{margin-top:12px}}
+@media(max-width:520px){.nomo-index .nb-workspace{padding:24px 14px 32px}.nomo-index .nb-title-row{margin-bottom:19px;gap:12px}.nomo-index .nb-title-row h1{font-size:23px}.nomo-index .nb-title-row p{font-size:10px;max-width:235px;line-height:1.6;margin-top:6px}.nomo-index .nb-panel{padding:17px 14px}.nomo-index .nb-networks{gap:5px;margin-top:12px}.nomo-index .nb-network{min-height:91px;padding:11px 3px 10px}.nomo-index .nb-network>span:last-of-type{font-size:8px;white-space:normal;max-width:64px;min-height:19px;display:flex;align-items:center}.nomo-index .nb-network strong{font-size:12px}.nomo-index .nb-network>img,.nomo-index .nb-network>.nb-robinhood-icon{width:24px!important;height:24px!important}.nomo-index .nb-amount-box{padding:14px 13px 12px}.nomo-index .nb-field-heading{font-size:11px}.nomo-index .nb-wallet-link{font-size:9px;gap:4px}.nomo-index .nb-meteor-link{font-size:9px}.nomo-index .nb-destination input{font-size:10px;padding:0 9px}.nomo-index .nb-sidebar{grid-template-columns:1fr;gap:20px}.nomo-index .nb-meteor-card{padding:19px}.nomo-index .nb-route-info{padding:0 4px}.nomo-index .nb-meteor-card p{max-width:280px}.nomo-index .nb-route-info>p{max-width:300px}.nomo-index .nb-review-route{gap:20px;padding-inline:9px}.nomo-index .nb-review-route strong{font-size:11px}.nomo-index .nb-review-details>div{font-size:10px;gap:10px}.nomo-index .nb-review h2{font-size:22px}}

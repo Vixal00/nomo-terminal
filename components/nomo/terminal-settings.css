@@ -1,0 +1,15 @@
+.nomo-index .ni-setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0;border-bottom:1px solid #303034;text-align:left;width:100%}
+.nomo-index .ni-setting-row>div{display:flex;flex-direction:column;gap:5px}
+.nomo-index .ni-setting-row strong,.nomo-index .ni-setting-shortcuts>strong{color:#d3d3d8;font-size:12px;font-weight:500}
+.nomo-index .ni-setting-row div>span{font-size:11px;color:#85858f;line-height:1.5}
+.nomo-index .ni-setting-switch{display:flex;align-items:center;flex:none;width:30px;height:17px;padding:3px;border:1px solid #424249;border-radius:10px;background:#25252a}
+.nomo-index .ni-setting-switch>span{width:9px;height:9px;background:#888891;border-radius:50%;transition:transform .15s,background .15s}
+.nomo-index .ni-setting-switch[aria-checked="true"]{background:#303b2b;border-color:#5b7050}
+.nomo-index .ni-setting-switch[aria-checked="true"]>span{transform:translateX(13px);background:#c7d6bc}
+.nomo-index .ni-setting-switch:focus-visible,.nomo-index .ni-setting-link:focus-visible{outline:1px solid #9ebe8f;outline-offset:4px}
+.nomo-index .ni-setting-link>svg{flex:none;color:#8f958b}
+.nomo-index .ni-setting-link:hover strong,.nomo-index .ni-setting-link:hover>svg{color:#c7d6bc}
+.nomo-index .ni-setting-shortcuts{display:flex;flex-direction:column;gap:14px;padding-top:22px}
+.nomo-index .ni-setting-shortcuts>div{display:flex;align-items:center;justify-content:space-between;gap:15px;color:#8e8e98;font-size:11px}
+.nomo-index .ni-setting-shortcuts kbd{padding:3px 6px;border:1px solid #36363c;border-radius:3px;background:#202024;font-family:inherit;font-size:10px;color:#b4b4bb}
+@media(prefers-reduced-motion:reduce){.nomo-index .ni-setting-switch>span{transition:none}}

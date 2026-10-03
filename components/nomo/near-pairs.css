@@ -1,0 +1,175 @@
+.nomo-index .np-main{max-width:1800px;margin:0 auto;padding:20px 24px 26px;color:#dcded8;font-size:11px}
+.nomo-index .np-page-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.nomo-index .np-page-head h1{font-size:21px;font-weight:600;letter-spacing:-.55px;line-height:1.3;color:#eff0ec}
+.nomo-index .np-page-head p{font-size:11px;color:#85858d;margin-top:5px}
+.nomo-index .np-page-actions{display:flex;align-items:center;gap:9px}
+.nomo-index .np-networks{display:flex;align-items:center;gap:3px;padding:3px;border:1px solid #303034;border-radius:5px;background:#151517}
+.nomo-index .np-networks>button{display:flex;align-items:center;gap:6px;padding:0 9px;height:28px;border:1px solid transparent;border-radius:3px;background:transparent;color:#8c8c96;font-size:10px;white-space:nowrap}
+.nomo-index .np-networks>button:hover{color:#dbddd5;background:#222225}
+.nomo-index .np-networks>button[aria-pressed=true]{background:#2a2d26;border-color:#3d4335;color:#cad3bc}
+.nomo-index .np-create-link{display:flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 11px;border:1px solid #c5cfb5;border-radius:5px;background:#c5cfb5;color:#24291e;font-size:10px;font-weight:550;white-space:nowrap}
+.nomo-index .np-create-link:hover{background:#d4dec5;border-color:#d4dec5}
+.nomo-index .np-fixture-note{display:flex;align-items:center;gap:6px;min-height:27px;padding:0 0 12px;color:#74757e;font-size:9px;border-bottom:1px solid #28282c}
+.nomo-index .np-fixture-note>span:last-child{margin-left:auto;color:#868982;font-variant-numeric:tabular-nums}
+.nomo-index .np-workspace{display:grid;grid-template-columns:minmax(0,1fr) 304px;align-items:start;gap:14px;margin-top:15px}
+.nomo-index .np-market{min-width:0}
+.nomo-index .np-selected-header{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:0 0 15px;outline:none;scroll-margin-top:125px}
+.nomo-index .np-selected-identity{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.nomo-index .np-selected-identity h2{display:flex;align-items:baseline;gap:6px;font-size:15px;font-weight:580;letter-spacing:-.25px}
+.nomo-index .np-selected-identity h2>span{font-size:10px;font-weight:400;color:#7e818a;letter-spacing:0}
+.nomo-index .np-selected-identity p{display:flex;align-items:center;gap:7px;font-size:9px;color:#8a8b93;margin-top:3px}
+.nomo-index .np-selected-identity p>span{color:#61636d;font-size:8px}
+.nomo-index .np-selected-stats{display:flex;align-items:center;justify-content:space-between;gap:20px;text-align:right;font-variant-numeric:tabular-nums}
+.nomo-index .np-selected-stats>div{display:flex;flex-direction:column;gap:5px}
+.nomo-index .np-selected-stats>div>span{font-size:9px;color:#7e818a}
+.nomo-index .np-selected-stats strong{font-size:11px;font-weight:500;white-space:nowrap}
+.nomo-index .np-selected-stats small{font-size:8px;font-weight:400;color:#777b82;margin-left:4px}
+.nomo-index .np-positive{color:#a7c792}
+.nomo-index .np-negative{color:#d78c99}
+.nomo-index .np-market>.ntc-chart{border:1px solid #2a2a2d;border-radius:6px;margin-bottom:12px}
+.nomo-index .np-market>.ntc-chart .ntc-canvas{height:294px}
+.nomo-index .np-market>.ntc-chart:fullscreen .ntc-canvas{height:auto}
+.nomo-index .np-trades{border:1px solid #2a2a2d;border-radius:5px;background:#111113;overflow:hidden}
+.nomo-index .np-trades-head{display:flex;align-items:center;gap:13px;min-height:39px;padding:0 12px;border-bottom:1px solid #29292d}
+.nomo-index .np-trades-head h2{font-size:11px;font-weight:500;color:#cbcdc8}
+.nomo-index .np-trades-head>div{display:flex;gap:2px}
+.nomo-index .np-trades-head button{height:22px;padding:0 7px;border:1px solid transparent;border-radius:3px;background:transparent;color:#777a83;font-size:9px}
+.nomo-index .np-trades-head button[aria-pressed=true]{background:#282c24;color:#bfcbb3;border-color:#343b2d}
+.nomo-index .np-trades-head button:hover{color:#dadcd4}
+.nomo-index .np-trades-head>span{margin-left:auto;font-size:9px;color:#686b75}
+.nomo-index .np-trades-scroll{max-height:231px;overflow:auto;scrollbar-width:thin;scrollbar-color:#3a3a3e transparent;overscroll-behavior:contain}
+.nomo-index .np-trades table{width:100%;border-collapse:collapse;font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.nomo-index .np-trades th{position:sticky;top:0;height:27px;padding:0 12px;background:#18181a;border-bottom:1px solid #29292d;font-size:9px;color:#777a85;font-weight:400;text-align:right;z-index:1}
+.nomo-index .np-trades td{height:34px;padding:0 12px;border-bottom:1px solid #242428;text-align:right;color:#b5b7bd}
+.nomo-index .np-trades th:first-child,.nomo-index .np-trades th:nth-child(2),.nomo-index .np-trades td:first-child,.nomo-index .np-trades td:nth-child(2){text-align:left}
+.nomo-index .np-trades td:first-child{color:#757781;font-size:9px}
+.nomo-index .np-trades td:nth-child(2)>svg{display:inline-block;vertical-align:middle;margin-right:4px;margin-top:-2px}
+.nomo-index .np-trades td.np-side-buy{color:#99ba86}
+.nomo-index .np-trades td.np-side-sell{color:#cc8794}
+.nomo-index .np-trades td:last-child{color:#868993;font-size:9px}
+.nomo-index .np-trades td:last-child>small{font-size:8px;color:#595d67;margin-left:7px}
+.nomo-index .np-trades tbody tr:hover{background:#1a1a1d}
+.nomo-index .np-trades tbody tr:last-child td{border-bottom:0}
+.nomo-index .np-rail{display:flex;flex-direction:column;gap:13px;min-width:0}
+.nomo-index .np-trade-panel{border:1px solid #303034;border-radius:6px;background:#171719;padding:12px}
+.nomo-index .np-trade-sides{display:flex;gap:3px;padding:3px;border:1px solid #303034;background:#111113;border-radius:5px}
+.nomo-index .np-trade-sides>button{display:flex;align-items:center;justify-content:center;width:50%;height:29px;border:1px solid transparent;border-radius:3px;background:transparent;color:#7f828c;font-size:11px;font-weight:500}
+.nomo-index .np-trade-sides>button.is-buy{border-color:#3a4431;background:#2c3525;color:#c4d4b8}
+.nomo-index .np-trade-sides>button.is-sell{border-color:#513941;background:#3b2a30;color:#e2b1bd}
+.nomo-index .np-trade-sides>button:hover{color:#e1e2dc}
+.nomo-index .np-order-label{display:flex;justify-content:space-between;align-items:center;margin:13px 0 12px;font-size:9px;color:#84858e}
+.nomo-index .np-order-label>span:last-child{font-size:8px;color:#747880;padding:2px 4px;border:1px solid #34363b;border-radius:3px}
+.nomo-index .np-spend-label{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#a4a6ae;font-size:10px;margin-bottom:7px}
+.nomo-index .np-spend-label>span{font-size:8px;color:#727680}
+.nomo-index .np-spend-label strong{font-weight:450;color:#a3a99b}
+.nomo-index .np-amount{display:flex;align-items:center;gap:10px;height:49px;border:1px solid #3a3a40;border-radius:5px;padding:0 11px;background:#111113}
+.nomo-index .np-amount>input{width:100%;min-width:0;height:100%;border:0;padding:0;background:transparent;color:#e0e4da;font-size:22px;font-variant-numeric:tabular-nums;outline:none}
+.nomo-index .np-amount>input::placeholder{color:#5f626b}
+.nomo-index .np-amount>span{color:#9fa598;font-size:10px}
+.nomo-index .np-amount-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
+.nomo-index .np-amount-presets>button{height:27px;padding:0 3px;border:1px solid #35353b;border-radius:4px;background:#1b1b1e;color:#9699a1;font-size:9px;white-space:nowrap}
+.nomo-index .np-amount-presets>button:hover{border-color:#54574e;color:#d6dccd}
+.nomo-index .np-amount-presets>button[aria-pressed=true]{background:#2b3025;border-color:#58614b;color:#cad4bb}
+.nomo-index .np-slippage{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:15px 0;font-size:10px;color:#888b95}
+.nomo-index .np-slippage>div{display:flex;gap:4px}
+.nomo-index .np-slippage button{height:23px;padding:0 6px;border:1px solid #34353b;border-radius:4px;background:#1a1a1d;color:#80858d;font-size:9px}
+.nomo-index .np-slippage button[aria-pressed=true]{border-color:#58614b;background:#2a3023;color:#c6d1b8}
+.nomo-index .np-slippage button:hover{color:#d5d9ce;border-color:#53584a}
+.nomo-index .np-quote{display:flex;flex-direction:column;gap:9px;margin:0 0 16px;padding-top:13px;border-top:1px solid #2c2d31;font-size:10px;font-variant-numeric:tabular-nums}
+.nomo-index .np-quote>div{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.nomo-index .np-quote dt{color:#858993;flex-shrink:0}
+.nomo-index .np-quote dt>span{font-size:8px;color:#616773;margin-left:3px}
+.nomo-index .np-quote dd{margin:0;color:#bdc2b7;text-align:right;overflow-wrap:anywhere;font-size:9px}
+.nomo-index .np-quote dd.np-receive{color:#d8dfce}
+.nomo-index .np-quote dd>small{font-size:8px;color:#6f7970;margin-left:3px}
+.nomo-index .np-primary,.nomo-index .np-secondary{display:flex;align-items:center;justify-content:center;gap:7px;min-height:32px;padding:0 10px;border-radius:4px;font-size:10px;font-weight:500;line-height:1.3}
+.nomo-index .np-primary{border:1px solid #c5cfb5;background:#c5cfb5;color:#252a1f}
+.nomo-index .np-primary:hover{background:#d5dec8;border-color:#d5dec8}
+.nomo-index .np-secondary{border:1px solid #3c3d42;background:#242427;color:#bec4b7}
+.nomo-index .np-secondary:hover{background:#303133;border-color:#56594f;color:#e0e4d8}
+.nomo-index .np-trade-submit{width:100%;height:35px;font-size:11px}
+.nomo-index .np-trade-submit.is-sell{background:#d39ca8;border-color:#d39ca8;color:#39232c}
+.nomo-index .np-trade-submit.is-sell:hover{background:#dfb0bb;border-color:#dfb0bb}
+.nomo-index .np-trade-note{font-size:9px;color:#767b86;line-height:1.65;margin-top:11px}
+.nomo-index .np-error{font-size:10px;line-height:1.5;color:#d294a3;margin-top:8px}
+.nomo-index .np-amount.has-error{border-color:#8d626f}
+.nomo-index .np-order-review{margin-top:12px;padding:10px;border:1px solid #3e4436;border-radius:5px;background:#22271e}
+.nomo-index .np-order-review>div{display:flex;align-items:center;gap:6px;color:#b9c9a8}
+.nomo-index .np-order-review>div>strong{font-size:10px;font-weight:500}
+.nomo-index .np-order-review>div>button{display:flex;align-items:center;justify-content:center;margin-left:auto;width:18px;height:18px;background:transparent;color:#8a967e;border:0;border-radius:3px}
+.nomo-index .np-order-review>p{display:flex;flex-wrap:wrap;align-items:center;gap:7px;color:#abb89c;font-size:10px;margin-top:9px;font-variant-numeric:tabular-nums}
+.nomo-index .np-order-review>p>strong{font-weight:500;color:#d1dfc1}
+.nomo-index .np-order-review>span{display:block;margin-top:8px;font-size:9px;color:#87947b;line-height:1.6}
+.nomo-index .np-pair-wallet{padding:13px 12px;border:1px solid #2c2d32;border-radius:6px;background:#141416}
+.nomo-index .np-section-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.nomo-index .np-section-title h2{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:#c2c7bc}
+.nomo-index .np-section-title>span{font-size:8px;color:#666e77}
+.nomo-index .np-wallet-description{font-size:9px;color:#777e88;line-height:1.6;margin-top:6px}
+.nomo-index .np-wallet-card{border:1px solid #303239;border-radius:5px;background:#1a1a1e;padding:10px;margin:12px 0}
+.nomo-index .np-wallet-address{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.nomo-index .np-wallet-address>code{font-size:8px;color:#929aa2;font-family:var(--font-geist-mono),monospace;overflow-wrap:anywhere;user-select:all;min-width:0}
+.nomo-index .np-wallet-address>button{display:flex;align-items:center;justify-content:center;width:20px;height:21px;padding:0;flex-shrink:0;border:0;border-radius:3px;background:transparent;color:#8a9395}
+.nomo-index .np-wallet-address>button:hover{color:#d1dacc;background:#2c3030}
+.nomo-index .np-wallet-balances{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.nomo-index .np-wallet-balances>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nomo-index .np-wallet-balances span{font-size:9px;color:#818791}
+.nomo-index .np-wallet-balances strong{font-size:16px;color:#c2cabb;font-weight:450;font-variant-numeric:tabular-nums}
+.nomo-index .np-wallet-balances small{font-size:8px;margin-left:5px;color:#6d7874;font-weight:400}
+.nomo-index .np-transfer-tabs{display:flex;gap:3px;padding:3px;border:1px solid #2e3035;background:#101013;border-radius:4px;margin-bottom:11px}
+.nomo-index .np-transfer-tabs>button{display:flex;align-items:center;justify-content:center;gap:5px;height:25px;width:50%;border:1px solid transparent;border-radius:3px;background:transparent;color:#7b8490;font-size:9px}
+.nomo-index .np-transfer-tabs>button[aria-pressed=true]{background:#292d29;border-color:#3b433b;color:#bbc7b4}
+.nomo-index .np-transfer-tabs>button:hover{color:#dce1d7}
+.nomo-index .np-transfer-amount{display:block;padding:10px;border:1px solid #34363c;border-radius:5px;background:#18191c}
+.nomo-index .np-transfer-amount>span{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:9px;color:#939aa2}
+.nomo-index .np-transfer-amount>span:last-child{justify-content:flex-start;color:#737f85;font-size:8px}
+.nomo-index .np-transfer-amount>input{width:100%;min-width:0;height:36px;border:0;background:transparent;color:#d3ddd1;outline:none;padding:0;font-size:20px;font-variant-numeric:tabular-nums}
+.nomo-index .np-transfer-amount>input::placeholder{color:#5b686c}
+.nomo-index .np-transfer-amount>span>button{height:18px;padding:0 4px;border:0;border-radius:3px;background:#2c322a;color:#b1c2a7;font-size:8px}
+.nomo-index .np-transfer-arrow{display:flex;justify-content:center;align-items:center;height:23px;color:#5f6b6a}
+.nomo-index .np-transfer-destination{padding:10px;border:1px solid #2d3136;border-radius:5px;background:#16171a}
+.nomo-index .np-transfer-destination>span{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:9px;color:#8b969b}
+.nomo-index .np-transfer-destination>strong{display:block;min-height:32px;padding-top:7px;font-size:16px;font-weight:450;color:#c1cebc}
+.nomo-index .np-transfer-destination>p{font-size:8px;line-height:1.6;color:#6e7b80;margin-top:3px}
+.nomo-index .np-transfer-submit{width:100%;height:32px;margin-top:11px;font-size:10px}
+.nomo-index .np-wallet-notice{display:flex;gap:6px;align-items:flex-start;margin-top:10px;padding-top:10px;border-top:1px solid #323b33;color:#a2b39b;font-size:9px;line-height:1.6}
+.nomo-index .np-wallet-notice>svg{margin-top:2px}
+.nomo-index .np-pairs-list{margin-top:22px}
+.nomo-index .np-list-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:11px}
+.nomo-index .np-list-head h2{font-size:13px;font-weight:550;color:#d1d7ce;white-space:nowrap}
+.nomo-index .np-list-head h2>span{font-size:10px;font-weight:400;color:#7b858b;margin-left:6px}
+.nomo-index .np-pair-search{display:flex;align-items:center;gap:7px;max-width:280px;width:44%;height:30px;padding:0 8px;border:1px solid #32353b;border-radius:4px;background:#16171a;color:#6e7a83}
+.nomo-index .np-pair-search>input{width:100%;min-width:0;padding:0;border:0;outline:none;background:transparent;color:#c4cec7;font-size:10px}
+.nomo-index .np-pair-search>input::placeholder{color:#67767f}
+.nomo-index .np-pair-search>button{display:flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:0;border-radius:3px;background:transparent;color:#8c9b9e}
+.nomo-index .np-pair-column-heads{display:grid;grid-template-columns:minmax(0,1fr) 180px 90px;gap:15px;padding:0 12px 7px;color:#687681;font-size:8px}
+.nomo-index .np-pair-column-heads>span:not(:first-child){text-align:right}
+.nomo-index .np-pair-rows{display:flex;flex-direction:column;gap:6px}
+.nomo-index .np-pair-row{display:grid;grid-template-columns:minmax(0,1fr) 180px 90px;align-items:center;gap:15px;width:100%;min-height:62px;padding:10px 12px;border:1px solid #2c3237;border-radius:5px;background:#16181a;color:#c9d3ca;text-align:left}
+.nomo-index .np-pair-row:hover{border-color:#4b574b;background:#1d211e}
+.nomo-index .np-pair-row.is-selected{border-color:#58664a;background:#1d241b}
+.nomo-index .np-pair-identity{display:flex;align-items:center;gap:9px;min-width:0}
+.nomo-index .np-pair-identity>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nomo-index .np-pair-identity strong{display:flex;align-items:baseline;gap:7px;font-size:11px;font-weight:550;color:#ced8cf;white-space:nowrap;min-width:0}
+.nomo-index .np-pair-identity strong>span{font-size:9px;font-weight:400;color:#7d9090;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nomo-index .np-pair-identity small{display:flex;align-items:center;gap:8px;font-size:8px;color:#738684}
+.nomo-index .np-pair-identity small>span{font-size:8px;color:#576f6b}
+.nomo-index .np-pair-value{display:flex;flex-direction:column;gap:4px;text-align:right;font-variant-numeric:tabular-nums}
+.nomo-index .np-pair-value>strong{font-size:11px;font-weight:450;color:#c5d4c6;white-space:nowrap}
+.nomo-index .np-pair-value small{font-size:8px;margin-left:4px;color:#7e957d;font-weight:400}
+.nomo-index .np-pair-value>span{font-size:9px;color:#728a7a}
+.nomo-index .np-pair-trades{display:flex;align-items:center;justify-content:flex-end;gap:11px;font-size:10px;color:#8da695;font-variant-numeric:tabular-nums}
+.nomo-index .np-pair-trades>svg{color:#56766b}
+.nomo-index .np-list-note{margin-top:11px;font-size:9px;color:#677d78;line-height:1.6}
+.nomo-index .np-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:190px;border:1px solid #303a3c;border-radius:5px;background:#171c1d;color:#7e9491;text-align:center;padding:20px}
+.nomo-index .np-empty h2,.nomo-index .np-empty h3{font-size:13px;font-weight:500;color:#bdd0c6}
+.nomo-index .np-empty p{font-size:10px;color:#7f9791}
+.nomo-index .np-empty>.np-secondary{margin-top:5px}
+.nomo-index .np-amount:focus-within,.nomo-index .np-transfer-amount:focus-within,.nomo-index .np-pair-search:focus-within{border-color:#80868a;outline:1px solid #80868a;outline-offset:1px}
+.nomo-index .np-amount>input:focus-visible,.nomo-index .np-transfer-amount>input:focus-visible,.nomo-index .np-pair-search>input:focus-visible{outline:none}
+.nomo-index .np-main button:focus-visible,.nomo-index .np-main a:focus-visible{outline:1px solid #8f9198;outline-offset:2px}
+.nomo-index .np-trades-scroll:focus-visible{outline:1px solid #797e87;outline-offset:-2px}
+@media(max-width:1180px){.nomo-index .np-selected-header{flex-wrap:wrap;gap:13px}.nomo-index .np-selected-stats{width:100%;text-align:left;gap:12px}.nomo-index .np-pair-column-heads,.nomo-index .np-pair-row{grid-template-columns:minmax(0,1fr) 145px 62px;gap:10px}.nomo-index .np-pair-trades{gap:6px}}
+@media(max-width:950px){.nomo-index .np-main{padding-left:16px;padding-right:16px}.nomo-index .np-workspace{grid-template-columns:minmax(0,1fr) 280px;gap:12px}.nomo-index .np-page-head{gap:12px}.nomo-index .np-page-actions{gap:7px}.nomo-index .np-networks>button{padding:0 7px;font-size:9px}.nomo-index .np-list-head{align-items:flex-start;flex-direction:column;gap:9px}.nomo-index .np-pair-search{width:100%;max-width:none}.nomo-index .np-pair-identity strong>span{display:none}.nomo-index .np-trades th,.nomo-index .np-trades td{padding-left:9px;padding-right:9px}.nomo-index .np-trades td:last-child>small{display:none}}
+@media(max-width:760px){.nomo-index .np-main{padding:15px 14px 20px}.nomo-index .np-page-head{align-items:flex-start;flex-direction:column;gap:14px}.nomo-index .np-page-actions{width:100%;justify-content:space-between}.nomo-index .np-networks>button{font-size:10px;padding:0 8px}.nomo-index .np-create-link{font-size:10px;padding:0 9px}.nomo-index .np-workspace{grid-template-columns:minmax(0,1fr);gap:16px}.nomo-index .np-rail{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:12px}.nomo-index .np-list-head{flex-direction:row;align-items:center}.nomo-index .np-pair-search{width:46%;max-width:260px}.nomo-index .np-pair-identity strong>span{display:inline}.nomo-index .np-selected-header{scroll-margin-top:165px}.nomo-index .np-market>.ntc-chart .ntc-canvas{height:270px}}
+@media(max-width:550px){.nomo-index .np-rail{grid-template-columns:1fr}.nomo-index .np-pair-column-heads,.nomo-index .np-pair-row{grid-template-columns:minmax(0,1fr) 117px 44px;gap:7px}.nomo-index .np-pair-column-heads{font-size:7px;padding:0 8px 7px}.nomo-index .np-pair-row{min-height:59px;padding:9px 8px}.nomo-index .np-pair-identity{gap:7px}.nomo-index .np-pair-identity strong>span,.nomo-index .np-pair-identity small>span{display:none}.nomo-index .np-pair-value>strong{font-size:10px}.nomo-index .np-pair-value>span{font-size:8px}.nomo-index .np-pair-value small{font-size:7px;margin-left:3px}.nomo-index .np-pair-trades{font-size:9px}.nomo-index .np-pair-trades>svg{display:none}.nomo-index .np-fixture-note{flex-wrap:wrap;font-size:8px;gap:5px}.nomo-index .np-fixture-note>span:last-child{font-size:8px}.nomo-index .np-list-head{flex-direction:column;align-items:flex-start;gap:10px}.nomo-index .np-pair-search{max-width:none;width:100%}.nomo-index .np-selected-stats{gap:7px}.nomo-index .np-selected-stats strong{font-size:10px}.nomo-index .np-selected-stats small{font-size:7px;margin-left:2px}.nomo-index .np-selected-stats>div>span{font-size:8px}.nomo-index .np-trades-head{padding:0 9px;gap:9px}.nomo-index .np-trades-head>span{font-size:8px}.nomo-index .np-trades table{font-size:9px}.nomo-index .np-trades th,.nomo-index .np-trades td{padding-left:7px;padding-right:7px}.nomo-index .np-trades td:last-child{font-size:8px}.nomo-index .np-trades td:nth-child(2)>svg{display:none}.nomo-index .np-market>.ntc-chart .ntc-canvas{height:230px}}
+@media(max-width:360px){.nomo-index .np-page-actions{gap:5px}.nomo-index .np-networks>button{font-size:9px;padding:0 5px;gap:4px}.nomo-index .np-create-link{font-size:9px;padding:0 7px;gap:4px}.nomo-index .np-pair-column-heads,.nomo-index .np-pair-row{grid-template-columns:minmax(0,1fr) 107px 35px}.nomo-index .np-selected-stats>div:last-child{display:none}}

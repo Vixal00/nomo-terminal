@@ -1,0 +1,23 @@
+node_modules/
+node_modules
+.next/
+out/
+build/
+.DS_Store
+*.pem
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Agent and tool folders. Session state, not project code.
+.agents/
+.claude/
+.playwright/
+
+.codex/
+.Codex/
+AGENTS.md
+CLAUDE.md
+.env
+.env.*
