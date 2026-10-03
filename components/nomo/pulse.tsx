@@ -110,7 +110,7 @@ function PulseColumn({ column, tokens, stars, onStar, onSelect, onBuy, quickAmou
     </header>
     <div ref={list} className="npu-token-list" onPointerEnter={event => { if (event.pointerType === "mouse" || event.pointerType === "pen") setHover(true); }} onPointerLeave={() => setHover(false)} onPointerCancel={() => setHover(false)} onFocusCapture={() => setFocus(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocus(false); }}>
       {displayed.map(token => <article className="npu-token-card" key={token.id} aria-label={`${token.symbol}, ${token.name}`}>
-        <TokenIdentity token={token} onSelect={onSelect} variant="pulse" trailing={<button className={`npu-star ${stars.includes(token.id) ? "is-starred" : ""}`} aria-label={`${stars.includes(token.id) ? "Remove" : "Add"} ${token.symbol} ${stars.includes(token.id) ? "from" : "to"} watchlist`} aria-pressed={stars.includes(token.id)} onClick={() => onStar(token.id)}><Star size={12} weight={stars.includes(token.id) ? "fill" : "regular"}/></button>}/>
+        <TokenIdentity token={token} onSelect={onSelect} variant="pulse" trailing={<button className={`npu-star ${stars.includes(token.id) ? "is-starred" : ""}`} aria-label={`${stars.includes(token.id) ? "Remove" : "Add"} ${token.symbol} ${stars.includes(token.id) ? "from" : "to"} watchlist`} aria-pressed={stars.includes(token.id)} onClick={() => onStar(token.id)}><Star size={14} weight={stars.includes(token.id) ? "fill" : "regular"}/></button>}/>
         <div className="npu-card-market">
           <span><small>MC</small><strong>{money(token.mcap)}</strong></span>
           <span title="24-hour volume"><small>V</small><strong>{money(token.volume)}</strong></span>

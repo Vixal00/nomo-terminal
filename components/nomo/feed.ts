@@ -117,7 +117,7 @@ export function useMarketFeed() {
       const count = 3 + Math.floor(sample(cycle, 0, 8) * 4);
       const start = Math.floor(sample(cycle, 0, 9) * TOKENS.length);
       for (let position = 0; position < count; position++) {
-        // Five is coprime to the 18-token snapshot: every update in a batch is distinct.
+        // Five is coprime to the 36-token snapshot: every update in a batch is distinct.
         const index = (start + position * 5) % TOKENS.length;
         schedule(() => {
           setState(previous => advanceMarketFeed(previous, { cycle, index, reorder: cycle % 4 === 0 && position === count - 1 }));

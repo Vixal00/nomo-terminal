@@ -46,11 +46,29 @@ const seeds: [string,string,string,number,number,number,number,number,number,Mar
   ["MOON","See you up there","orbit",.00000694,6940,8600,-.81,-7.83,-12.14,"New","2m","#b3a0ec"],
   ["FLOW","Go with it","wave",.0000912,91200,167000,1.16,20.39,51.32,"Graduating","1h","#8cc6ec"],
   ["LUCKY","Feeling lucky","dice",.0000186,18600,27200,2.77,47.02,92.40,"New","9m","#ced3d6"],
+  ["GOBLIN","Tiny trouble","/art/coins/p02.webp",.0000078,7800,11600,1.81,18.24,45.12,"New","11m","#a8d194"],
+  ["PEBBLE","Small beginnings","/art/coins/p04.webp",.0000112,11200,17200,2.36,27.14,62.83,"New","12m","#cad3d8"],
+  ["MISO","Soup season","/art/coins/p06.webp",.0000194,19400,25800,.84,13.52,28.41,"New","14m","#eac28b"],
+  ["BLOOP","Deep blue","/art/coins/p09.webp",.0000246,24600,39800,3.17,42.11,81.27,"New","16m","#8cc6ec"],
+  ["PIXEL","One pixel at a time","/art/coins/p13.webp",.0000168,16800,22100,-.42,-4.37,-9.12,"New","18m","#dfb4e9"],
+  ["BEAN","Growing daily","/art/coins/p15.webp",.0000283,28300,45700,1.94,31.42,74.66,"New","21m","#a8d194"],
+  ["NOVA","A bright beginning","/art/coins/p18.webp",.0000864,86400,138000,1.28,23.65,58.24,"Graduating","1h 12m","#ebae79"],
+  ["MOSS","Quiet growth","/art/coins/p20.webp",.0000689,68900,94200,.56,11.78,24.19,"Graduating","1h 24m","#82be74"],
+  ["FROST","Cold front","/art/coins/p22.webp",.0000571,57100,83600,-.31,-2.82,-6.37,"Graduating","1h 38m","#a6dfcc"],
+  ["COMET","Catch the tail","/art/coins/p25.webp",.0000945,94500,156000,1.79,29.31,66.48,"Graduating","2h","#eda179"],
+  ["KITE","Higher together","/art/coins/p27.webp",.0000768,76800,108000,.91,17.52,38.71,"Graduating","2h 16m","#e2cd77"],
+  ["DRIFT","Find your current","/art/coins/p30.webp",.0000627,62700,89700,-.18,6.84,15.26,"Graduating","2h 42m","#8cc6ec"],
+  ["ECHO","Hear it again","/art/coins/p32.webp",.000184,184000,142000,.62,12.37,29.46,"Established","12h","#b3a0ec"],
+  ["LUMA","Light the way","/art/coins/p36.webp",.000392,392000,208000,1.07,19.81,43.28,"Established","16h","#e2cd77"],
+  ["BOLT","Made of energy","/art/coins/p38.webp",.000128,128000,97200,-.83,-7.12,-14.62,"Established","22h","#ebae79"],
+  ["PEARL","From the deep","/art/coins/p40.webp",.000567,567000,286000,.34,8.79,18.52,"Established","2d","#dfb4e9"],
+  ["ATLAS","A world of moves","/art/coins/p45.webp",.000823,823000,368000,.72,15.64,32.18,"Established","4d","#a8b9b8"],
+  ["BLOOM","Always in season","/art/coins/p47.webp",.000315,315000,194000,1.41,26.43,57.82,"Established","5d","#ed9daa"],
 ];
 export const TOKENS: Token[] = seeds.map(([symbol,name,art,price,mcap,volume,change1m,change30m,change24h,stage,age,color],i) => {
   const holders = Math.round(mcap/560+148+i*19);
   return ({
-  id:symbol.toLowerCase(),symbol,name,image:art === "nomo" ? "/nomo/nomo-coin.webp" : `/nomo/coins/${art}-64.webp`,color,chain:"Solana",
+  id:symbol.toLowerCase(),symbol,name,image:art.startsWith("/") ? art : art === "nomo" ? "/nomo/nomo-coin.webp" : `/nomo/coins/${art}-64.webp`,color,chain:"Solana",
   // Illustrative supply is fully circulating, so market cap and FDV both equal price × 1 billion.
   price,mcap,totalSupply:1_000_000_000,volume,liquidity:Math.round(mcap*.13+volume*.06),holders,
   change1m,change5m:Math.round((change24h*.13-i*.2)*100)/100,change30m,change1h:Math.round(change24h*.58*100)/100,change24h,

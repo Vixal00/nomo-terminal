@@ -1,4 +1,4 @@
-.nomo-index .npu-main{container-type:inline-size;container-name:pulse;padding:16px 24px 24px;max-width:1800px;min-width:0;margin:auto;min-height:calc(100svh - 114px);font-size:11px;color:#d5d5dc}
+.nomo-index .npu-main{container-type:inline-size;container-name:pulse;padding:16px 20px 24px;width:100%;min-width:0;margin:auto;min-height:calc(100svh - 114px);font-size:11px;color:#d5d5dc}
 .nomo-index .npu-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;min-height:30px}
 .nomo-index .npu-heading h1{font-size:21px;font-weight:620;letter-spacing:-.65px;margin:0}
 .nomo-index .npu-heading-actions{display:flex;align-items:center;gap:13px}
@@ -44,38 +44,38 @@
 .nomo-index .npu-filter-trigger.is-active{color:#c5cfb5;background:#252b20;border-color:#4b553f}
 .nomo-index .npu-filter-trigger>span{font-size:8px;padding-right:3px}
 .nomo-index .npu-token-list{height:max(380px,calc(100svh - 241px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#38383f #141416;min-width:0}
-.nomo-index .npu-token-card{position:relative;display:grid;grid-template-columns:56px minmax(0,1fr) 110px;gap:4px 10px;align-items:center;padding:10px 12px 11px;border-bottom:1px solid #29292d;background:#121214;min-width:0}
+.nomo-index .npu-token-card{position:relative;display:grid;grid-template-columns:68px minmax(0,1fr) 124px;gap:5px 12px;align-items:center;padding:10px 12px 11px;border-bottom:1px solid #29292d;background:#121214;min-width:0}
 .nomo-index .npu-token-card:hover{background:#19191c}
 .nomo-index .npu-token-card>.ni-token-identity{display:contents}
-.nomo-index .npu-token-card .ni-token-identity-avatar{grid-column:1;grid-row:1/3;align-self:center;flex-basis:56px;width:56px;height:56px;border-radius:7px;box-shadow:0 0 0 1px #34383a}
+.nomo-index .npu-token-card .ni-token-identity-avatar{grid-column:1;grid-row:1/3;align-self:center;flex-basis:68px;width:68px;height:68px;border-radius:7px;box-shadow:0 0 0 1px #34383a}
 .nomo-index .npu-token-card .ni-token-identity-avatar>.nm-avatar{border-radius:7px!important}
-.nomo-index .npu-token-card .ni-token-identity-body{grid-column:2;grid-row:1;gap:4px;align-self:center;min-width:0}
-.nomo-index .npu-token-card .ni-token-identity-heading{gap:5px;min-width:0}
-.nomo-index .npu-token-card .ni-token-identity-symbol{font-size:12px}
-.nomo-index .npu-token-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px!important;color:#727780!important;text-align:left}
+.nomo-index .npu-token-card .ni-token-identity-body{grid-column:2;grid-row:1;gap:6px;align-self:center;min-width:0}
+.nomo-index .npu-token-card .ni-token-identity-heading{gap:6px;min-width:0;height:21px}
+.nomo-index .npu-token-card .ni-token-identity-symbol{font-size:15px;line-height:21px}
+.nomo-index .npu-token-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px!important;color:#838892!important;text-align:left}
 .nomo-index .npu-token-address{display:flex;align-items:center;gap:7px;min-width:0}
-.nomo-index .npu-token-address .ni-token-identity-copy{padding:0;font-size:9px;height:16px}
-.nomo-index .npu-token-address .ni-token-identity-address{font-size:9px;max-width:76px}
-.nomo-index .npu-token-address .ni-token-identity-age{color:#949d8d;font-size:9px}
-.nomo-index .npu-token-holders{display:flex;align-items:center;gap:4px;color:#a0a3ab;font-size:9px;font-variant-numeric:tabular-nums}
+.nomo-index .npu-token-address .ni-token-identity-copy{padding:0;font-size:11px;height:18px}
+.nomo-index .npu-token-address .ni-token-identity-address{font-size:10px;max-width:82px}
+.nomo-index .npu-token-address .ni-token-identity-age{color:#949d8d;font-size:10px}
+.nomo-index .npu-token-holders{display:flex;align-items:center;gap:4px;color:#a0a3ab;font-size:10px;font-variant-numeric:tabular-nums}
 .nomo-index .npu-token-holders>span,.nomo-index .npu-token-holders>svg{color:#656d77}
-.nomo-index .npu-star{display:grid;place-items:center;flex:0 0 16px;height:18px;margin-left:auto;color:#5e646d}
+.nomo-index .npu-star{display:grid;place-items:center;flex:0 0 18px;height:21px;margin:0;color:#5e646d}
 .nomo-index .npu-star:hover,.nomo-index .npu-star.is-starred{color:#c5cfb5}
 .nomo-index .npu-card-market{grid-column:3;grid-row:1;display:grid;gap:3px;align-self:start;padding-top:1px;text-align:right;min-width:0;font-variant-numeric:tabular-nums}
-.nomo-index .npu-card-market>span{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;white-space:nowrap;font-size:9px}
-.nomo-index .npu-card-market small{color:#737780;font-size:8px}
-.nomo-index .npu-card-market strong{color:#d8dadf;font-size:11px;font-weight:500}
-.nomo-index .npu-card-market>span:first-child strong{font-size:12px}
+.nomo-index .npu-card-market>span{display:flex;align-items:baseline;justify-content:flex-end;gap:5px;white-space:nowrap;font-size:11px}
+.nomo-index .npu-card-market small{color:#858a93;font-size:10px}
+.nomo-index .npu-card-market strong{color:#d8dadf;font-size:13px;font-weight:500}
+.nomo-index .npu-card-market>span:first-child strong{font-size:15px}
 .nomo-index .npu-card-signals{grid-column:2;grid-row:2;min-width:0}
 .nomo-index .npu-card-signals .nm-token-signals.is-chips{gap:3px}
-.nomo-index .npu-card-signals .nm-token-signals.is-chips>.nm-signal-line{gap:3px;min-height:17px}
-.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip{height:17px;min-height:17px;gap:2px;padding:0 3px;border-radius:3px}
-.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip>strong{font-size:8px}
-.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip>svg{width:10px;height:10px}
+.nomo-index .npu-card-signals .nm-token-signals.is-chips>.nm-signal-line{gap:4px;min-height:22px}
+.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip{height:22px;min-height:22px;gap:3px;padding:0 4px;border-radius:3px}
+.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip>strong{font-size:10px}
+.nomo-index .npu-card-signals .nm-token-signals.is-chips .nm-signal-chip>svg{width:12px;height:12px}
 .nomo-index .npu-card-action{grid-column:3;grid-row:2;display:flex;align-items:center;justify-content:flex-end;gap:7px}
-.nomo-index .npu-transactions{display:flex;align-items:center;gap:4px;white-space:nowrap;color:#acafb7;font-size:8px;font-variant-numeric:tabular-nums}
+.nomo-index .npu-transactions{display:flex;align-items:center;gap:4px;white-space:nowrap;color:#acafb7;font-size:10px;font-variant-numeric:tabular-nums}
 .nomo-index .npu-transactions>span:first-child{color:#666d76}
-.nomo-index .npu-buy{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:24px;min-width:58px;padding:0 7px;font-size:10px;font-weight:550;color:#c5cfb5;border:1px solid #455039;border-radius:4px;background:#262e20;font-variant-numeric:tabular-nums}
+.nomo-index .npu-buy{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:28px;min-width:66px;padding:0 8px;font-size:12px;font-weight:550;color:#c5cfb5;border:1px solid #455039;border-radius:4px;background:#262e20;font-variant-numeric:tabular-nums}
 .nomo-index .npu-buy svg{color:#a6cb94}
 .nomo-index .npu-buy:hover{border-color:#7b8c67;color:#dde8cd;background:#35412b}
 .nomo-index .npu-buy:disabled{opacity:.4;cursor:not-allowed}
@@ -91,8 +91,11 @@
 .nomo-index .npu-empty p{font-size:10px;max-width:230px;line-height:1.6;margin:0}
 .nomo-index .npu-empty button{color:#c5cfb5;background:#272e21;border:1px solid #3e4933;border-radius:4px;font-size:10px;padding:6px 10px;margin-top:6px}
 .nomo-index .npu-dialog{position:fixed;inset:0;margin:auto;width:min(435px,calc(100vw - 28px));max-height:calc(100svh - 40px);overflow:auto;border:1px solid #39393f;border-radius:10px;background:#171719;padding:0;color:#d7d7df;font:inherit;box-shadow:0 24px 100px #0009}.nomo-index .npu-dialog::backdrop{background:#060607b5;backdrop-filter:blur(4px)}.nomo-index .npu-dialog>form{padding:21px}.nomo-index .npu-dialog header{display:flex;align-items:center;justify-content:space-between;gap:15px}.nomo-index .npu-dialog h2{font-size:17px;font-weight:580;letter-spacing:-.3px;margin:0}.nomo-index .npu-dialog p{font-size:11px;color:#85858f;line-height:1.65;margin:12px 0 20px}.nomo-index .npu-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:#898992;border-radius:4px}.nomo-index .npu-icon:hover{background:#2a2a2f;color:#dcdce4}.nomo-index .npu-filter-fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}.nomo-index .npu-filter-fields label{display:flex;flex-direction:column;gap:8px;font-size:10px;color:#aaaab4;min-width:0}.nomo-index .npu-filter-fields label>span{display:flex;align-items:center;gap:7px;padding:0 10px;height:35px;border:1px solid #37373d;border-radius:5px;background:#101012;color:#81818c}.nomo-index .npu-filter-fields label>span:focus-within{border-color:#7d896e}.nomo-index .npu-filter-fields input{width:100%;min-width:0;border:0;background:none;outline:0;font:inherit;color:#dddde4;padding:8px 0}.nomo-index .npu-checkbox{display:flex;align-items:center;gap:8px;font-size:11px;color:#bbbcc5;margin-top:20px;cursor:pointer}.nomo-index .npu-checkbox+.npu-checkbox{margin-top:13px}.nomo-index .npu-checkbox input{width:13px;height:13px;accent-color:#c5cfb5}.nomo-index .npu-checkbox svg{color:#8a9580;margin-left:auto}.nomo-index .npu-dialog .npu-filter-note{font-size:9px;margin:14px 0 0;color:#74747e}.nomo-index .npu-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:17px;margin-top:20px;border-top:1px solid #2d2d32}.nomo-index .npu-button{height:31px;padding:0 11px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #36363c;border-radius:4px;background:#202023;color:#aaaab4;font-size:10px}.nomo-index .npu-button.npu-primary{background:#c5cfb5;color:#24291e;border-color:#c5cfb5}.nomo-index .npu-main :is(button,a,input,select):focus-visible{outline:1px solid #a9b699;outline-offset:3px}
-@container pulse (max-width:1250px){.nomo-index .npu-column-header{gap:6px;padding-inline:8px}.nomo-index .npu-column-title{gap:4px}.nomo-index .npu-column-title>svg{display:none}.nomo-index .npu-column-tools{gap:4px}.nomo-index .npu-column-amount{width:51px}.nomo-index .npu-token-card{padding-inline:10px;column-gap:8px}}
-@container pulse (max-width:1000px){.nomo-index .npu-mobile-tabs{display:flex}.nomo-index .npu-board{grid-template-columns:minmax(0,1fr)}.nomo-index .npu-column:not(.is-mobile-active){display:none}.nomo-index .npu-column{border-right:0}.nomo-index .npu-column-title>svg{display:block}.nomo-index .npu-token-list{height:max(380px,calc(100svh - 300px))}.nomo-index .npu-search{max-width:200px}}
+@container pulse (max-width:1250px){.nomo-index .npu-column-header{gap:6px;padding-inline:8px}.nomo-index .npu-column-title{gap:4px}.nomo-index .npu-column-title>svg{display:none}.nomo-index .npu-column-tools{gap:4px}.nomo-index .npu-column-amount{width:51px}.nomo-index .npu-token-card{padding-inline:10px;column-gap:8px;grid-template-columns:68px minmax(0,1fr) 112px}}
+@container pulse (max-width:1160px){.nomo-index .npu-mobile-tabs{display:flex}.nomo-index .npu-board{grid-template-columns:minmax(0,1fr)}.nomo-index .npu-column:not(.is-mobile-active){display:none}.nomo-index .npu-column{border-right:0}.nomo-index .npu-column-title>svg{display:block}.nomo-index .npu-token-list{height:max(380px,calc(100svh - 300px))}.nomo-index .npu-search{max-width:200px}}
 @media(max-width:700px){.nomo-index .npu-main{padding:14px 12px 24px}.nomo-index .npu-heading{flex-wrap:wrap;gap:12px;margin-bottom:13px}.nomo-index .npu-heading-actions{justify-content:space-between;width:100%;gap:10px}.nomo-index .npu-quick-settings{border-left:0;padding-left:0}.nomo-index .npu-pause,.nomo-index .npu-quick-settings>span{font-size:9px}.nomo-index .npu-dialog>form{padding:17px}}
 .nomo-index .npu-buy-error{margin:-7px 0 14px;color:#ee7783;font-size:10px;line-height:1.5;text-align:right}.nomo-index .npu-buy-error:empty{display:none}
 @media(max-width:700px){.nomo-index .npu-buy-error{text-align:left;margin-top:-4px}}
+
+@container pulse (max-width:410px){.nomo-index .npu-token-card .ni-token-identity-avatar{grid-row:1}.nomo-index .npu-card-signals{grid-column:1/3}}
+@container pulse (max-width:330px){.nomo-index .npu-token-card{grid-template-columns:68px minmax(0,1fr) 85px}.nomo-index .npu-token-card .ni-token-identity-symbol{font-size:14px}.nomo-index .npu-card-action{gap:5px}.nomo-index .npu-transactions,.nomo-index .npu-token-holders,.nomo-index .npu-token-name{display:none}}
