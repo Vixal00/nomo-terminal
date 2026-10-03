@@ -28,7 +28,7 @@ export function LeaderboardWorkspace() {
   useEffect(() => { if (selected) dialog.current?.showModal(); else dialog.current?.close(); }, [selected]);
   const ranked = PREVIEW_TRADERS.filter(trader => scope === "All NEAR traders" || trader.nomo).map(trader => periodTrader(trader, period)).sort((a, b) => b.pnl - a.pnl);
   const rows = ranked.filter(trader => `${trader.name} ${trader.handle} ${trader.address}`.toLowerCase().includes(query.trim().toLowerCase().replace(/^@/, ""))).sort((a, b) => (metric(a, sort) - metric(b, sort)) * (ascending ? 1 : -1));
-  const following = (trader: PreviewTrader) => wallets.some(wallet => wallet.address === trader.address);
+  const following = (trader: PreviewTrader) => wallets.some(wallet => (!wallet.chain || wallet.chain === "NEAR") && wallet.address === trader.address);
   const sortBy = (key: SortKey) => { if (sort === key) setAscending(!ascending); else { setSort(key); setAscending(key === "lastMinutes"); } };
   const openTrader = (trader: PreviewTrader) => { setSelected(trader); setDetailView("Open positions"); setCopied(false); };
   const detailTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {

@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { TOKENS } from "./data";
+import { isStoredTrackedWallet, normalizeWalletAddress, trackedWalletKey, type TrackedWallet } from "./tracked-wallets";
+export { isNearAccount } from "./tracked-wallets";
+export type { TrackedWallet } from "./tracked-wallets";
 
 /** Authored UI fixtures. No account, trade or X profile is fetched or verified. */
 export type PreviewTrader = {
@@ -31,16 +34,10 @@ export const PREVIEW_TRADES = Array.from({ length: 36 }, (_, index) => {
   return { id: `trade-${index}`, address: trader.address, token, side: index % 3 === 2 ? "Sell" as const : "Buy" as const, amount: 14.6 + index * 3.17, minutes: 2 + index * 7 };
 });
 
-export type TrackedWallet = { address: string; name: string; avatar: string; monitor: boolean; trades: boolean; addedAt: number };
 export const normalizeTrackedAccount = (address: string) => PREVIEW_TRADERS.find(trader => trader.address.replace(/\.near$/, ".preview.near") === address)?.address || address;
 export const TRACKED_WALLETS_KEY = "nomo.preview.tracked-wallets.v1";
 const WALLET_EVENT = "nomo:tracked-wallets";
 const initialWallets = PREVIEW_TRADERS.slice(0, 3).concat(PREVIEW_TRADERS[4]).map(trader => ({ address: trader.address, name: trader.name, avatar: trader.avatar, monitor: true, trades: true, addedAt: 0 }));
-const isWallet = (value: unknown): value is TrackedWallet => {
-  if (!value || typeof value !== "object") return false;
-  const wallet = value as Partial<TrackedWallet>;
-  return typeof wallet.address === "string" && typeof wallet.name === "string" && typeof wallet.avatar === "string" && wallet.avatar.startsWith("/art/coins/") && typeof wallet.monitor === "boolean" && typeof wallet.trades === "boolean" && typeof wallet.addedAt === "number";
-};
 
 export function useTrackedWallets() {
   const [wallets, setWallets] = useState<TrackedWallet[]>(initialWallets);
@@ -49,8 +46,8 @@ export function useTrackedWallets() {
       try {
         const raw: unknown = JSON.parse(localStorage.getItem(TRACKED_WALLETS_KEY) || "null");
         if (Array.isArray(raw)) {
-          const normalized = raw.filter(isWallet).map(wallet => ({ ...wallet, address: normalizeTrackedAccount(wallet.address) }));
-          setWallets(normalized.filter((wallet, index) => normalized.findIndex(item => item.address === wallet.address) === index));
+          const normalized = raw.filter(isStoredTrackedWallet).map(wallet => ({ ...wallet, address: normalizeWalletAddress(!wallet.chain || wallet.chain === "NEAR" ? normalizeTrackedAccount(wallet.address) : wallet.address, wallet.chain) }));
+          setWallets(normalized.filter((wallet, index) => normalized.findIndex(item => trackedWalletKey(item) === trackedWalletKey(wallet)) === index));
         }
       } catch { /* A blocked or empty store keeps the local preview usable. */ }
     };
@@ -64,20 +61,19 @@ export function useTrackedWallets() {
     try { localStorage.setItem(TRACKED_WALLETS_KEY, JSON.stringify(next)); window.dispatchEvent(new Event(WALLET_EVENT)); } catch { /* Session state remains available. */ }
   };
   const toggleTrader = (trader: PreviewTrader) => {
-    const exists = wallets.some(wallet => wallet.address === trader.address);
-    saveWallets(exists ? wallets.filter(wallet => wallet.address !== trader.address) : [...wallets, { address: trader.address, name: trader.name, avatar: trader.avatar, monitor: true, trades: true, addedAt: Date.now() }]);
+    const exists = wallets.some(wallet => trackedWalletKey(wallet) === trackedWalletKey(trader));
+    saveWallets(exists ? wallets.filter(wallet => trackedWalletKey(wallet) !== trackedWalletKey(trader)) : [...wallets, { address: trader.address, name: trader.name, avatar: trader.avatar, monitor: true, trades: true, addedAt: Date.now() }]);
   };
   return { wallets, saveWallets, toggleTrader };
 }
 
-export const traderForWallet = (address: string) => PREVIEW_TRADERS.find(trader => trader.address === address);
+export const traderForWallet = (address: string, chain:TrackedWallet["chain"] = "NEAR") => chain === "NEAR" ? PREVIEW_TRADERS.find(trader => trader.address === address) : undefined;
 export const shortAccount = (address: string) => address.length > 26 ? `${address.slice(0, 12)}…${address.slice(-9)}` : address;
 export const nearAmount = (amount: number) => Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export const signedNear = (amount: number) => `${amount < 0 ? "−" : "+"}${nearAmount(amount)}`;
 export const PREVIEW_NEAR_USD = 4.7;
 export const previewUsd = (amount: number) => `${amount < 0 ? "−" : ""}$${(Math.abs(amount) * PREVIEW_NEAR_USD).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 export const activityAge = (minutes: number) => minutes < 60 ? `${minutes}m ago` : minutes < 1440 ? `${Math.floor(minutes / 60)}h ago` : `${Math.floor(minutes / 1440)}d ago`;
-export const isNearAccount = (address: string) => address.length >= 2 && address.length <= 64 && /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/.test(address);
 
 export const TRADER_PERIODS = ["24h", "7 days", "30 days", "All time"] as const;
 export type TraderPeriod = typeof TRADER_PERIODS[number];

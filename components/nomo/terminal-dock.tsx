@@ -7,6 +7,8 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowUpRight, ArrowsDownUp, Bell, BellRinging, Check, ClockCounterClockwise, Copy, MagnifyingGlass, Star, Trash, Wallet, X, XLogo } from "@phosphor-icons/react";
 import { TIMEFRAMES, TOKEN_PORTRAITS, changeForTime, money, percent, priceText, type Token } from "./data";
 import { PREVIEW_TRADES, activityAge, nearAmount, shortAccount, signedNear, traderForWallet, useTrackedWallets } from "./trader-preview";
+import { trackedWalletKey } from "./tracked-wallets";
+import { TrackedWalletAvatar } from "./tracked-wallet-avatar";
 import "./terminal-dock.css";
 import { SocialDock } from "./social-dock";
 
@@ -188,24 +190,24 @@ function TrackerDock({ tokens, onSelect }: Pick<DockProps, "tokens" | "onSelect"
   const [selected, setSelected] = useState("");
   const [query, setQuery] = useState("");
   const { copied, status, setStatus, copy } = useDockCopy();
-  const byAddress = useMemo(() => new Map(wallets.map(wallet => [wallet.address, wallet])), [wallets]);
+  const byAddress = useMemo(() => new Map(wallets.filter(wallet=>!wallet.chain || wallet.chain === "NEAR").map(wallet => [wallet.address, wallet])), [wallets]);
   const matches = (value: string) => value.toLowerCase().includes(query.toLowerCase().trim());
   const filteredWallets = wallets.filter(wallet => matches(`${wallet.name} ${wallet.address}`));
-  const selectedAddress = byAddress.has(selected) ? selected : "";
-  const activity = PREVIEW_TRADES.filter(trade => byAddress.get(trade.address)?.trades && (!selectedAddress || trade.address === selectedAddress) && matches(`${byAddress.get(trade.address)?.name} ${trade.address} ${trade.token.symbol} ${trade.token.name}`));
+  const selectedKey = wallets.some(wallet=>trackedWalletKey(wallet) === selected) ? selected : "";
+  const activity = PREVIEW_TRADES.filter(trade => byAddress.get(trade.address)?.trades && (!selectedKey || trackedWalletKey({address:trade.address}) === selectedKey) && matches(`${byAddress.get(trade.address)?.name} ${trade.address} ${trade.token.symbol} ${trade.token.name}`));
 
   return <>
     <div className="ntd-tracker-tabs" role="group" aria-label="Tracker view"><button type="button" className={tab === "wallets" ? "is-active" : ""} aria-pressed={tab === "wallets"} onClick={() => setTab("wallets")}>Wallets<span>{wallets.length}</span></button><button type="button" className={tab === "activity" ? "is-active" : ""} aria-pressed={tab === "activity"} onClick={() => setTab("activity")}>Activity</button><Link href="/trackers" title="Open full trackers" aria-label="Open full trackers"><ArrowUpRight size={14} /></Link></div>
     <label className="ntd-search"><MagnifyingGlass size={13} /><input placeholder={tab === "wallets" ? "Search wallets" : "Search activity"} aria-label={tab === "wallets" ? "Search tracked wallets" : "Search tracker activity"} value={query} onChange={event => setQuery(event.target.value)} /></label>
-    {tab === "activity" && <div className="ntd-wallet-filter"><label htmlFor="ntd-wallet-filter">Wallet</label><select id="ntd-wallet-filter" value={selectedAddress} onChange={event => setSelected(event.target.value)}><option value="">All tracked wallets</option>{wallets.map(wallet => <option key={wallet.address} value={wallet.address}>{wallet.name}</option>)}</select></div>}
+    {tab === "activity" && <div className="ntd-wallet-filter"><label htmlFor="ntd-wallet-filter">Wallet</label><select id="ntd-wallet-filter" value={selectedKey} onChange={event => setSelected(event.target.value)}><option value="">All tracked wallets</option>{wallets.map(wallet => <option key={trackedWalletKey(wallet)} value={trackedWalletKey(wallet)}>{wallet.name} · {wallet.chain || "NEAR"}</option>)}</select></div>}
     <div className="ntd-scroll">
       {tab === "wallets" ? <>
         <div className="ntd-list-heading"><span>Tracked wallets</span><span>7d PnL · NEAR</span></div>
         {filteredWallets.length ? filteredWallets.map(wallet => {
-          const trader = traderForWallet(wallet.address);
-          return <article className="ntd-tracked-wallet" key={wallet.address}>
-            <div className="ntd-wallet-top"><button type="button" className="ntd-wallet-identity" onClick={() => { setSelected(wallet.address); setQuery(""); setTab("activity"); }}><img src={wallet.avatar} alt="" width={27} height={27} /><span><strong>{wallet.name}</strong><small>{trader ? activityAge(trader.lastMinutes) : "No activity"}</small></span></button><span className={trader ? trader.pnl >= 0 ? "ntd-positive" : "ntd-negative" : "ntd-muted"}>{trader ? signedNear(trader.pnl) : "—"}</span></div>
-            <div className="ntd-wallet-bottom"><button type="button" className="ntd-address-copy" title={wallet.address} aria-label={`Copy ${wallet.name} wallet address`} onClick={() => void copy(wallet.address, wallet.name)}>{shortAccount(wallet.address)}{copied === wallet.address ? <Check size={11} /> : <Copy size={11} />}</button><button type="button" className="ntd-icon ntd-remove" aria-label={`Remove ${wallet.name} from trackers`} onClick={() => { saveWallets(wallets.filter(item => item.address !== wallet.address)); setStatus(`${wallet.name} removed from trackers.`); }}><Trash size={13} /></button></div>
+          const trader = traderForWallet(wallet.address,wallet.chain);
+          return <article className="ntd-tracked-wallet" key={trackedWalletKey(wallet)}>
+            <div className="ntd-wallet-top"><button type="button" className="ntd-wallet-identity" onClick={() => { setSelected(trackedWalletKey(wallet)); setQuery(""); setTab("activity"); }}><TrackedWalletAvatar wallet={wallet} size={27}/><span><strong>{wallet.name}</strong><small>{trader ? activityAge(trader.lastMinutes) : "No activity"}</small></span></button><span className={trader ? trader.pnl >= 0 ? "ntd-positive" : "ntd-negative" : "ntd-muted"}>{trader ? signedNear(trader.pnl) : "—"}</span></div>
+            <div className="ntd-wallet-bottom"><button type="button" className="ntd-address-copy" title={wallet.address} aria-label={`Copy ${wallet.name} wallet address`} onClick={() => void copy(wallet.address, wallet.name)}>{shortAccount(wallet.address)}{copied === wallet.address ? <Check size={11} /> : <Copy size={11} />}</button><button type="button" className="ntd-icon ntd-remove" aria-label={`Remove ${wallet.name} from trackers`} onClick={() => { saveWallets(wallets.filter(item => trackedWalletKey(item) !== trackedWalletKey(wallet))); setStatus(`${wallet.name} removed from trackers.`); }}><Trash size={13} /></button></div>
           </article>;
         }) : <DockEmpty icon="tracker" title={query ? "No wallets found" : "No tracked wallets"} description={query ? "Try a different name or address." : "Follow a trader or add a wallet in Trackers."} />}
       </> : <>
