@@ -9,7 +9,7 @@ import "./token-identity.css";
 
 type CopyState = "idle" | "copying" | "success" | "error";
 
-export function TokenIdentity({ token, onSelect, variant = "default", trailing }: { token: Token; onSelect: (token: Token) => void; variant?: "default" | "pulse"; trailing?: ReactNode }) {
+export function TokenIdentity({ token, onSelect, variant = "default", trailing }: { token: Token; onSelect: (token: Token) => void; variant?: "default" | "pulse" | "discover"; trailing?: ReactNode }) {
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const [confirmation, setConfirmation] = useState(0);
   const request = useRef(0);
@@ -57,8 +57,8 @@ export function TokenIdentity({ token, onSelect, variant = "default", trailing }
 
   return <div className={`ni-token-identity${variant === "pulse" ? " ni-token-identity--pulse" : ""}`} data-copy-state={copyState}>
     <button type="button" className="ni-token-identity-avatar" onClick={() => onSelect(token)} aria-label={`Open ${token.symbol} details, ${token.chain}, ${token.launchpad}`}>
-      <TokenAvatar token={token} size={variant === "pulse" ? 68 : 36} variant="square" />
-      <span className="ni-token-identity-badges" title={`${token.chain} · ${token.launchpad}`} aria-hidden="true"><MarketChainIcon chain={token.chain} size={8} /><i/><LaunchpadIcon name={token.launchpad} size={8} /></span>
+      <TokenAvatar token={token} size={variant === "pulse" ? 68 : variant === "discover" ? 52 : 36} variant="square" />
+      <span className="ni-token-identity-badges" title={`${token.chain} · ${token.launchpad}`} aria-hidden="true"><MarketChainIcon chain={token.chain} size={variant === "discover" ? 13 : 8} /><i/><LaunchpadIcon name={token.launchpad} size={variant === "discover" ? 13 : 8} /></span>
     </button>
     <div className="ni-token-identity-body">
       <div className="ni-token-identity-heading">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
-import { Binoculars, ChartLineUp, GearSix, SlidersHorizontal, Star, Wallet } from "@phosphor-icons/react";
+import { Binoculars, ChartLineUp, GearSix, SlidersHorizontal, Star, Wallet, XLogo } from "@phosphor-icons/react";
 import { type Token, money, percent, priceText, TIMEFRAMES, changeForTime } from "./data";
 import { TokenAvatar } from "./shared";
 
@@ -128,6 +128,8 @@ export type TerminalBarProps = {
   watchlistCount: number;
   watchlistActive: boolean;
   trackerActive?: boolean;
+  socialActive?: boolean;
+  onSocial?: () => void;
   activePreset: number | null;
   onPresets: () => void;
   onSettings: () => void;
@@ -135,15 +137,16 @@ export type TerminalBarProps = {
   onWatchlist: () => void;
 };
 
-const previewDescription = "Market activity and wallet balances use local sample data. No network connection, orders or transfers.";
+const previewDescription = "Market activity and social posts use local sample data. Wallet trades and transfers are simulated and saved on this device; no on-chain transactions are sent.";
 
-export function TerminalBar({ tokens, watchlistCount, watchlistActive, trackerActive, activePreset, onPresets, onSettings, onTracker, onWatchlist }: TerminalBarProps) {
+export function TerminalBar({ tokens, watchlistCount, watchlistActive, trackerActive, socialActive, onSocial, activePreset, onPresets, onSettings, onTracker, onWatchlist }: TerminalBarProps) {
   const volume = tokens.reduce((sum, token) => sum + token.volume, 0);
   return <footer className="ni-terminal-bar" aria-label="Terminal status and shortcuts">
     <div className="ni-terminal-shortcuts">
       <button type="button" onClick={onPresets} title={`Edit presets · ${activePreset == null ? "Custom" : `P${activePreset + 1}`}`} aria-label="Edit quick buy presets"><SlidersHorizontal size={12} aria-hidden="true"/><span>Presets</span></button>
       <button type="button" onClick={onSettings} title="Settings" aria-label="Open settings"><GearSix size={13} aria-hidden="true"/></button>
       <button type="button" onClick={onTracker} title="Tracker" aria-label="Open tracker" aria-pressed={!!trackerActive}><Binoculars size={12} aria-hidden="true"/><span>Tracker</span></button>
+      {onSocial && <button type="button" onClick={onSocial} title="Social" aria-label="Open social" aria-pressed={!!socialActive}><XLogo size={12} aria-hidden="true"/><span>Social</span></button>}
       <button type="button" onClick={onWatchlist} title="Watchlist" aria-label="Open watchlist" aria-pressed={watchlistActive}><Star size={12} weight={watchlistActive ? "fill" : "regular"} aria-hidden="true"/><span>Watchlist</span><small>{watchlistCount}</small></button>
     </div>
     <div className="ni-terminal-status">

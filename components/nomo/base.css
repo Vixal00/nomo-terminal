@@ -10,3 +10,5 @@
 .nomo .nm-token-signals>span:hover>svg{color:#c6ccd2}.nomo .nm-token-details h3>span,.nomo .nm-token-detail-grid>div>span,.nomo .nm-token-contract>span{display:inline-flex;align-items:center;gap:6px}.nomo .nm-token-detail-grid>div>span>svg,.nomo .nm-token-contract>span>svg{color:#a1a7b0;flex-shrink:0}.nomo .nm-token-details h3>span>svg{flex-shrink:0}.nomo .nm-token-signals>span{min-height:16px}
 
 .nomo .nm-icon{display:inline-block;vertical-align:middle;flex-shrink:0}
+
+.nomo [data-token-navigation]{cursor:pointer}.nomo [data-token-navigation]:hover{background-color:#19191c}.nomo [data-token-navigation]:focus-visible{outline:1px solid #7b8474;outline-offset:-2px}

@@ -52,6 +52,8 @@ export function useFeedMotion(ref: RefObject<HTMLDivElement | null>, tick: numbe
     const nextPositions = new Map<HTMLElement, Position>();
     const rows = root.querySelectorAll<HTMLElement>("[data-feed-id]");
     rows.forEach(node => {
+      const scope = node.closest("[data-feed-scope]");
+      if (scope && scope !== root) return;
       const id = node.dataset.feedId || "";
       const sequence = Number(node.dataset.feedSeq || 0);
       const old = positions.current.get(node);

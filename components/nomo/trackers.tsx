@@ -5,15 +5,10 @@ import { ArrowDown, ArrowSquareOut, ArrowsDownUp, Check, Copy, DownloadSimple, E
 import { TOKENS, TOKEN_PORTRAITS, money } from "./data";
 import { activityAge, isNearAccount, nearAmount, normalizeTrackedAccount, PREVIEW_TRADERS, PREVIEW_TRADES, previewUsd, shortAccount, signedNear, traderForWallet, useTrackedWallets, type TrackedWallet } from "./trader-preview";
 import "./trackers.css";
+import { useXProfiles, saveSocialPreference, X_KEY, HIDDEN_X_KEY, FOLLOW_X_KEY, type XProfile } from "./social-profiles";
 
 const TABS = ["Manager", "Trades", "Monitor", "X"] as const;
 type TrackerTab = typeof TABS[number];
-type XProfile = { handle: string; name: string; address: string; avatar: string; fixture: boolean };
-const X_PROFILES: XProfile[] = PREVIEW_TRADERS.slice(0, 8).map(trader => ({ handle: trader.handle, name: trader.name, address: trader.address, avatar: trader.avatar, fixture: true }));
-const X_KEY = "nomo.preview.x-profiles.v1";
-const HIDDEN_X_KEY = "nomo.preview.hidden-x.v1";
-const FOLLOW_X_KEY = "nomo.preview.followed-x.v1";
-const normalizeHandle = (handle: string) => X_PROFILES.find(profile => `${profile.handle}_preview` === handle)?.handle || handle;
 
 function tabKeys(event: KeyboardEvent<HTMLButtonElement>, index: number, select: (tab: TrackerTab) => void) {
   const next = event.key === "ArrowRight" ? (index + 1) % TABS.length : event.key === "ArrowLeft" ? (index + TABS.length - 1) % TABS.length : event.key === "Home" ? 0 : event.key === "End" ? TABS.length - 1 : -1;
@@ -51,9 +46,7 @@ export function TrackersWorkspace() {
   const [query, setQuery] = useState("");
   const [side, setSide] = useState("All trades");
   const [sort, setSort] = useState("Added");
-  const [profiles, setProfiles] = useState<XProfile[]>(X_PROFILES);
-  const [hidden, setHidden] = useState<string[]>([]);
-  const [followedX, setFollowedX] = useState<string[]>([]);
+  const { profiles, setProfiles, hidden, setHidden, followedX, setFollowedX } = useXProfiles();
   const [showHidden, setShowHidden] = useState(false);
   const [modal, setModal] = useState<"wallet" | "import" | "x" | "detail" | "profile" | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<TrackedWallet | null>(null);
@@ -67,16 +60,7 @@ export function TrackersWorkspace() {
   const dialog = useRef<HTMLDialogElement>(null);
   const file = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    try {
-      const saved: unknown = JSON.parse(localStorage.getItem(X_KEY) || "null");
-      if (Array.isArray(saved)) setProfiles([...X_PROFILES, ...saved.filter((item): item is XProfile => !!item && typeof item === "object" && typeof item.handle === "string" && /^[a-zA-Z0-9_]{1,15}$/.test(item.handle) && typeof item.name === "string" && typeof item.address === "string" && typeof item.avatar === "string" && item.avatar.startsWith("/art/coins/")).map(item => ({ ...item, address: normalizeTrackedAccount(item.address), fixture: false }))]);
-      const savedHidden: unknown = JSON.parse(localStorage.getItem(HIDDEN_X_KEY) || "[]");
-      const savedFollowed: unknown = JSON.parse(localStorage.getItem(FOLLOW_X_KEY) || "[]");
-      if (Array.isArray(savedHidden)) setHidden(savedHidden.filter((item): item is string => typeof item === "string").map(normalizeHandle));
-      if (Array.isArray(savedFollowed)) setFollowedX(savedFollowed.filter((item): item is string => typeof item === "string").map(normalizeHandle));
-    } catch { /* Keep the preview functional if local storage is unavailable. */ }
-  }, []);
+  useEffect(() => { if (new URLSearchParams(window.location.search).get("tab") === "x") setTab("X"); }, []);
   useEffect(() => { if (modal) dialog.current?.showModal(); else dialog.current?.close(); }, [modal]);
 
   const switchTab = (next: TrackerTab) => { setTab(next); setQuery(""); setStatus(""); };
@@ -91,7 +75,7 @@ export function TrackersWorkspace() {
   const importable = useMemo(() => parseWalletImport(importText).filter(item => !wallets.some(wallet => wallet.address === item.address)), [importText, wallets]);
   const setPreference = (wallet: TrackedWallet, key: "monitor" | "trades") => saveWallets(wallets.map(item => item.address === wallet.address ? { ...item, [key]: !item[key] } : item));
   const copy = async (value: string) => { try { await navigator.clipboard.writeText(value); setStatus("Address copied"); } catch { setStatus("Copy unavailable. Select the address in the wallet details."); } };
-  const remember = (key: string, value: unknown) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* The current session keeps the change. */ } };
+  const remember = saveSocialPreference;
   const isFollowing = (profile: XProfile) => profile.address ? wallets.some(wallet => wallet.address === profile.address) : followedX.includes(profile.handle);
   const followProfile = (profile: XProfile) => {
     if (profile.address) saveWallets(isFollowing(profile) ? wallets.filter(wallet => wallet.address !== profile.address) : [...wallets, { address: profile.address, name: profile.name, avatar: profile.avatar, monitor: true, trades: true, addedAt: Date.now() }]);
@@ -129,7 +113,7 @@ export function TrackersWorkspace() {
     <section className="ntk-panel" id="ntk-panel" role="tabpanel" aria-labelledby={`ntk-tab-${tab}`}>
       <div className="ntk-toolbar">
         <label className="ntk-search"><MagnifyingGlass size={14}/><input aria-label={tab === "X" ? "Search X accounts" : tab === "Manager" ? "Search wallets" : "Search wallets or tokens"} placeholder={tab === "X" ? "Search X accounts" : tab === "Manager" ? "Search wallets" : "Search wallets or tokens"} value={query} onChange={event => setQuery(event.target.value)}/>{query && <button type="button" aria-label="Clear search" onClick={() => setQuery("")}><X size={12}/></button>}</label>
-        {tab === "Manager" && <><label className="ntk-select"><ArrowsDownUp size={13}/><select aria-label="Sort tracked wallets" value={sort} onChange={event => setSort(event.target.value)}><option>Added</option><option>Name</option><option>PnL</option></select></label><div className="ntk-toolbar-actions"><button className="ntk-button" onClick={() => open("import")}><UploadSimple size={13}/>Import</button><button className="ntk-button" onClick={() => { const url = URL.createObjectURL(new Blob([JSON.stringify(wallets.map(({ address, name }) => ({ address, name })), null, 2)], { type: "application/json" })); const link = document.createElement("a"); link.href = url; link.download = "nomo-tracked-wallets.json"; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); setStatus("Wallet list exported"); }}><DownloadSimple size={13}/>Export</button><button className="ntk-button ntk-primary" onClick={() => open("wallet")}><Plus size={13}/>Add wallet</button></div></>}
+        {tab === "Manager" && <><label className="ntk-select"><ArrowsDownUp size={13}/><select aria-label="Sort tracked wallets" value={sort} onChange={event => setSort(event.target.value)}><option>Added</option><option>Name</option><option>PnL</option></select></label><div className="ntk-toolbar-actions"><button className="ntk-button" onClick={() => open("import")}><UploadSimple size={13}/>Import</button><button className="ntk-button" type="button"><DownloadSimple size={13}/>Export</button><button className="ntk-button ntk-primary" onClick={() => open("wallet")}><Plus size={13}/>Add wallet</button></div></>}
         {tab === "Trades" && <div className="ntk-segment" role="group" aria-label="Trade type">{["All trades", "Buy", "Sell"].map(item => <button key={item} aria-pressed={side === item} onClick={() => setSide(item)}>{item}</button>)}</div>}
         {tab === "Monitor" && <span className="ntk-toolbar-note">{wallets.filter(wallet => wallet.monitor).length} wallets in Monitor</span>}
         {tab === "X" && <div className="ntk-toolbar-actions">{hidden.length > 0 && <button className="ntk-button" aria-pressed={showHidden} onClick={() => setShowHidden(!showHidden)}>{showHidden ? "Hide hidden" : `Show hidden (${hidden.length})`}</button>}<button className="ntk-button ntk-primary" onClick={() => open("x")}><Plus size={13}/>Add X account</button></div>}

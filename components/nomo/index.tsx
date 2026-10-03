@@ -1,5 +1,7 @@
 "use client";
 
+import { tokenNavigation } from "./token-navigation";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -69,9 +71,9 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
   const rows = d.rows.filter(item => !hiddenPairIds.includes(item.id) && matchesMarketFilters(item, marketFilters, d.time));
   const resetFilters = () => { setMarketFilters(emptyMarketFilters()); d.setMinCap(0); d.setSearch(""); d.setSort("trending"); };
   const [searchOpen, setSearchOpen] = useState(false);
-  const [dock, setDock] = useState<"watchlist" | "tracker" | null>(null);
-  useEffect(() => {try {const value = sessionStorage.getItem("nomo.terminal.dock");if (value === "watchlist" || value === "tracker") setDock(value);} catch {}}, []);
-  const toggleDock = (next: "watchlist" | "tracker" | null) => {const value = next === dock ? null : next;setDock(value);try {if (value) sessionStorage.setItem("nomo.terminal.dock", value);else sessionStorage.removeItem("nomo.terminal.dock");} catch {}};
+  const [dock, setDock] = useState<"watchlist" | "tracker" | "social" | null>(null);
+  useEffect(() => {try {const value = sessionStorage.getItem("nomo.terminal.dock");if (value === "watchlist" || value === "tracker" || value === "social") setDock(value);} catch {}}, []);
+  const toggleDock = (next: "watchlist" | "tracker" | "social" | null) => {const value = next === dock ? null : next;setDock(value);try {if (value) sessionStorage.setItem("nomo.terminal.dock", value);else sessionStorage.removeItem("nomo.terminal.dock");} catch {}};
   const quickBuyInput = useRef<HTMLInputElement>(null);
   const markets = useRef<HTMLElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -98,9 +100,9 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
   const quickSpend = Number(quickAmount);
   const quickValid = quickAmount.trim() !== "" && Number.isFinite(quickSpend) && quickSpend > 0;
   const quickError = !quickValid ? "Enter an amount greater than zero." : wallet.connected && quickSpend > wallet.balance ? "Amount exceeds your available balance." : null;
-  const quickBuy = (value: Token) => {
-    const message = !wallet.connected ? "Connect your wallet before buying." : quickError || "Trading is not connected. No transaction was sent.";
-    setTradeResult({ id: ++resultId.current, status: "error", title: `Buy ${value.symbol} failed`, message });
+  const quickBuy = (value: Token, requestedAmount = quickAmount) => {
+    const result = wallet.execute({ type: "Buy", token: value, amount: Number(requestedAmount), currency: "USDC" });
+    setTradeResult({ id: ++resultId.current, status: result.ok ? "success" : "error", title: `Buy ${value.symbol} ${result.ok ? "successful" : "failed"}`, message: result.ok ? `${result.entry.amount.toLocaleString("en-US", { maximumFractionDigits: 4 })} ${value.symbol} added to your simulated wallet.` : result.error });
   };
   const changeClass = (value: number) => value >= 0 ? "nm-positive" : "nm-negative";
   const sort = (value: string) => d.setSort(d.sort === value ? "trending" : value);
@@ -146,7 +148,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
     <div className={`ni-workspace${dock ? " ni-workspace-docked" : ""}`}>
     {dock && <TerminalDock kind={dock} tokens={d.tokens} stars={d.stars} onStar={d.toggleStar} onSelect={token} onClose={() => toggleDock(null)}/>}
     <div className="ni-workspace-body">
-    {workspace === "portfolio" ? <PortfolioWorkspace tokens={d.tokens} wallet={wallet} onSelect={token}/> : workspace === "pulse" ? <PulseWorkspace tokens={d.tokens} stars={d.stars} onStar={d.toggleStar} onSelect={token} onBuy={quickBuy} quickAmount={quickAmount} quickBuyError={quickError} activePreset={activePreset} onPreset={quickBuySettings.selectPreset} onAmountChange={setQuickAmount}/> : workspace === "trackers" ? <TrackersWorkspace/> : workspace === "leaderboard" ? <LeaderboardWorkspace/> : workspace === "create" ? <CreatePairWorkspace/> : workspace === "bridge" ? <BridgeWorkspace/> : workspace === "pairs" ? <NearPairsWorkspace tokens={d.tokens} wallet={wallet}/> : detailToken ? <TokenDetail token={detailToken} wallet={wallet} quickBuy={quickBuySettings} starred={d.stars.includes(detailToken.id)} onStar={() => d.toggleStar(detailToken.id)} onPresets={() => open("presets")} amountRef={quickBuyInput} buyFocusRequest={buyFocusRequest}/> : <main className="ni-main">
+    {workspace === "portfolio" ? <PortfolioWorkspace tokens={d.tokens} wallet={wallet} onSelect={token}/> : workspace === "pulse" ? <PulseWorkspace tokens={d.tokens} stars={d.stars} onStar={d.toggleStar} onSelect={token} onBuy={quickBuy} quickAmount={quickAmount} balance={wallet.connected ? wallet.balance : undefined} presets={quickBuyPresets} activePreset={activePreset}/> : workspace === "trackers" ? <TrackersWorkspace/> : workspace === "leaderboard" ? <LeaderboardWorkspace/> : workspace === "create" ? <CreatePairWorkspace/> : workspace === "bridge" ? <BridgeWorkspace wallet={wallet}/> : workspace === "pairs" ? <NearPairsWorkspace tokens={d.tokens} wallet={wallet}/> : detailToken ? <TokenDetail token={detailToken} wallet={wallet} quickBuy={quickBuySettings} starred={d.stars.includes(detailToken.id)} onStar={() => d.toggleStar(detailToken.id)} onPresets={() => open("presets")} amountRef={quickBuyInput} buyFocusRequest={buyFocusRequest}/> : <main className="ni-main">
       <div className="ni-title-row" data-enter>
         <h1>Discover</h1>
       </div>
@@ -178,9 +180,9 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
         <div className="ni-table-scroll" {...d.feedInteractionProps}>
           <table className="ni-table">
             <thead><tr><th className="ni-star-cell" aria-label="Watchlist"/><th className="ni-token-cell">Token</th><th className="ni-cap-head"><button onClick={() => sort("mcap")}>Market cap {d.sort === "mcap" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-price-head"><span className="ni-th-label">Price</span></th><th className="ni-change-head"><button onClick={() => sort("change")}>{d.time} {d.sort === "change" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-volume-head"><button onClick={() => sort("volume")}>Volume {d.time} {d.sort === "volume" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-liquidity-head"><span className="ni-th-label">Liquidity</span></th><th className="ni-holders-head"><span className="ni-th-label">Holders</span></th><th className="ni-info-head"><span className="ni-th-label">Token info</span></th><th className="ni-trend-head">Trend</th><th className="ni-quick-buy-head">Quick buy</th></tr></thead>
-            <tbody>{rows.map(item => <tr key={item.id} className="nm-feed-item" data-feed-id={item.id} data-feed-seq={item.updatedAtTick || 0} data-feed-direction={item.direction || 1}>
+            <tbody>{rows.map(item => <tr key={item.id} {...tokenNavigation(item, token)} className="nm-feed-item" data-feed-id={item.id} data-feed-seq={item.updatedAtTick || 0} data-feed-direction={item.direction || 1}>
               <td className="ni-star-cell"><button className={d.stars.includes(item.id) ? "ni-star starred" : "ni-star"} onClick={() => d.toggleStar(item.id)} aria-label={`${d.stars.includes(item.id) ? "Remove" : "Add"} ${item.symbol} ${d.stars.includes(item.id) ? "from" : "to"} watchlist`} aria-pressed={d.stars.includes(item.id)}><Star size={14} weight={d.stars.includes(item.id) ? "fill" : "regular"}/></button></td>
-              <td className="ni-token-cell"><TokenIdentity token={item} onSelect={token}/></td>
+              <td className="ni-token-cell"><TokenIdentity token={item} onSelect={token} variant="discover"/></td>
               <td className="ni-value nm-tick-value"><span className="ni-metric-primary">{money(item.mcap)}</span><small className="ni-cell-secondary ni-cap-ath">ATH {money(item.athMcap)}</small><small className={`ni-mobile-change ${changeClass(d.change(item))}`}>{percent(d.change(item))}<small>{d.time}</small></small><span className="ni-cap-bar"><i style={{width: `${Math.max(5, Math.min(100, item.mcap / 4820000 * 100))}%`}}/></span></td>
               <td className="ni-value ni-price nm-tick-value"><span className="ni-metric-primary">{priceText(item.price)}</span></td>
               <td className={`ni-percent ni-change-cell nm-tick-value ni-selected-time ${changeClass(d.change(item))}`}><span className="ni-metric-primary">{percent(d.change(item))}</span></td>
@@ -204,6 +206,8 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       watchlistCount={d.stars.length}
       watchlistActive={dock === "watchlist"}
       trackerActive={dock === "tracker"}
+      socialActive={dock === "social"}
+      onSocial={() => toggleDock("social")}
       activePreset={activePreset}
       onPresets={() => open("presets")}
       onSettings={() => open("settings")}

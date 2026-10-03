@@ -171,3 +171,27 @@
 @media(max-width:600px){.nomo-index .ni-time>button{min-width:27px;padding:0 4px;font-size:10px}.nomo-index .ni-controls{grid-template-columns:minmax(0,1fr) auto}.nomo-index .ni-controls:before{display:block;grid-column:1;grid-row:1}.nomo-index .ni-controls .ni-time{grid-column:2;grid-row:1}.nomo-index .ni-controls .ni-quick-buy-controls{grid-column:1;grid-row:2}.nomo-index .ni-controls .ni-filter-button{grid-column:2;grid-row:2}.nomo-index .ni-filter-button>span{font-size:10px}.nomo-index .ni-preset-field{grid-template-columns:85px minmax(0,1fr);column-gap:9px}.nomo-index .ni-preset-field>label{gap:6px}}
 
 .nomo-index .ni-filter-panel select:focus-visible{outline:none;border-color:var(--nm-focus)}
+/* A more readable market table, with room for chain and protocol details. */
+.nomo-index .ni-table td{height:92px;font-size:14px;padding-top:15px;padding-bottom:15px}
+.nomo-index .ni-table th{height:42px;font-size:12px}
+.nomo-index .ni-table .ni-token-identity{gap:12px;min-height:52px}
+.nomo-index .ni-table .ni-token-identity-avatar{width:52px;height:52px;flex-basis:52px;border-radius:8px}
+.nomo-index .ni-table .ni-token-identity-badges{height:19px;gap:3px;padding:2px 3px;bottom:-6px;right:-3px;border-radius:5px}
+.nomo-index .ni-table .ni-token-identity-badges>i{height:10px}
+.nomo-index .ni-table .ni-token-identity-body{gap:5px}
+.nomo-index .ni-table .ni-token-identity-heading{height:21px;gap:7px}
+.nomo-index .ni-table .ni-token-identity-symbol{font-size:15px;line-height:21px}
+.nomo-index .ni-table .ni-token-identity-secondary{font-size:12px;line-height:18px;color:#90939c}
+.nomo-index .ni-table .ni-token-identity-age,.nomo-index .ni-table .ni-token-identity-address{font-size:11px;color:#858993}
+.nomo-index .ni-table .ni-token-identity-copy{height:22px}
+.nomo-index .ni-table .ni-metric-primary{font-size:14px;line-height:20px}
+.nomo-index .ni-table .ni-cell-secondary{font-size:11px;line-height:17px;color:#858993}
+.nomo-index .ni-table .nm-token-signals.is-chips .nm-signal-chip{height:25px;min-height:25px;padding:0 5px;gap:4px}
+.nomo-index .ni-table .nm-token-signals.is-chips .nm-signal-chip>strong{font-size:11px}
+.nomo-index .ni-table .nm-token-signals.is-chips .nm-signal-chip>svg{width:14px;height:14px}
+.nomo-index .ni-table .nm-token-signals.is-chips .nm-signal-line{gap:5px}
+.nomo-index .ni-table .ni-quick-buy{height:33px;font-size:12px;padding:0 9px}
+.nomo-index .ni-table .ni-star>svg{width:17px;height:17px}
+.nomo-index .ni-table .ni-chart-cell .nm-spark{width:112px;height:33px}
+@media(min-width:601px){.nomo-index .ni-table{min-width:1480px}.nomo-index .ni-table .ni-token-cell{width:280px;min-width:280px}.nomo-index .ni-table th.ni-info-head{width:246px}.nomo-index .ni-table .ni-trend-head{width:154px}.nomo-index .ni-table th.ni-quick-buy-head{width:142px}}
+@media(max-width:600px){.nomo-index .ni-table td{height:90px}.nomo-index .ni-table .ni-token-cell{min-width:0}.nomo-index .ni-table .ni-token-identity{gap:10px}.nomo-index .ni-table .ni-token-identity-symbol{font-size:14px}.nomo-index .ni-table .ni-token-identity-copy{display:none}.nomo-index .ni-table .ni-metric-primary{font-size:12px}.nomo-index .ni-table .ni-token-identity-secondary{font-size:11px}.nomo-index .ni-table .ni-quick-buy{padding:0 5px;font-size:11px}.nomo-index .ni-table .ni-mobile-change{font-size:11px}}

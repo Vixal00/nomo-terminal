@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowUpRight, Check, FileText, Info, Wallet } from "@phosphor-icons/react";
 import { RobinhoodMark } from "@/components/marks";
 import "./bridge.css";
+import type { PreviewWallet } from "./wallet";
+import type { CashAsset } from "./simulated-wallet";
 
 const NETWORKS = [
   { id: "solana", name: "Solana", symbol: "SOL", icon: "/nomo/icons/solana-circle.svg", rate: 40 },
@@ -42,10 +44,10 @@ function NetworkIcon({ network, size = 26 }: { network: Network; size?: number }
   );
 }
 
-export function BridgeWorkspace() {
+export function BridgeWorkspace({ wallet }: { wallet: PreviewWallet }) {
   const [network, setNetwork] = useState<Network>(NETWORKS[0]);
   const [amount, setAmount] = useState("");
-  const [destination, setDestination] = useState("");
+  const [destination, setDestination] = useState("demo.near");
   const [attempted, setAttempted] = useState(false);
   const [phase, setPhase] = useState<Phase>("form");
   const [walletNotice, setWalletNotice] = useState("");
@@ -53,9 +55,11 @@ export function BridgeWorkspace() {
   const amountInput = useRef<HTMLInputElement>(null);
   const destinationInput = useRef<HTMLInputElement>(null);
 
-  const sendError = amountError(amount);
+  const sourceAsset: CashAsset = network.id === "solana" ? "SOL" : network.id === "ethereum" ? "ETH" : network.id === "base" ? "BASE" : "ROBINHOOD";
+  const available = wallet.assets[sourceAsset];
+  const sendError = amountError(amount) || (Number(amount) > available ? "Amount exceeds your available balance." : "");
   const destinationError = !destination.trim() ? "Enter the NEAR address that will receive the funds." : !validDestination(destination) ? "Use a valid .near account or a 64-character lowercase hex address." : "";
-  const numericAmount = sendError ? 0 : Number(amount);
+  const numericAmount = amountError(amount) ? 0 : Number(amount);
   const gross = numericAmount * network.rate;
   const fee = gross * NOMO_FEE;
   const receive = gross - fee;
@@ -74,7 +78,7 @@ export function BridgeWorkspace() {
   }
 
   function requestWalletConnection() {
-    setWalletNotice("Wallet connection is not available yet.");
+    wallet.connect(); setDestination("demo.near"); setWalletNotice("Using your simulated wallet.");
   }
 
   return (
@@ -92,7 +96,7 @@ export function BridgeWorkspace() {
             <form onSubmit={review} noValidate>
               <div className="nb-field-heading">
                 <h2>From</h2>
-                <button type="button" className="nb-wallet-link" onClick={() => requestWalletConnection()}><Wallet size={14} />Pay with Phantom</button>
+                <button type="button" className="nb-wallet-link" onClick={() => requestWalletConnection()}><Wallet size={14} />Use simulated wallet</button>
               </div>
               <div className="nb-networks" role="group" aria-label="Source network">
                 {NETWORKS.map((item) => (
@@ -108,7 +112,7 @@ export function BridgeWorkspace() {
               <div className={`nb-amount-box ${attempted && sendError ? "has-error" : ""}`}>
                 <div className="nb-field-heading"><label htmlFor="bridge-send">You send</label><span className="nb-asset"><NetworkIcon network={network} size={19} />{network.symbol}</span></div>
                 <input id="bridge-send" ref={amountInput} className="nb-amount-input" inputMode="decimal" autoComplete="off" spellCheck={false} placeholder="0.0" value={amount} onChange={(event) => setAmount(event.target.value)} aria-invalid={attempted && !!sendError} aria-describedby={attempted && sendError ? "bridge-amount-error" : undefined} />
-                <span className="nb-amount-caption">Amount on {network.name}</span>
+                <span className="nb-amount-caption">Available {formatAmount(available)} {network.symbol}</span>
               </div>
               {attempted && sendError && <p className="nb-error" id="bridge-amount-error">{sendError}</p>}
 
@@ -121,7 +125,7 @@ export function BridgeWorkspace() {
               </div>
 
               <div className="nb-destination">
-                <div className="nb-field-heading"><label htmlFor="bridge-destination">Receive at</label><button className="nb-meteor-link" type="button" onClick={() => requestWalletConnection()}><img src="/nomo/icons/meteor.svg" alt="" width={15} height={15} />Connect Meteor</button></div>
+                <div className="nb-field-heading"><label htmlFor="bridge-destination">Receive at</label><button className="nb-meteor-link" type="button" onClick={() => requestWalletConnection()}><img src="/nomo/icons/meteor.svg" alt="" width={15} height={15} />Use my address</button></div>
                 <input id="bridge-destination" ref={destinationInput} value={destination} onChange={(event) => setDestination(event.target.value)} placeholder="yourname.near or 64-character address" autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={64} aria-invalid={attempted && !!destinationError} aria-describedby={attempted && destinationError ? "bridge-destination-error" : "bridge-address-help"} />
                 {attempted && destinationError ? <p className="nb-error" id="bridge-destination-error">{destinationError}</p> : <p className="nb-address-help" id="bridge-address-help">Enter the receiving account on NEAR.</p>}
               </div>
@@ -132,8 +136,8 @@ export function BridgeWorkspace() {
           ) : (
             <div className="nb-review">
               {phase === "review" ? <button type="button" className="nb-back" onClick={() => setPhase("form")}><ArrowLeft size={14} />Edit details</button> : <div className="nb-receipt-icon"><FileText size={23} /></div>}
-              <h2 tabIndex={-1} ref={phaseHeading}>{phase === "review" ? "Review your route" : "Route reviewed"}</h2>
-              <p className="nb-review-intro">{phase === "review" ? "Check the destination and amounts before continuing." : "No transaction was submitted."}</p>
+              <h2 tabIndex={-1} ref={phaseHeading}>{phase === "review" ? "Review your route" : "Bridge complete"}</h2>
+              <p className="nb-review-intro">{phase === "review" ? "Check the destination and amounts before continuing." : "Your simulated balances have been updated. No on-chain transaction was sent."}</p>
               <div className="nb-review-route"><span><NetworkIcon network={network} size={27} /><strong>{network.name}</strong></span><ArrowDown size={15} /><span><img src="/nomo/icons/near-circle.svg" alt="" width={27} height={27} /><strong>NEAR</strong></span></div>
               <dl className="nb-review-details">
                 <div><dt>You send</dt><dd>{formatAmount(numericAmount)} {network.symbol}</dd></div>
@@ -142,7 +146,8 @@ export function BridgeWorkspace() {
                 <div><dt>Network fee</dt><dd>Not estimated</dd></div>
                 <div className="nb-recipient-row"><dt>Receive at</dt><dd>{destination.trim()}</dd></div>
               </dl>
-              {phase === "review" ? <button className="nb-primary" type="button" onClick={() => setPhase("receipt")}>Done</button> : <button className="nb-primary" type="button" onClick={() => { setPhase("form"); setAttempted(false); }}>Back to bridge</button>}
+              {walletNotice && <p className="nb-error" role="status">{walletNotice}</p>}
+              {phase === "review" ? <button className="nb-primary" type="button" onClick={() => { const result = wallet.execute({type:"Bridge",asset:sourceAsset,amount:numericAmount,recipient:destination.trim()}); if(result.ok){setWalletNotice("");setPhase("receipt");}else setWalletNotice(result.error); }}>Confirm bridge</button> : <button className="nb-primary" type="button" onClick={() => { setPhase("form"); setAttempted(false); }}>Back to bridge</button>}
             </div>
           )}
         </section>

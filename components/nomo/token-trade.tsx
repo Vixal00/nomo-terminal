@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type RefObject } from "react";
 import { ArrowDown, Check, GearSix, SlidersHorizontal, Wallet, X } from "@phosphor-icons/react";
 import { compact, priceText, type Token } from "./data";
 import type { useQuickBuySettings } from "./quick-buy-settings";
 import type { PreviewWallet } from "./wallet";
 import "./token-trade.css";
+import { TradeToast, type TradeResult } from "./trade-toast";
 
 type Quote = { side: "Buy" | "Sell"; amount: number; receive: number; minimum: number };
 type TokenTradeProps = {
@@ -24,7 +25,8 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
   const [sellAmount, setSellAmount] = useState("");
   const [slippage, setSlippage] = useState("1");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [quote, setQuote] = useState<Quote | null>(null);
+  const [result, setResult] = useState<TradeResult | null>(null);
+  const dismissResult = useCallback(() => setResult(null), []);
   const settingsRoot = useRef<HTMLDivElement>(null);
   const settingsTrigger = useRef<HTMLButtonElement>(null);
   const lastBuyFocusRequest = useRef(buyFocusRequest);
@@ -50,16 +52,16 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
   useEffect(() => {
     setSide("Buy");
     setSellAmount("");
-    setQuote(null);
+    setResult(null);
     setSettingsOpen(false);
   }, [token.id]);
-  useEffect(() => { setQuote(null); }, [amount, side, slippage, wallet.connected]);
+  useEffect(() => { setResult(null); }, [amount, side, slippage, wallet.connected]);
   useEffect(() => {
     if (buyFocusRequest !== undefined && buyFocusRequest !== lastBuyFocusRequest.current) {
       lastBuyFocusRequest.current = buyFocusRequest;
       buyFocusPending.current = true;
       setSide("Buy");
-      setQuote(null);
+      setResult(null);
     }
     if (buyFocusPending.current && side === "Buy") {
       buyFocusPending.current = false;
@@ -94,7 +96,9 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
 
     <form className="nt-trade-form" onSubmit={event => {
       event.preventDefault();
-      if (canPreview) setQuote({ side, amount: size, receive, minimum });
+      if (!canPreview) return;
+      const outcome = wallet.execute({type:side,token,amount:size,currency:"USDC"});
+      setResult({id:Date.now(),status:outcome.ok?"success":"error",title:`${side} ${token.symbol} ${outcome.ok?"successful":"failed"}`,message:outcome.ok?"Your simulated balance and position have been updated.":outcome.error});
     }}>
       <div className="nt-trade-sides" role="group" aria-label="Trade side">
         {(["Buy", "Sell"] as const).map(value => <button key={value} type="button" aria-pressed={side === value} className={side === value ? `is-active is-${value.toLowerCase()}` : ""} onClick={() => setSide(value)}>{value}</button>)}
@@ -128,12 +132,8 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
       {hint && <p id={`${fieldId}-hint`} className={`nt-trade-hint ${overBalance ? "is-error" : ""}`}>{hint}</p>}
 
 
-      {quote && <div className="nt-trade-confirmation" role="status" aria-live="polite">
-        <div className="nt-trade-confirmation-title"><Check size={14}/><strong>Order review</strong><button type="button" aria-label="Dismiss order review" onClick={() => setQuote(null)}><X size={13}/></button></div>
-        <div className="nt-trade-confirmation-swap"><span>{quote.side === "Buy" ? dollars(quote.amount) : `${quantity(quote.amount)} ${token.symbol}`}</span><ArrowDown size={12}/><strong>{quote.side === "Buy" ? `${quantity(quote.receive)} ${token.symbol}` : dollars(quote.receive)}</strong></div>
-        <div className="nt-trade-confirmation-min"><span>Minimum received</span><span>{quote.side === "Buy" ? `${quantity(quote.minimum)} ${token.symbol}` : dollars(quote.minimum)}</span></div>
-        <p>No trade submitted. Estimate excludes fees and price impact.</p>
-      </div>}
+
     </form>
+    <TradeToast result={result} onDismiss={dismissResult}/>
   </section>;
 }

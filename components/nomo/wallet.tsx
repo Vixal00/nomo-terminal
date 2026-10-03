@@ -1,19 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, CaretDown, SignOut, Wallet } from "@phosphor-icons/react";
 import { TOKENS, priceText, type Token } from "./data";
 import { TokenAvatar } from "./shared";
 import { UsdcIcon } from "./brand-icons";
+import { applyOperation, ASSET_PRICES, createLedger, type WalletOperation, type WalletResult } from "./simulated-wallet";
 
 const ACCOUNT = "7xKp…9mQ2";
-const CASH = 1250;
-const HOLDINGS: Record<string, number> = { nearly: 15000, sight: 50000 };
+const LEDGER_KEY = "nomo.simulated-wallet.v1";
+const initialLedger = createLedger();
+let ledger = initialLedger;
+let hydrated = false;
+const subscribers = new Set<() => void>();
+const subscribe = (listener: () => void) => { subscribers.add(listener); return () => { subscribers.delete(listener); }; };
+const publish = () => subscribers.forEach(listener => listener());
+function readLedger() {
+ try {
+  const value = JSON.parse(localStorage.getItem(LEDGER_KEY) || "null");
+  if (value && Object.keys(initialLedger.assets).every(key => Number.isFinite(value.assets?.[key]) && value.assets[key] >= 0) && value.positions && Object.values(value.positions).every((item: any) => item && Number.isFinite(item.amount) && item.amount >= 0 && Number.isFinite(item.cost) && item.cost >= 0 && Number.isFinite(item.openedAt)) && Array.isArray(value.history)) ledger = value;
+ } catch {}
+ publish();
+}
 const STORAGE_KEY = "nomo.previewWallet.connected";
 
 // Local presentation state only. No provider, account, or transaction is connected.
 export function usePreviewWallet() {
   const [connected, setConnected] = useState(true);
+  const state = useSyncExternalStore(subscribe, () => ledger, () => initialLedger);
+  useEffect(() => {
+    if (!hydrated) { hydrated = true; readLedger(); }
+    const sync = (event: StorageEvent) => { if (event.key === LEDGER_KEY) readLedger(); };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
   useEffect(() => {
     try { setConnected(sessionStorage.getItem(STORAGE_KEY) !== "false"); } catch {}
   }, []);
@@ -25,8 +45,22 @@ export function usePreviewWallet() {
     connected,
     connect: () => update(true),
     disconnect: () => update(false),
-    balance: CASH,
-    tokenBalance: (id: string) => HOLDINGS[id] || 0,
+    balance: state.assets.USDC,
+    assets: state.assets,
+    history: state.history,
+    cashValue: Object.entries(state.assets).reduce((sum, [key, amount]) => sum + amount * ASSET_PRICES[key as keyof typeof ASSET_PRICES], 0),
+    tokenBalance: (id: string) => state.positions[id]?.amount || 0,
+    position: (id: string) => state.positions[id],
+    execute: (operation: WalletOperation): WalletResult => {
+      if (!connected) return { ok: false, state: ledger, error: "Connect your simulated wallet first." };
+      const result = applyOperation(ledger, operation);
+      if (result.ok) {
+        ledger = result.state;
+        try { localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger)); } catch {}
+        publish();
+      }
+      return result;
+    },
   };
 }
 
@@ -73,7 +107,7 @@ export function WalletControl({ wallet, variant, onPortfolio }: {
 
 export function WalletSummary({ wallet, tokens = TOKENS, avatarVariant = "coin" }: { wallet: PreviewWallet; tokens?: Token[]; avatarVariant?: "coin" | "square" }) {
   const positions = tokens.filter(token => wallet.tokenBalance(token.id) > 0);
-  const total = wallet.balance + positions.reduce((sum, token) => sum + wallet.tokenBalance(token.id) * token.price, 0);
+  const total = wallet.cashValue + positions.reduce((sum, token) => sum + wallet.tokenBalance(token.id) * token.price, 0);
   return <div className="nm-wallet-summary">
     <div className="nm-wallet-summary-account"><Wallet size={16}/><span>{ACCOUNT}</span><span>Connected</span></div>
     <div className="nm-wallet-total"><span>Portfolio value</span><strong>${total.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2})}</strong></div>

@@ -1,14 +1,17 @@
 "use client";
 
+import { tokenNavigation } from "./token-navigation";
+
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowUpRight, ArrowsDownUp, Bell, BellRinging, Check, ClockCounterClockwise, Copy, MagnifyingGlass, Star, Trash, Wallet, X } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowUpRight, ArrowsDownUp, Bell, BellRinging, Check, ClockCounterClockwise, Copy, MagnifyingGlass, Star, Trash, Wallet, X, XLogo } from "@phosphor-icons/react";
 import { TIMEFRAMES, TOKEN_PORTRAITS, changeForTime, money, percent, priceText, type Token } from "./data";
 import { PREVIEW_TRADES, activityAge, nearAmount, shortAccount, signedNear, traderForWallet, useTrackedWallets } from "./trader-preview";
 import "./terminal-dock.css";
+import { SocialDock } from "./social-dock";
 
 type DockProps = {
-  kind: "watchlist" | "tracker";
+  kind: "watchlist" | "tracker" | "social";
   tokens: Token[];
   stars: string[];
   onStar: (id: string) => void;
@@ -55,12 +58,12 @@ function useDockCopy() {
 }
 
 export function TerminalDock({ kind, tokens, stars, onStar, onSelect, onClose }: DockProps) {
-  return <aside className="ntd-dock" aria-label={kind === "watchlist" ? "Watchlist panel" : "Wallet tracker panel"}>
+  return <aside className="ntd-dock" aria-label={kind === "watchlist" ? "Watchlist panel" : kind === "social" ? "Social panel" : "Wallet tracker panel"}>
     <header className="ntd-header">
-      <div>{kind === "watchlist" ? <Star size={15} /> : <Wallet size={15} />}<h2>{kind === "watchlist" ? "Watchlist" : "Wallet tracker"}</h2>{kind === "watchlist" && <span className="ntd-count">{stars.length}</span>}</div>
-      <button className="ntd-icon" type="button" onClick={onClose} aria-label={`Close ${kind === "watchlist" ? "watchlist" : "wallet tracker"}`}><X size={15} /></button>
+      <div>{kind === "watchlist" ? <Star size={15} /> : kind === "social" ? <XLogo size={15} /> : <Wallet size={15} />}<h2>{kind === "watchlist" ? "Watchlist" : kind === "social" ? "Social" : "Wallet tracker"}</h2>{kind === "watchlist" && <span className="ntd-count">{stars.length}</span>}</div>
+      <button className="ntd-icon" type="button" onClick={onClose} aria-label={`Close ${kind === "watchlist" ? "watchlist" : kind === "social" ? "social" : "wallet tracker"}`}><X size={15} /></button>
     </header>
-    {kind === "watchlist" ? <WatchlistDock tokens={tokens} stars={stars} onStar={onStar} onSelect={onSelect} /> : <TrackerDock tokens={tokens} onSelect={onSelect} />}
+    {kind === "watchlist" ? <WatchlistDock tokens={tokens} stars={stars} onStar={onStar} onSelect={onSelect} /> : kind === "social" ? <SocialDock/> : <TrackerDock tokens={tokens} onSelect={onSelect} />}
   </aside>;
 }
 
@@ -167,7 +170,7 @@ function WatchlistDock({ tokens, stars, onStar, onSelect }: Pick<DockProps, "tok
         {watched.length ? watched.map(token => {
           const change = changeForTime(token, timeframe);
           const alert = alerts.find(item => item.tokenId === token.id);
-          return <article className="ntd-token" key={token.id}>
+          return <article className="ntd-token" key={token.id} {...tokenNavigation(token, onSelect)}>
             <div className="ntd-token-top"><button type="button" className="ntd-token-identity" onClick={() => onSelect(token)}><img src={TOKEN_PORTRAITS[token.id] || token.image} width={29} height={29} alt="" /><span><strong>{token.symbol}</strong><small>{token.name}</small></span></button><span className={change >= 0 ? "ntd-positive" : "ntd-negative"}>{percent(change)}</span></div>
             <button type="button" className="ntd-token-stats" aria-label={`Open ${token.symbol} token`} onClick={() => onSelect(token)}><span><small>Mcap</small>{money(token.mcap)}</span><span><small>Vol 24h</small>{money(token.volume)}</span><span><small>Liquidity</small>{money(token.liquidity)}</span></button>
             <div className="ntd-token-bottom"><button type="button" className="ntd-address-copy" title={token.contract} aria-label={`Copy ${token.symbol} contract address`} onClick={() => void copy(token.contract, token.symbol)}>{token.contract.slice(0, 4)}…{token.contract.slice(-4)}{copied === token.contract ? <Check size={11} /> : <Copy size={11} />}</button><div><button type="button" className={`ntd-icon ${alert ? "is-active" : ""}`} onClick={() => editAlert(token)} aria-label={`${alert ? "Edit" : "Set"} ${token.symbol} price alert`} title={alert ? `Price alert ${alert.direction} ${priceText(alert.target)}` : "Set price alert"}><BellRinging size={13} /></button><button type="button" className="ntd-icon ntd-remove" onClick={() => { onStar(token.id); setStatus(`${token.symbol} removed from watchlist.`); }} aria-label={`Remove ${token.symbol} from watchlist`}><Trash size={13} /></button></div></div>

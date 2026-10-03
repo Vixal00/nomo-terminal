@@ -5,6 +5,7 @@ import { ArrowDownLeft, ArrowUpRight, Check, ClockCounterClockwise, CopySimple }
 import { compact, money, priceText, type Token } from "./data";
 import { createTokenActivity } from "./token-detail-fixtures";
 import "./token-activity.css";
+import { usePreviewWallet } from "./wallet";
 
 const tabs = ["Trades", "Holders", "Top traders", "My activity"] as const;
 type ActivityTab = typeof tabs[number];
@@ -51,6 +52,8 @@ function WalletCopy({ address }: { address: string }) {
 }
 
 function TokenActivityPanel({ token }: { token: Token }) {
+  const wallet = usePreviewWallet();
+  const ownTrades = wallet.history.filter(entry => entry.tokenId === token.id && (entry.type === "Buy" || entry.type === "Sell"));
   const [tab, setTab] = useState<ActivityTab>("Trades");
   const [filter, setFilter] = useState<TradeFilter>("All");
   const id = useId();
@@ -115,7 +118,7 @@ function TokenActivityPanel({ token }: { token: Token }) {
         <div className="nta-table-toolbar"><span className="nta-table-note">Ranked by total PnL</span><span className="nta-summary">Realized + unrealized</span></div>
         <div className="nta-table-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label="Top traders table"><table className="nta-table nta-traders"><caption className="nta-sr-only">Top traders of {token.symbol}; PnL includes remaining positions</caption><thead><tr><th scope="col">#</th><th scope="col">Wallet</th><th scope="col">Bought</th><th scope="col">Sold</th><th scope="col">PnL</th><th scope="col">Balance</th></tr></thead><tbody>{fixtures.traders.map((trader, index) => <tr key={trader.wallet}><td className="nta-rank">{index + 1}</td><td><WalletCopy address={trader.wallet} /></td><td className="nta-number">{dollarText(trader.bought)}</td><td className="nta-number">{dollarText(trader.sold)}</td><td className={`nta-number ${trader.pnl >= 0 ? "is-buy" : "is-sell"}`}>{trader.pnl >= 0 ? "+" : "−"}{dollarText(Math.abs(trader.pnl))}</td><td className="nta-number">{dollarText(trader.balance)}</td></tr>)}</tbody></table></div>
       </>}
-      {tab === "My activity" && <div className="nta-empty"><span className="nta-empty-icon"><ClockCounterClockwise size={23} weight="light" aria-hidden="true" /></span><h3>No activity yet</h3><p>Your orders will appear here.</p></div>}
+      {tab === "My activity" && (ownTrades.length ? <div className="nta-table-scroll" tabIndex={0} role="region" aria-label="My token activity"><table className="nta-table"><thead><tr><th>Time</th><th>Side</th><th>{token.symbol}</th><th>Value</th><th>P&L</th></tr></thead><tbody>{ownTrades.map(entry=><tr key={entry.id}><td>{new Date(entry.at).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</td><td className={entry.type === "Buy" ? "is-buy" : "is-sell"}>{entry.type}</td><td>{compact(entry.amount)}</td><td>{dollarText(entry.value)}</td><td>{entry.pnl === undefined ? "—" : `${entry.pnl >= 0 ? "+" : "−"}${dollarText(Math.abs(entry.pnl))}`}</td></tr>)}</tbody></table></div> : <div className="nta-empty"><span className="nta-empty-icon"><ClockCounterClockwise size={23} weight="light" aria-hidden="true" /></span><h3>No activity yet</h3><p>Your orders will appear here.</p></div>)}
     </div>
   </section>;
 }

@@ -13,7 +13,7 @@ type SendReview = { asset: SendAsset; recipient: string; amount: string };
 
 const USERNAME_KEY = "nomo.previewWallet.username";
 const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
-const NETWORKS = ["Ethereum", "Base", "Arbitrum", "Robinhood"] as const;
+const NETWORKS = ["Ethereum", "Base", "Robinhood"] as const;
 // Wallet providers are not connected; unavailable addresses are rendered as masked placeholders.
 const WALLETS = [
   { name: "NEAR", description: "Trading wallet", icon: "near" },
@@ -118,7 +118,7 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
     try { localStorage.setItem(USERNAME_KEY, next); setNotice(`@${next} saved on this device.`); }
     catch { setNotice(`@${next} saved for this visit. Device storage is unavailable.`); }
   };
-  const balances: Record<SendAsset, number> = { NEAR: 0, USDC: wallet.balance, NEARLY: wallet.tokenBalance("nearly"), SIGHT: wallet.tokenBalance("sight") };
+  const balances: Record<SendAsset, number> = { NEAR: wallet.assets.NEAR, USDC: wallet.balance, NEARLY: wallet.tokenBalance("nearly"), SIGHT: wallet.tokenBalance("sight") };
   const available = balances[sendAsset];
   const reviewSend = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -129,7 +129,10 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
     if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(amount) || !Number.isFinite(numericAmount) || numericAmount <= 0) errors.amount = "Enter an amount greater than zero.";
     else if (numericAmount > available) errors.amount = `Amount exceeds the balance of ${available.toLocaleString("en-US")} ${sendAsset}.`;
     setSendErrors(errors);
-    setReview(Object.keys(errors).length ? null : { asset: sendAsset, recipient: nextRecipient, amount });
+    if (Object.keys(errors).length) { setReview(null); return; }
+    const result = wallet.execute({type:"Send",asset:sendAsset === "NEARLY" ? "nearly" : sendAsset === "SIGHT" ? "sight" : sendAsset,amount:numericAmount,recipient:nextRecipient});
+    if (result.ok) { setReview({asset:sendAsset,recipient:nextRecipient,amount}); setAmount(""); }
+    else setSendErrors({amount:result.error});
   };
   const updateSend = () => { setSendErrors({}); setReview(null); };
   const depositNetwork = depositAsset === "ETH" ? network : "Solana";
@@ -175,8 +178,8 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
           <p className="nw-intro">Deposit ETH or SOL, then convert to NEAR in your trading wallet.</p>
           <div className="nw-deposit-assets" aria-label="Deposit asset"><button type="button" className={depositAsset === "ETH" ? "is-active" : ""} aria-pressed={depositAsset === "ETH"} onClick={() => { setDepositAsset("ETH"); setNotice(""); }}><CurrencyEth size={17} aria-hidden="true" /><span>Ethereum<small>ETH</small></span><Check size={13} aria-hidden="true" /></button><button type="button" className={depositAsset === "SOL" ? "is-active" : ""} aria-pressed={depositAsset === "SOL"} onClick={() => { setDepositAsset("SOL"); setNotice(""); }}><SolanaIcon size={16} /><span>Solana<small>SOL</small></span><Check size={13} aria-hidden="true" /></button></div>
           {depositAsset === "ETH" && <div className="nw-network-select"><span>Network</span><div aria-label="ETH deposit network">{NETWORKS.map(item => <button type="button" key={item} className={network === item ? "is-active" : ""} aria-pressed={network === item} onClick={() => { setNetwork(item); setNotice(""); }}>{item}</button>)}</div></div>}
-          <section className="nw-deposit-card"><div className="nw-deposit-card-heading"><h3>{depositAsset} deposit address</h3><span>{depositNetwork}</span></div><code className="nw-deposit-address" aria-label="Deposit address unavailable">••••••••••••••••••••••••</code><p className="nw-deposit-warning"><Info size={12} aria-hidden="true" />Deposits are not connected yet.</p><div className="nw-deposit-actions"><button type="button" className="nw-primary" disabled title="Connect a wallet to copy its deposit address"><Copy size={13} />Copy address</button><button type="button" className="nw-secondary" disabled title="Connect a wallet to view its address on the explorer">Explorer<ArrowSquareOut size={13} aria-hidden="true" /></button></div></section>
-          <div className="nw-network-balances"><span>Balances</span>{(depositAsset === "ETH" ? NETWORKS : ["Solana"]).map(item => <div key={item}><span>{item}</span><strong>0 {depositAsset}</strong></div>)}</div>
+          <section className="nw-deposit-card"><div className="nw-deposit-card-heading"><h3>Fund simulated wallet</h3><span>{depositNetwork}</span></div><p className="nw-deposit-warning"><Info size={12}/>Adds test funds on this device.</p><div className="nw-deposit-actions"><button type="button" className="nw-primary" onClick={() => { const result = wallet.execute({type:"Deposit",asset:depositAsset === "SOL" ? "SOL" : network === "Base" ? "BASE" : network === "Robinhood" ? "ROBINHOOD" : "ETH",amount:depositAsset === "SOL" ? 5 : .25}); setNotice(result.ok ? "Simulated funds added." : result.error); }}>Add {depositAsset === "SOL" ? "5 SOL" : "0.25 ETH"}</button><button type="button" className="nw-secondary" onClick={() => { const result = wallet.execute({type:"Deposit",asset:"USDC",amount:1000}); setNotice(result.ok ? "1,000 simulated USDC added." : result.error); }}>Add 1,000 USDC</button></div></section>
+          <div className="nw-network-balances"><span>Balances</span>{(depositAsset === "ETH" ? NETWORKS : ["Solana"]).map(item => <div key={item}><span>{item}</span><strong>{wallet.assets[item === "Solana" ? "SOL" : item === "Base" ? "BASE" : item === "Robinhood" ? "ROBINHOOD" : "ETH"].toLocaleString("en-US")} {depositAsset}</strong></div>)}</div>
           <div className="nw-route"><div className="nw-section-heading"><h3>Deposit route</h3></div><ol><li><span className="nw-route-step">1</span><div><strong>Receive {depositAsset}</strong><span>On {depositNetwork}</span></div></li><li><span className="nw-route-step">2</span><div><strong>Convert through NEAR Intents</strong><span>Quote and network minimum required</span></div></li><li><span className="nw-route-step"><NearIcon size={10} /></span><div><strong>Arrive as NEAR</strong><span>In your trading wallet</span></div></li></ol></div>
         </> : <>
           <p className="nw-intro">Send an asset to a NEAR account.</p>
@@ -184,9 +187,9 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
             <label className="nw-field" htmlFor={`${id}-asset`}><span>Asset</span><div className="nw-select-wrap"><select id={`${id}-asset`} value={sendAsset} onChange={event => { setSendAsset(event.target.value as SendAsset); setAmount(""); updateSend(); }}>{Object.keys(balances).map(asset => <option key={asset} value={asset}>{asset}</option>)}</select><CaretDown size={12} aria-hidden="true" /></div></label>
             <label className="nw-field" htmlFor={`${id}-recipient`}><span>Recipient</span><input id={`${id}-recipient`} value={recipient} onChange={event => { setRecipient(event.target.value); updateSend(); }} placeholder="name.near or 64-character address" autoComplete="off" autoCapitalize="none" spellCheck={false} aria-invalid={!!sendErrors.recipient} aria-describedby={sendErrors.recipient ? `${id}-recipient-error` : undefined} />{sendErrors.recipient && <span id={`${id}-recipient-error`} className="nw-error">{sendErrors.recipient}</span>}</label>
             <label className="nw-field" htmlFor={`${id}-amount`}><span>Amount</span><div className={`nw-amount-input ${sendErrors.amount ? "has-error" : ""}`}><input id={`${id}-amount`} value={amount} onChange={event => { setAmount(event.target.value); updateSend(); }} placeholder="0.00" inputMode="decimal" autoComplete="off" aria-invalid={!!sendErrors.amount} aria-describedby={sendErrors.amount ? `${id}-amount-error` : `${id}-send-balance`} /><span>{sendAsset}</span><button type="button" onClick={() => { setAmount(String(available)); updateSend(); }}>Max</button></div><span className="nw-send-balance" id={`${id}-send-balance`}>Balance<strong>{available.toLocaleString("en-US")} {sendAsset}</strong></span>{sendErrors.amount && <span id={`${id}-amount-error`} className="nw-error">{sendErrors.amount}</span>}</label>
-            <button type="submit" className="nw-primary"><PaperPlaneTilt size={14} aria-hidden="true" />Review transfer</button>
+            <button type="submit" className="nw-primary"><PaperPlaneTilt size={14} aria-hidden="true" />Send</button>
           </form>
-          {review && <div className="nw-send-review" role="status"><div><Info size={14} aria-hidden="true" /><strong>Transfer review</strong></div><dl><div><dt>Amount</dt><dd>{review.amount} {review.asset}</dd></div><div><dt>Recipient</dt><dd>{review.recipient}</dd></div><div><dt>Network</dt><dd>NEAR</dd></div></dl><p>No transaction was submitted. A connected wallet is required to send funds.</p></div>}
+          {review && <div className="nw-send-review" role="status"><div><Info size={14} aria-hidden="true" /><strong>Transfer complete</strong></div><dl><div><dt>Amount</dt><dd>{review.amount} {review.asset}</dd></div><div><dt>Recipient</dt><dd>{review.recipient}</dd></div><div><dt>Network</dt><dd>NEAR</dd></div></dl><p>Sent from your simulated wallet. No on-chain transaction was submitted.</p></div>}
 
         </>}
       </div>
