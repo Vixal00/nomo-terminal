@@ -85,6 +85,13 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
     };
   }, [settingsOpen]);
 
+  const executeTrade = (privateSwap = false) => {
+    if (!canPreview || (privateSwap && side !== "Buy")) return;
+    // Both entry points use the local wallet until a swap provider is connected.
+    const outcome = wallet.execute({ type: side, token, amount: size, currency: "USDC" });
+    setResult({ id: Date.now(), status: outcome.ok ? "success" : "error", title: `${privateSwap ? "Private swap" : side} ${token.symbol} ${outcome.ok ? "successful" : "failed"}`, message: outcome.ok ? "Your simulated balance and position have been updated." : outcome.error });
+  };
+
   return <section className="nt-trade" aria-label={`Trade ${token.symbol}`}>
     {holding > 0 && <div className="nt-trade-position">
       <div className="nt-trade-position-title"><Wallet size={14}/><span>My position</span></div>
@@ -96,9 +103,7 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
 
     <form className="nt-trade-form" onSubmit={event => {
       event.preventDefault();
-      if (!canPreview) return;
-      const outcome = wallet.execute({type:side,token,amount:size,currency:"USDC"});
-      setResult({id:Date.now(),status:outcome.ok?"success":"error",title:`${side} ${token.symbol} ${outcome.ok?"successful":"failed"}`,message:outcome.ok?"Your simulated balance and position have been updated.":outcome.error});
+      executeTrade();
     }}>
       <div className="nt-trade-sides" role="group" aria-label="Trade side">
         {(["Buy", "Sell"] as const).map(value => <button key={value} type="button" aria-pressed={side === value} className={side === value ? `is-active is-${value.toLowerCase()}` : ""} onClick={() => setSide(value)}>{value}</button>)}
@@ -129,6 +134,10 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
         <div><span>Minimum received</span><span>{receive > 0 && validSlippage ? receipt(minimum) : "—"}</span></div>
       </div>
       {wallet.connected ? <button className={`nt-trade-submit ${side === "Sell" ? "is-sell" : ""}`} type="submit" disabled={!canPreview}>{side} {token.symbol}</button> : <button className="nt-trade-submit" type="button" onClick={wallet.connect}>Connect wallet</button>}
+      {side === "Buy" && <div className="nt-private-swap">
+        <button className="nt-private-swap-button" type="button" disabled={!canPreview} onClick={() => executeTrade(true)}><img src="/nomo/dark-swap/icon.png" width="16" height="16" alt=""/>Private swap</button>
+        <p>Powered by <img src="/nomo/dark-swap/wordmark.png" width="65" height="13" alt="DARK swap"/></p>
+      </div>}
       {hint && <p id={`${fieldId}-hint`} className={`nt-trade-hint ${overBalance ? "is-error" : ""}`}>{hint}</p>}
 
 
