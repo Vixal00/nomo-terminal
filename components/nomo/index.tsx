@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import {
   ArrowDown, ArrowRight, ArrowsLeftRight, ArrowUpRight, CaretDown,
-  Binoculars, Check, Compass, EyeSlash, Fire, IntersectSquare, MagnifyingGlass, Plus, PlusCircle, Trophy, XLogo,
+  Binoculars, Check, Compass, EyeSlash, Fire, MagnifyingGlass, Plus, PlusCircle, Trophy, XLogo,
   SlidersHorizontal, Star, Wallet, X, Lightning, RocketLaunch, Waveform,
 } from "@phosphor-icons/react";
 import { type Token, compact, money, percent, priceText, TIMEFRAMES, TOKEN_PORTRAITS, ORIGIN_AVATARS, ORIGIN_LAUNCHPADS } from "./data";
@@ -128,7 +128,6 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       <nav className="ni-nav" aria-label="Main navigation" ref={nav}>
         <button className={!workspace ? "active" : ""} aria-current={!workspace ? "page" : undefined} data-nav-motion="discover" onClick={() => {d.setView("Trending");if (tokenId || workspace) router.push("/discover/index");}}><Compass size={14} aria-hidden="true"/>Discover</button>
         <button className={workspace === "pulse" ? "active" : ""} aria-current={workspace === "pulse" ? "page" : undefined} data-nav-motion="pulse" onClick={() => router.push("/pulse")}><Waveform size={14} aria-hidden="true"/>Pulse</button>
-        <button type="button" disabled><IntersectSquare size={14} aria-hidden="true"/>NEAR pairs</button>
         <button className={workspace === "portfolio" ? "active" : ""} aria-current={workspace === "portfolio" ? "page" : undefined} data-nav-motion="portfolio" onClick={() => router.push("/portfolio")}><Wallet size={14} aria-hidden="true"/>Portfolio</button>
         <button className={workspace === "trackers" ? "active" : ""} aria-current={workspace === "trackers" ? "page" : undefined} data-nav-motion="trackers" onClick={() => router.push("/trackers")}><Binoculars size={14} aria-hidden="true"/>Trackers</button>
         <button className={workspace === "leaderboard" ? "active" : ""} aria-current={workspace === "leaderboard" ? "page" : undefined} data-nav-motion="leaderboard" onClick={() => router.push("/leaderboard")}><Trophy size={14} aria-hidden="true"/>Leaderboard</button>
