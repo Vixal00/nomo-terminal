@@ -111,15 +111,14 @@ function PulseColumn({ column, tokens, stars, onStar, onSelect, onBuy, quickAmou
     <div ref={list} className="npu-token-list" onPointerEnter={event => { if (event.pointerType === "mouse" || event.pointerType === "pen") setHover(true); }} onPointerLeave={() => setHover(false)} onPointerCancel={() => setHover(false)} onFocusCapture={() => setFocus(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocus(false); }}>
       {displayed.map(token => <article className="npu-token-card" key={token.id} aria-label={`${token.symbol}, ${token.name}`}>
         <TokenIdentity token={token} onSelect={onSelect} variant="pulse" trailing={<button className={`npu-star ${stars.includes(token.id) ? "is-starred" : ""}`} aria-label={`${stars.includes(token.id) ? "Remove" : "Add"} ${token.symbol} ${stars.includes(token.id) ? "from" : "to"} watchlist`} aria-pressed={stars.includes(token.id)} onClick={() => onStar(token.id)}><Star size={14} weight={stars.includes(token.id) ? "fill" : "regular"}/></button>}/>
-        <div className="npu-card-market">
-          <span><small>MC</small><strong>{money(token.mcap)}</strong></span>
-          <span title="24-hour volume"><small>V</small><strong>{money(token.volume)}</strong></span>
+        <div className="npu-card-rail">
+          <button disabled={!buyValid} className="npu-buy" title={quickBuyError || undefined} aria-describedby={quickBuyError ? "npu-buy-error" : undefined} aria-label={`Buy ${token.symbol} for $${amountValid ? amount : 0}`} onClick={() => onBuy(token)}><Lightning size={11} weight="fill"/>${amountValid ? compact(amount) : "—"}</button>
+          <div className="npu-card-market">
+            <span><small>MC</small><strong>{money(token.mcap)}</strong></span>
+            <span className="npu-card-activity"><small title="24-hour volume">V</small><strong>{money(token.volume)}</strong><span className="npu-transactions" title={`${token.buys.toLocaleString("en-US")} buys / ${token.sells.toLocaleString("en-US")} sells`}><small>TX</small>{compact(token.buys + token.sells)}</span></span>
+          </div>
         </div>
         <div className="npu-card-signals"><TokenSignals token={token} compact variant="chips" essential/></div>
-        <div className="npu-card-action">
-          <span className="npu-transactions" title={`${token.buys.toLocaleString("en-US")} buys / ${token.sells.toLocaleString("en-US")} sells`}><span>TX</span>{compact(token.buys + token.sells)}</span>
-          <button disabled={!buyValid} className="npu-buy" title={quickBuyError || undefined} aria-describedby={quickBuyError ? "npu-buy-error" : undefined} aria-label={`Buy ${token.symbol} for $${amountValid ? amount : 0}`} onClick={() => onBuy(token)}><Lightning size={11} weight="fill"/>${amountValid ? compact(amount) : "—"}</button>
-        </div>
         <div className={`npu-migration-progress ${column.id === "migrated" ? "is-complete" : ""}`} role="progressbar" aria-label={`${token.symbol} bonding curve`} aria-valuenow={token.progress} aria-valuemin={0} aria-valuemax={100} title={column.id === "migrated" ? "Migration complete" : `Bonding curve: ${token.progress}%`}><i style={{width:`${Math.min(100, token.progress)}%`}}/></div>
       </article>)}
       {displayed.length === 0 && <div className="npu-empty"><MagnifyingGlass size={20}/><strong>No matching pairs</strong><p>Try another search or adjust this column’s filters.</p><button onClick={() => { setSearch(""); onResetFilters(); }}>Reset this column</button></div>}
