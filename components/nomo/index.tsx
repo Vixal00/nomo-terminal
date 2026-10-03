@@ -128,7 +128,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       <nav className="ni-nav" aria-label="Main navigation" ref={nav}>
         <button className={!workspace ? "active" : ""} aria-current={!workspace ? "page" : undefined} data-nav-motion="discover" onClick={() => {d.setView("Trending");if (tokenId || workspace) router.push("/discover/index");}}><Compass size={14} aria-hidden="true"/>Discover</button>
         <button className={workspace === "pulse" ? "active" : ""} aria-current={workspace === "pulse" ? "page" : undefined} data-nav-motion="pulse" onClick={() => router.push("/pulse")}><Waveform size={14} aria-hidden="true"/>Pulse</button>
-        <button className={workspace === "pairs" ? "active" : ""} aria-current={workspace === "pairs" ? "page" : undefined} data-nav-motion="pairs" onClick={() => router.push("/pairs")}><IntersectSquare size={14} aria-hidden="true"/>NEAR pairs</button>
+        <button type="button" disabled><IntersectSquare size={14} aria-hidden="true"/>NEAR pairs</button>
         <button className={workspace === "portfolio" ? "active" : ""} aria-current={workspace === "portfolio" ? "page" : undefined} data-nav-motion="portfolio" onClick={() => router.push("/portfolio")}><Wallet size={14} aria-hidden="true"/>Portfolio</button>
         <button className={workspace === "trackers" ? "active" : ""} aria-current={workspace === "trackers" ? "page" : undefined} data-nav-motion="trackers" onClick={() => router.push("/trackers")}><Binoculars size={14} aria-hidden="true"/>Trackers</button>
         <button className={workspace === "leaderboard" ? "active" : ""} aria-current={workspace === "leaderboard" ? "page" : undefined} data-nav-motion="leaderboard" onClick={() => router.push("/leaderboard")}><Trophy size={14} aria-hidden="true"/>Leaderboard</button>
@@ -136,7 +136,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       </nav>
       <div className="ni-header-actions">
         <a className="ni-social-link" href="https://x.com/nomotrading" target="_blank" rel="noopener noreferrer" aria-label="Nomo on X"><XLogo size={15}/></a>
-        <button type="button" className="ni-create-button" onClick={() => router.push("/create")} aria-label="Create a NEAR pair"><Plus size={13} weight="bold"/><span>Create</span></button>
+        <button type="button" className="ni-create-button" onClick={() => router.push("/create")} aria-label="Create a pair"><Plus size={13} weight="bold"/><span>Create</span></button>
         <button type="button" className="ni-search-trigger" onClick={() => setSearchOpen(true)} aria-label="Search tokens" aria-haspopup="dialog"><MagnifyingGlass size={15}/><span>Search tokens</span></button>
         <NotificationsControl/>
         <WalletMenu wallet={wallet} onPortfolio={() => router.push("/portfolio")}/>

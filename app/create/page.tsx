@@ -4,5 +4,5 @@ import "@/components/nomo/index.css";
 import "@/components/nomo/market-chrome.css";
 import IndexDiscover from "@/components/nomo/index";
 import { NomoIconProvider } from "@/components/nomo/icon-system";
-export const metadata: Metadata = { title: "Create a NEAR pair" };
+export const metadata: Metadata = { title: "Create a pair" };
 export default function Page() { return <NomoIconProvider><IndexDiscover workspace="create"/></NomoIconProvider>; }
