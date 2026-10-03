@@ -49,21 +49,21 @@
 .nomo .nc-feed-toolbar>span{display:flex;align-items:center;gap:8px}
 .nomo .nc-feed-toolbar i{width:5px;height:5px;background:#afcb9d;border-radius:50%}
 .nomo .nc-feed-toolbar i.is-paused{background:#80858c}
-.nomo .nc-trade{display:flex;align-items:center;gap:12px;width:100%;padding:18px;border:0;border-bottom:1px solid #29292d;background:none;text-align:left}
+.nomo .nc-trade{display:flex;align-items:center;gap:9px;width:100%;padding:11px 16px;border:0;border-bottom:1px solid #29292d;background:none;text-align:left}
 .nomo .nc-trade:hover{background:#1c1e1b}
-.nomo .nc-trader-avatar{position:relative;flex:0 0 38px;width:38px;height:38px}
-.nomo .nc-trader-avatar>img{border-radius:50%;object-fit:cover}
-.nomo .nc-trader-avatar>.nc-self-avatar{width:38px;height:38px}
-.nomo .nc-trader-avatar>i{position:absolute;right:-2px;bottom:-1px;display:grid;place-items:center;width:15px;height:15px;border:2px solid #141416;border-radius:50%;background:#b5d6a1;color:#203419}
-.nomo .nc-trade-body{display:flex;flex:1;flex-direction:column;min-width:0;gap:7px}
+.nomo .nc-trader-avatar{position:relative;flex:0 0 28px;width:28px;height:28px}
+.nomo .nc-trader-avatar>img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.nomo .nc-trader-avatar>.nc-self-avatar{width:28px;height:28px}
+.nomo .nc-trader-avatar>i{position:absolute;right:-2px;bottom:-1px;display:grid;place-items:center;width:13px;height:13px;border:2px solid #141416;border-radius:50%;background:#b5d6a1;color:#203419}
+.nomo .nc-trade-body{display:flex;flex:1;flex-direction:column;min-width:0;gap:4px}
 .nomo .nc-trade-top,.nomo .nc-trade-value{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.nomo .nc-trade-top>span{font-size:12px;color:#a6abb2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nomo .nc-trade-top>span{font-size:11px;color:#a6abb2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nomo .nc-trade-top>time{font-size:10px;color:#747b84;white-space:nowrap}
 .nomo .nc-trade-value>span{display:flex;align-items:center;gap:8px}
-.nomo .nc-trade-value strong{font-size:23px;line-height:1.1;letter-spacing:-.6px;font-weight:550;color:#bedca9;font-variant-numeric:tabular-nums}
+.nomo .nc-trade-value strong{font-size:18px;line-height:1.1;letter-spacing:-.3px;font-weight:550;color:#bedca9;font-variant-numeric:tabular-nums}
 .nomo .nc-trade-value small{font-size:10px;color:#a3bd92}
-.nomo .nc-trade-token{font-size:12px;color:#d1d5cc;font-weight:550}
-.nomo .nc-trade-token img{border-radius:50%;object-fit:cover}
+.nomo .nc-trade-token{font-size:11px;color:#d1d5cc;font-weight:550}
+.nomo .nc-trade-token img{width:16px;height:16px;border-radius:50%;object-fit:cover}
 .nomo .nc-trade-detail{display:flex;flex-wrap:wrap;gap:4px 8px;color:#7f8690;font-size:10px;font-variant-numeric:tabular-nums}
 .nomo .nc-trade-detail>span{color:#656e78}
 .nomo .nc-feed-note{flex-shrink:0;border-top:1px solid #2d2d31;padding:13px 18px;background:#171719}

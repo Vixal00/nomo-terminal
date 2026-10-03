@@ -58,7 +58,7 @@ export function TokenIdentity({ token, onSelect, variant = "default", trailing }
   return <div className={`ni-token-identity${variant === "pulse" ? " ni-token-identity--pulse" : ""}`} data-copy-state={copyState}>
     <button type="button" className="ni-token-identity-avatar" onClick={() => onSelect(token)} aria-label={`Open ${token.symbol} details, ${token.chain}, ${token.launchpad}`}>
       <TokenAvatar token={token} size={variant === "pulse" ? 68 : variant === "discover" ? 52 : 36} variant="square" />
-      <span className="ni-token-identity-badges" title={`${token.chain} · ${token.launchpad}`} aria-hidden="true"><MarketChainIcon chain={token.chain} size={variant === "pulse" ? 16 : variant === "discover" ? 13 : 8} /><i/><LaunchpadIcon name={token.launchpad} size={variant === "pulse" ? 16 : variant === "discover" ? 13 : 8} /></span>
+      <span className="ni-token-identity-badges" title={`${token.chain} · ${token.launchpad}`} aria-hidden="true"><MarketChainIcon chain={token.chain} size={variant === "pulse" ? 12 : variant === "discover" ? 13 : 8} /><i/><LaunchpadIcon name={token.launchpad} size={variant === "pulse" ? 12 : variant === "discover" ? 13 : 8} /></span>
     </button>
     <div className="ni-token-identity-body">
       <div className="ni-token-identity-heading">
