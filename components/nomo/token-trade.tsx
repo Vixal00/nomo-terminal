@@ -136,7 +136,7 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
       {wallet.connected ? <button className={`nt-trade-submit ${side === "Sell" ? "is-sell" : ""}`} type="submit" disabled={!canPreview}>{side} {token.symbol}</button> : <button className="nt-trade-submit" type="button" onClick={wallet.connect}>Connect wallet</button>}
       {side === "Buy" && <div className="nt-private-swap">
         <button className="nt-private-swap-button" type="button" disabled={!canPreview} onClick={() => executeTrade(true)}><img src="/nomo/dark-swap/icon.png" width="16" height="16" alt=""/>Private swap</button>
-        <p>Powered by <img src="/nomo/dark-swap/wordmark.png" width="65" height="13" alt="DARK swap"/></p>
+        <p>Powered by <img src="/nomo/dark-swap/wordmark.png" width="50" height="10" alt="DARK swap"/></p>
       </div>}
       {hint && <p id={`${fieldId}-hint`} className={`nt-trade-hint ${overBalance ? "is-error" : ""}`}>{hint}</p>}
 

@@ -4,6 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } f
 import { ArrowDownLeft, ArrowRight, ArrowSquareOut, ArrowUpRight, CaretDown, Check, Copy, CurrencyEth, Info, Key, Meteor, PaperPlaneTilt, SignOut, User, Wallet, X } from "@phosphor-icons/react";
 import { NearIcon, SolanaIcon } from "./brand-icons";
 import type { PreviewWallet } from "./wallet";
+import { ASSET_PRICES } from "./simulated-wallet";
 import "./wallet-menu.css";
 
 type WalletView = "wallets" | "deposit" | "send";
@@ -137,14 +138,15 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
   const updateSend = () => { setSendErrors({}); setReview(null); };
   const depositNetwork = depositAsset === "ETH" ? network : "Solana";
   const title = view === "wallets" ? "Your wallets" : view === "deposit" ? "Deposit" : "Send";
-  const cash = wallet.balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const nearBalance = wallet.assets.NEAR.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const cash = (wallet.assets.NEAR * ASSET_PRICES.NEAR).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return <div className="nw-wallet" ref={root} onBlur={event => {
     if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
   }}>
-    <button ref={trigger} type="button" className="nw-trigger" aria-label={wallet.connected ? `Wallet, $${cash}` : "Open wallet"} aria-haspopup="dialog" aria-expanded={open && view !== "deposit"} aria-controls={open ? `${id}-panel` : undefined} onClick={() => openMenu("wallets", trigger.current)}>
-      <Wallet size={15} aria-hidden="true" />
-      {wallet.connected ? <><span className="nw-trigger-balance">${cash}</span></> : <span>Wallet</span>}
+    <button ref={trigger} type="button" className="nw-trigger" aria-label={wallet.connected ? `Wallet, ${nearBalance} NEAR` : "Open wallet"} aria-haspopup="dialog" aria-expanded={open && view !== "deposit"} aria-controls={open ? `${id}-panel` : undefined} onClick={() => openMenu("wallets", trigger.current)}>
+      <NearIcon size={15} />
+      {wallet.connected ? <><span className="nw-trigger-balance">{nearBalance} NEAR</span></> : <span>Wallet</span>}
       <CaretDown size={10} aria-hidden="true" />
     </button>
 
@@ -161,7 +163,7 @@ export function WalletMenu({ wallet, onPortfolio }: { wallet: PreviewWallet; onP
           <button type="button" className="nw-primary" onClick={() => { wallet.connect(); changeView("wallets"); }}>Open wallet<ArrowRight size={14} aria-hidden="true" /></button>
           <button type="button" className="nw-secondary" onClick={() => setNotice("Wallet connection is not available yet.")}><Meteor size={15} aria-hidden="true" />Connect Meteor Wallet</button>
         </div> : view === "wallets" ? <>
-          <div className="nw-balance"><div><span>Available balance </span><strong>${cash}<small>USDC</small></strong></div>{onPortfolio && <button type="button" className="nw-icon-button" aria-label="View portfolio" onClick={() => { close(); onPortfolio(); }}><ArrowUpRight size={16} aria-hidden="true" /></button>}</div>
+          <div className="nw-balance"><div><span>Available balance</span><strong><NearIcon size={20}/>{nearBalance}<small>NEAR</small></strong><span className="nw-balance-usd">${cash}</span></div>{onPortfolio && <button type="button" className="nw-icon-button" aria-label="View portfolio" onClick={() => { close(); onPortfolio(); }}><ArrowUpRight size={16} aria-hidden="true" /></button>}</div>
           <form className="nw-username" onSubmit={saveUsername} noValidate>
             <label htmlFor={`${id}-username`}><User size={13} aria-hidden="true" />Trader username</label>
             <div className="nw-username-row"><div className={`nw-username-input ${usernameError ? "has-error" : ""}`}><span>@</span><input id={`${id}-username`} value={username} onChange={event => { setUsername(event.target.value); setUsernameError(""); }} placeholder="your_username" maxLength={20} autoComplete="off" autoCapitalize="none" spellCheck={false} aria-invalid={!!usernameError} aria-describedby={`${id}-username-help`} /></div><button type="submit" className="nw-secondary">{savedUsername ? "Save" : "Create"}</button></div>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { ArrowUpRight, CaretDown, SignOut, Wallet } from "@phosphor-icons/react";
 import { TOKENS, priceText, type Token } from "./data";
 import { TokenAvatar } from "./shared";
-import { UsdcIcon } from "./brand-icons";
+import { NearIcon } from "./brand-icons";
 import { applyOperation, ASSET_PRICES, createLedger, type WalletOperation, type WalletResult } from "./simulated-wallet";
 
 const ACCOUNT = "7xKp…9mQ2";
@@ -92,12 +92,12 @@ export function WalletControl({ wallet, variant, onPortfolio }: {
   return <div className={`nm-wallet nm-wallet-${variant}`} ref={root}>
     <button ref={trigger} type="button" className={`nm-wallet-trigger ${wallet.connected ? "is-connected" : ""}`} aria-label={wallet.connected ? `Wallet ${ACCOUNT}` : "Connect wallet"} aria-expanded={wallet.connected ? open : undefined} onClick={() => wallet.connected ? setOpen(!open) : wallet.connect()}>
       <Wallet size={16} weight={open ? "fill" : "regular"} />
-      {wallet.connected ? <><span className="nm-wallet-cash">${wallet.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span><span className="nm-wallet-account"><i />{ACCOUNT}</span><CaretDown size={11}/></> : <span>Connect wallet</span>}
+      {wallet.connected ? <><span className="nm-wallet-cash">{wallet.assets.NEAR.toLocaleString("en-US", { maximumFractionDigits: 2 })} NEAR</span><span className="nm-wallet-account"><i />{ACCOUNT}</span><CaretDown size={11}/></> : <span>Connect wallet</span>}
     </button>
     {open && wallet.connected && <div className="nm-wallet-menu" role="dialog" aria-label="Wallet menu">
       <div className="nm-wallet-menu-head"><span>My wallet</span><span className="nm-wallet-status"><i/>Connected</span></div>
       <div className="nm-wallet-menu-address"><Wallet size={18}/><strong>{ACCOUNT}</strong></div>
-      <div className="nm-wallet-menu-balance"><span>Available to trade</span><strong>${wallet.balance.toLocaleString("en-US", {minimumFractionDigits:2})}<small>USDC</small></strong></div>
+      <div className="nm-wallet-menu-balance"><span>Available to trade</span><strong>{wallet.assets.NEAR.toLocaleString("en-US", {maximumFractionDigits:2})}<small>NEAR</small></strong></div>
       {onPortfolio && <button className="nm-wallet-menu-action" type="button" onClick={() => { trigger.current?.focus(); setOpen(false); onPortfolio(); }}>View portfolio<ArrowUpRight size={15}/></button>}
       <button className="nm-wallet-menu-action" type="button" onClick={() => { trigger.current?.focus(); setOpen(false); wallet.disconnect(); }}>Disconnect<SignOut size={15}/></button>
 
@@ -111,7 +111,7 @@ export function WalletSummary({ wallet, tokens = TOKENS, avatarVariant = "coin" 
   return <div className="nm-wallet-summary">
     <div className="nm-wallet-summary-account"><Wallet size={16}/><span>{ACCOUNT}</span><span>Connected</span></div>
     <div className="nm-wallet-total"><span>Portfolio value</span><strong>${total.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2})}</strong></div>
-    <div className="nm-wallet-asset"><UsdcIcon size={30}/><div><strong>USDC</strong><span>Available to trade</span></div><div><strong>${wallet.balance.toLocaleString("en-US", {minimumFractionDigits:2})}</strong><span>{wallet.balance.toLocaleString("en-US")} USDC</span></div></div>
+    <div className="nm-wallet-asset"><NearIcon size={30}/><div><strong>NEAR</strong><span>Available to trade</span></div><div><strong>${(wallet.assets.NEAR * ASSET_PRICES.NEAR).toLocaleString("en-US", {minimumFractionDigits:2,maximumFractionDigits:2})}</strong><span>{wallet.assets.NEAR.toLocaleString("en-US", {maximumFractionDigits:2})} NEAR</span></div></div>
     {positions.map(token => <div className="nm-wallet-asset" key={token.id}><TokenAvatar token={token} size={30} variant={avatarVariant}/><div><strong>{token.symbol}</strong><span>{priceText(token.price)}</span></div><div><strong>${(wallet.tokenBalance(token.id) * token.price).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2})}</strong><span>{wallet.tokenBalance(token.id).toLocaleString("en-US")} {token.symbol}</span></div></div>)}
 
   </div>;

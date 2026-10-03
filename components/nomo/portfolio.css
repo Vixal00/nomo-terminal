@@ -14,6 +14,7 @@
 .nomo-index .pf-overview-stat>span{display:flex;align-items:center;gap:6px;font-size:10px;color:#929298}
 .nomo-index .pf-overview-stat>span>svg{color:#7b7f78}
 .nomo-index .pf-overview-stat>strong{font-size:22px;font-weight:450;letter-spacing:-.45px;color:#d5d9cf;line-height:1.2}
+.nomo-index .pf-balance-unit{font-size:12px;font-weight:400;letter-spacing:0;color:#969e8e}
 .nomo-index .pf-overview-stat>small{font-size:9px;color:#72767c}
 .nomo-index .pf-positive{color:#b6cba2!important}
 .nomo-index .pf-negative{color:#d3919f!important}
