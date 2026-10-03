@@ -1,21 +1,32 @@
 export const TRACKER_CHAINS = ["NEAR", "Solana", "Robinhood Chain", "Ethereum", "Base"] as const;
 export type TrackerChain = typeof TRACKER_CHAINS[number];
-export const WALLET_EMOJIS = [
-  { value:"🐳", label:"Whale" }, { value:"🐬", label:"Dolphin" },
-  { value:"🦈", label:"Shark" }, { value:"🦅", label:"Eagle" },
-  { value:"🐂", label:"Bull" }, { value:"🦊", label:"Fox" },
-  { value:"🐸", label:"Frog" }, { value:"🦉", label:"Owl" },
-  { value:"🐺", label:"Wolf" }, { value:"🦁", label:"Lion" },
-  { value:"🐙", label:"Octopus" }, { value:"🦍", label:"Gorilla" },
+export const WALLET_SHAPES = [
+  { value:"circle", label:"Circle" }, { value:"square", label:"Square" },
+  { value:"diamond", label:"Diamond" }, { value:"triangle", label:"Triangle" },
+  { value:"hexagon", label:"Hexagon" }, { value:"star", label:"Star" },
 ] as const;
-export type WalletEmoji = typeof WALLET_EMOJIS[number]["value"];
+export const WALLET_COLORS = [
+  { value:"sage", label:"Sage", hex:"#bdcea3" },
+  { value:"mint", label:"Mint", hex:"#79cbb3" },
+  { value:"sky", label:"Sky", hex:"#86b8e6" },
+  { value:"lilac", label:"Lilac", hex:"#b6a0e5" },
+  { value:"amber", label:"Amber", hex:"#e2bb77" },
+  { value:"coral", label:"Coral", hex:"#df929d" },
+] as const;
+export type WalletShape = typeof WALLET_SHAPES[number]["value"];
+export type WalletColor = typeof WALLET_COLORS[number]["value"];
 export type TrackedWallet = {
-  address:string; name:string; avatar:string; monitor:boolean; trades:boolean; addedAt:number;
-  chain?:TrackerChain; emoji?:WalletEmoji;
+  address:string; name:string; monitor:boolean; trades:boolean; addedAt:number;
+  chain?:TrackerChain; shape?:WalletShape; color?:WalletColor;
 };
 
 export const normalizeWalletAddress = (address:string, chain:TrackerChain = "NEAR") => chain === "Solana" ? address.trim() : address.trim().toLowerCase();
 export const trackedWalletKey = (wallet:Pick<TrackedWallet,"address"|"chain">) => `${wallet.chain || "NEAR"}:${normalizeWalletAddress(wallet.address,wallet.chain)}`;
+export function walletAppearance(wallet:Pick<TrackedWallet,"address"|"chain"|"shape"|"color">):{shape:WalletShape;color:WalletColor} {
+  let hash=2166136261;
+  for(const character of trackedWalletKey(wallet)) hash=Math.imul(hash^character.charCodeAt(0),16777619)>>>0;
+  return {shape:wallet.shape || WALLET_SHAPES[hash%WALLET_SHAPES.length].value,color:wallet.color || WALLET_COLORS[Math.floor(hash/WALLET_SHAPES.length)%WALLET_COLORS.length].value};
+}
 export const isNearAccount = (address:string) => address.length >= 2 && address.length <= 64 && /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/.test(address);
 export function isWalletAddress(address:string, chain:TrackerChain) {
   const value=normalizeWalletAddress(address,chain);
@@ -31,25 +42,26 @@ export function isWalletAddress(address:string, chain:TrackerChain) {
 }
 
 const isChain = (value:unknown):value is TrackerChain => TRACKER_CHAINS.some(chain=>chain===value);
-const isEmoji = (value:unknown):value is WalletEmoji => WALLET_EMOJIS.some(emoji=>emoji.value===value);
+const isShape = (value:unknown):value is WalletShape => WALLET_SHAPES.some(shape=>shape.value===value);
+const isColor = (value:unknown):value is WalletColor => WALLET_COLORS.some(color=>color.value===value);
 export function isStoredTrackedWallet(value:unknown):value is TrackedWallet {
   if(!value || typeof value !== "object") return false;
   const wallet=value as Partial<TrackedWallet>;
   return typeof wallet.address === "string" && typeof wallet.name === "string" &&
-    typeof wallet.avatar === "string" && wallet.avatar.startsWith("/art/coins/") &&
     typeof wallet.monitor === "boolean" && typeof wallet.trades === "boolean" &&
     typeof wallet.addedAt === "number" && Number.isFinite(wallet.addedAt) &&
     (wallet.chain === undefined || isChain(wallet.chain)) &&
-    (wallet.emoji === undefined || isEmoji(wallet.emoji));
+    (wallet.shape === undefined || isShape(wallet.shape)) &&
+    (wallet.color === undefined || isColor(wallet.color));
 }
 
-type ImportedWallet = Pick<TrackedWallet,"address"|"name"|"chain"|"emoji">;
+type ImportedWallet = Pick<TrackedWallet,"address"|"name"|"chain"|"shape"|"color">;
 export function parseWalletImport(value:string):ImportedWallet[] {
   const found=new Map<string,ImportedWallet>();
-  const add=(address:string,name="",chain:TrackerChain="NEAR",emoji?:WalletEmoji)=>{
+  const add=(address:string,name="",chain:TrackerChain="NEAR",shape?:WalletShape,color?:WalletColor)=>{
     const clean=normalizeWalletAddress(address,chain);
     if(!isWalletAddress(clean,chain)) return;
-    const wallet={address:clean,name:name.trim().slice(0,32)||(clean.length>26?`${clean.slice(0,12)}…${clean.slice(-9)}`:clean),chain,emoji};
+    const wallet={address:clean,name:name.trim().slice(0,32)||(clean.length>26?`${clean.slice(0,12)}…${clean.slice(-9)}`:clean),chain,shape,color};
     found.set(trackedWalletKey(wallet),wallet);
   };
   try {
@@ -59,7 +71,7 @@ export function parseWalletImport(value:string):ImportedWallet[] {
       else if(item && typeof item === "object" && "address" in item && typeof item.address === "string"){
         const chain="chain" in item?item.chain:"NEAR";
         if(!isChain(chain)) continue;
-        add(item.address,"name" in item && typeof item.name === "string"?item.name:"",chain,"emoji" in item && isEmoji(item.emoji)?item.emoji:undefined);
+        add(item.address,"name" in item && typeof item.name === "string"?item.name:"",chain,"shape" in item && isShape(item.shape)?item.shape:undefined,"color" in item && isColor(item.color)?item.color:undefined);
       }
     }
   } catch {

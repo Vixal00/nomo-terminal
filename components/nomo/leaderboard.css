@@ -1,4 +1,8 @@
-.nomo-index .nld-main{padding:16px 24px 30px;max-width:1800px;margin:auto;min-height:calc(100svh - 114px);min-width:0;color:#d7d7dc;font-size:11px}
+.nomo-index .nld-main{padding:16px 24px 12px;max-width:1800px;margin:auto;height:calc(100dvh - var(--ni-navigation-height,90px) - 32px - env(safe-area-inset-bottom,0px));min-height:0;min-width:0;display:flex;flex-direction:column;color:#d7d7dc;font-size:11px}
+.nomo-index .nld-main>.nld-toolbar,.nomo-index .nld-main>.nld-footnote{flex-shrink:0}
+.nomo-index .nld-main>.nld-table-scroll{flex:1;min-height:0;overscroll-behavior:contain;scrollbar-gutter:stable}
+.nomo-index .nld-table-scroll:focus-visible{outline:1px solid #737f69;outline-offset:3px}
+.nomo-index .nld-main .nld-table th{position:sticky;top:0;z-index:2;box-shadow:0 1px #2c2c30}
 .nomo-index .nld-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:16px;min-height:32px}
 .nomo-index .nld-toolbar h1{font-size:21px;font-weight:620;letter-spacing:-.65px;flex-shrink:0}
 .nomo-index .nld-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-left:auto;min-width:0;flex-wrap:wrap}

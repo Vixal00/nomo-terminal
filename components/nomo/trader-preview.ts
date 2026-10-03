@@ -26,6 +26,13 @@ export const PREVIEW_TRADERS: PreviewTrader[] = [
   { id: "pebble", name: "Pebble", handle: "pebble", address: "pebble.near", avatar: "/art/coins/p77.webp", nomo: true, balance: 263.11, pnl: -12.48, realized: -23.84, volume: 682.94, trades: 25, wins: 10, tokens: 6, lastMinutes: 128 },
   { id: "bluehour", name: "Blue hour", handle: "bluehour", address: "bluehour.near", avatar: "/art/coins/p68.webp", nomo: true, balance: 138.54, pnl: -86.27, realized: -101.93, volume: 1239.22, trades: 34, wins: 12, tokens: 7, lastMinutes: 173 },
   { id: "ember", name: "Ember", handle: "ember", address: "ember.near", avatar: "/art/coins/p03.webp", nomo: false, balance: 389.12, pnl: -143.81, realized: -167.3, volume: 1628.73, trades: 41, wins: 16, tokens: 8, lastMinutes: 208 },
+  ...["Harbor", "Daybreak", "Kestrel", "Driftwood", "Solstice", "Juniper", "Lighthouse", "Copper", "Monsoon", "Quartz", "Clover", "Nightjar", "Tidepool", "Lumen", "Willow", "Meridian", "Cobalt", "Fable", "Rivermint", "Aster", "Horizon", "Flint", "Marigold", "Evergreen", "Bluefin", "Rook", "Saffron", "Cloudline", "Maple", "Tundra", "Dusk", "Avalon", "Seabird", "Moraine", "Crescent", "Wildflower"].map((name,index):PreviewTrader=>{
+    const id=name.toLowerCase();
+    const trades=24+(index*17)%143;
+    const pnl=228.4-index*9.3+Math.sin(index*2.1)*52;
+    const portraits=["p65","p34","p11","p69","p57","p72","p16","p24","p29","p77","p68","p03"];
+    return {id,name,handle:id,address:`${id}.near`,avatar:`/art/coins/${portraits[(index*5+3)%portraits.length]}.webp`,nomo:index%4!==3,balance:153.27+(index*139.71)%2200,pnl,realized:pnl*.72-18.3,volume:520.46+(index*317.53)%4900,trades,wins:Math.round(trades*(.38+(index*7%43)/100)),tokens:3+index%11,lastMinutes:5+(index*23)%620};
+  }),
 ];
 
 export const PREVIEW_TRADES = Array.from({ length: 36 }, (_, index) => {
@@ -37,7 +44,7 @@ export const PREVIEW_TRADES = Array.from({ length: 36 }, (_, index) => {
 export const normalizeTrackedAccount = (address: string) => PREVIEW_TRADERS.find(trader => trader.address.replace(/\.near$/, ".preview.near") === address)?.address || address;
 export const TRACKED_WALLETS_KEY = "nomo.preview.tracked-wallets.v1";
 const WALLET_EVENT = "nomo:tracked-wallets";
-const initialWallets = PREVIEW_TRADERS.slice(0, 3).concat(PREVIEW_TRADERS[4]).map(trader => ({ address: trader.address, name: trader.name, avatar: trader.avatar, monitor: true, trades: true, addedAt: 0 }));
+const initialWallets = PREVIEW_TRADERS.slice(0, 3).concat(PREVIEW_TRADERS[4]).map(trader => ({ address: trader.address, name: trader.name, monitor: true, trades: true, addedAt: 0 }));
 
 export function useTrackedWallets() {
   const [wallets, setWallets] = useState<TrackedWallet[]>(initialWallets);
@@ -62,7 +69,7 @@ export function useTrackedWallets() {
   };
   const toggleTrader = (trader: PreviewTrader) => {
     const exists = wallets.some(wallet => trackedWalletKey(wallet) === trackedWalletKey(trader));
-    saveWallets(exists ? wallets.filter(wallet => trackedWalletKey(wallet) !== trackedWalletKey(trader)) : [...wallets, { address: trader.address, name: trader.name, avatar: trader.avatar, monitor: true, trades: true, addedAt: Date.now() }]);
+    saveWallets(exists ? wallets.filter(wallet => trackedWalletKey(wallet) !== trackedWalletKey(trader)) : [...wallets, { address: trader.address, name: trader.name, monitor: true, trades: true, addedAt: Date.now() }]);
   };
   return { wallets, saveWallets, toggleTrader };
 }
