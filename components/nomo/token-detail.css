@@ -31,31 +31,44 @@
 .nomo-index .nt-rail{min-width:0;display:flex;flex-direction:column;border:1px solid #2a2a2d;border-radius:6px;background:#141416;overflow:hidden}
 .nomo-index .nt-rail-section{padding:16px 14px;border-top:1px solid #2a2a2d}
 .nomo-index .nt-rail-section h2{font-size:12px;line-height:18px;font-weight:500;color:#dedee2}
-.nomo-index .nt-stat-windows{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;margin-top:12px}
-.nomo-index .nt-stat-windows>button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 1px;border:1px solid transparent;border-radius:4px}
-.nomo-index .nt-stat-windows>button[aria-pressed=true]{border-color:#33363a;background:#202224}
-.nomo-index .nt-stat-windows>button:hover{background:#1d1f21}
-.nomo-index .nt-stat-windows span{font-size:9px;color:#7c7f89}
-.nomo-index .nt-stat-windows strong{font-weight:450;font-size:9px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.nomo-index .nt-stat-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0}
-.nomo-index .nt-stat-totals>div{display:flex;flex-direction:column;gap:6px}
-.nomo-index .nt-stat-totals>div+div{border-left:1px solid #2a2a2e;padding-left:10px}
-.nomo-index .nt-stat-totals span{color:#797c86;font-size:9px;white-space:nowrap}
-.nomo-index .nt-stat-totals strong{font-size:12px;font-weight:450;font-variant-numeric:tabular-nums}
-.nomo-index .nt-pressure-labels,.nomo-index .nt-pressure-values{display:flex;justify-content:space-between;font-size:9px;font-variant-numeric:tabular-nums;color:#777b86}
-.nomo-index .nt-pressure-labels>span{display:flex;align-items:center;gap:4px}
-.nomo-index .nt-pressure-labels i{width:4px;height:4px;background:#83b68c;border-radius:50%}
-.nomo-index .nt-pressure-labels>span+span i{background:#c47785}
-.nomo-index .nt-pressure-track{height:3px;border-radius:2px;background:#945462;margin:8px 0;overflow:hidden}
-.nomo-index .nt-pressure-track>span{display:block;height:100%;background:#739e72}
+/* Compact activity splits and aligned audit rows, shared with the trading rail. */
+.nomo-index .nt-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nomo-index .nt-section-heading>span{font-size:10px;color:#858a94;font-variant-numeric:tabular-nums}
+.nomo-index .nt-stat-windows{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin:13px -14px 0;border-top:1px solid #2c2d31;border-bottom:1px solid #2c2d31;background:#171719}
+.nomo-index .nt-stat-windows>button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:53px;padding:8px 1px;border:0;border-right:1px solid #25262a;background:none}
+.nomo-index .nt-stat-windows>button:last-child{border-right:0}
+.nomo-index .nt-stat-windows>button[aria-pressed=true]{background:#232621}
+.nomo-index .nt-stat-windows>button[aria-pressed=true]:after{position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#adc79b;content:""}
+.nomo-index .nt-stat-windows>button:hover{background:#20221f}
+.nomo-index .nt-stat-windows>button:focus-visible{outline:1px solid #a6b99a;outline-offset:-3px}
+.nomo-index .nt-stat-windows span{font-size:10px;color:#858a94}
+.nomo-index .nt-stat-windows>button[aria-pressed=true]>span{color:#d7dfd1}
+.nomo-index .nt-stat-windows strong{font-weight:500;font-size:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nomo-index .nt-stat-breakdown{display:flex;flex-direction:column;margin-top:4px}
+.nomo-index .nt-stat-split{display:grid;grid-template-columns:83px minmax(0,1fr);align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #27282c}
+.nomo-index .nt-stat-total{display:flex;flex-direction:column;gap:6px;min-width:0}
+.nomo-index .nt-stat-total>span{font-size:10px;color:#838995}
+.nomo-index .nt-stat-total>strong{font-size:17px;line-height:1.2;font-weight:550;color:#e1e4dd;letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.nomo-index .nt-stat-sides{min-width:0}
+.nomo-index .nt-stat-sides>div:not(.nt-stat-bar){display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nomo-index .nt-stat-sides>div>span{font-size:9px;color:#858b96}
+.nomo-index .nt-stat-sides>div>strong{font-size:12px;font-weight:500;color:#9dc3a6;font-variant-numeric:tabular-nums;margin-top:3px}
+.nomo-index .nt-stat-sides>div>strong:last-child{color:#cc8c98}
+.nomo-index .nt-stat-bar{display:flex;gap:3px;height:3px;margin-top:8px;overflow:hidden}
+.nomo-index .nt-stat-bar>i{min-width:0;border-radius:2px;background:#78a484}
+.nomo-index .nt-stat-bar>i:last-child{background:#a66677}
+.nomo-index .nt-stat-ratio{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;font-size:10px;color:#818792}
+.nomo-index .nt-stat-ratio>strong{font-size:11px;font-weight:500;color:#cbd1c5;font-variant-numeric:tabular-nums}
 .nomo-index .nt-audit .nm-token-details{margin:0;padding:0;border:0;background:none}
-.nomo-index .nt-audit .nm-token-details h3{font-size:12px;font-weight:500;display:flex;justify-content:space-between;gap:5px;margin-bottom:15px}
-.nomo-index .nt-audit h3>span{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:400;color:#81848c}
-.nomo-index .nt-audit .nm-token-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 12px}
-.nomo-index .nt-audit .nm-token-detail-grid>div{display:flex;flex-direction:column;gap:5px}
-.nomo-index .nt-audit .nm-token-detail-grid>div>span{display:flex;align-items:center;gap:5px;font-size:9px;color:#787c87}
-.nomo-index .nt-audit .nm-token-detail-grid>div>span>svg{width:11px;height:11px;opacity:.8}
-.nomo-index .nt-audit .nm-token-detail-grid strong{font-size:11px;font-weight:450;color:#bfc2c8;font-variant-numeric:tabular-nums}
+.nomo-index .nt-audit .nm-token-details h3{font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:13px}
+.nomo-index .nt-audit h3>span{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:400;color:#9298a1}
+.nomo-index .nt-audit .nm-token-detail-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.nomo-index .nt-audit .nm-token-detail-grid>div{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;min-height:30px;padding:6px 9px;background:#1b1c1f;border:1px solid #24262a;border-radius:4px;text-align:left}
+.nomo-index .nt-audit .nm-token-detail-grid>div>span{display:flex;align-items:center;gap:7px;font-size:10px;color:#9298a3;min-width:0}
+.nomo-index .nt-audit .nm-token-detail-grid>div>span>svg{width:13px;height:13px;color:#787f8a}
+.nomo-index .nt-audit .nm-token-detail-grid strong{flex-shrink:0;font-size:11px;font-weight:500;color:#c9cdd2;font-variant-numeric:tabular-nums}
+.nomo-index .nt-audit .nm-token-detail-grid strong[data-tone=ok]{color:#96bd9f}
+.nomo-index .nt-audit .nm-token-detail-grid strong[data-tone=bad]{color:#d98d9b}
 .nomo-index .nt-audit .nm-token-contract{display:none}
 .nomo-index .nt-progress>div:first-child{display:flex;justify-content:space-between;align-items:center}
 .nomo-index .nt-progress strong{font-size:10px;color:#b5c7a9;font-weight:450}
@@ -79,3 +92,36 @@
 .nomo-index .nt-rail>.nt-trade{border:0;border-radius:0;background:transparent}
 
 @media(min-width:761px) and (max-height:800px){.nomo-index .nt-market>.ntc-chart:not(:fullscreen) .ntc-canvas{height:268px}}
+
+/* Let the activity tape use the full height beside the trading rail. */
+.nomo-index .nt-main{max-width:none}
+.nomo-index .nt-workspace{align-items:stretch;min-height:calc(100dvh - var(--ni-navigation-height,90px) - 103px)}
+.nomo-index .nt-market{display:flex;flex-direction:column;min-width:0;min-height:0;container-type:inline-size;container-name:token-market}
+.nomo-index .nt-market>.ntc-chart{flex-shrink:0}
+.nomo-index .nt-market>.nta-activity{flex:1;min-height:430px;overflow:hidden;contain:size}
+/* Keep token identity and market numbers in one compact reading group. */
+.nomo-index .nt-token-header{justify-content:flex-start;flex-wrap:nowrap;gap:20px;min-height:76px;padding:12px 14px;margin-bottom:12px;border:1px solid #252629;border-radius:6px;background:#131315;flex-shrink:0}
+.nomo-index .nt-identity{gap:10px;flex:0 0 auto;max-width:340px}
+.nomo-index .nt-identity>div{min-width:0}
+.nomo-index .nt-name{gap:6px;white-space:nowrap}
+.nomo-index .nt-name h1{font-size:17px;line-height:23px}
+.nomo-index .nt-full-name{overflow:hidden;text-overflow:ellipsis;max-width:110px;color:#777d87;font-size:11px}
+.nomo-index .nt-contract{font-size:9px;flex-shrink:0}
+.nomo-index .nt-star{width:18px;height:22px;flex-shrink:0}
+.nomo-index .nt-launchpad{display:grid;place-items:center;right:-2px;bottom:-2px;width:17px;height:17px;border:2px solid #131315;border-radius:5px;background:#1b1e19}
+.nomo-index .nt-subtitle{margin-top:5px;gap:9px;font-size:10px;white-space:nowrap}
+.nomo-index .nt-subtitle .nt-token-age{color:#a3b693;flex-shrink:0}
+.nomo-index .nt-token-origin{display:flex;align-items:center;gap:4px;font-size:9px;color:#818894;white-space:nowrap}
+.nomo-index .nt-header-cap{display:flex;flex-direction:column;justify-content:center;gap:6px;flex-shrink:0;border-left:1px solid #2c2d31;padding-left:20px;font-variant-numeric:tabular-nums}
+.nomo-index .nt-header-cap>span{font-size:10px;color:#7d838d}
+.nomo-index .nt-header-cap>div{display:flex;align-items:baseline;gap:7px}
+.nomo-index .nt-header-cap strong{font-size:18px;line-height:1.2;letter-spacing:-.3px;font-weight:600;color:#e0e3dc;white-space:nowrap}
+.nomo-index .nt-header-cap small{font-size:9px;white-space:nowrap}
+.nomo-index .nt-header-metrics{flex:0 1 auto;display:grid;grid-template-columns:repeat(6,max-content);justify-content:start;text-align:left;gap:24px;min-width:0;width:auto;padding-left:20px;border-left:1px solid #2c2d31}
+.nomo-index .nt-header-metrics>div{gap:6px;min-width:0}
+.nomo-index .nt-header-metrics>div>span{font-size:10px;color:#7d838d;white-space:nowrap}
+.nomo-index .nt-header-metrics strong{font-size:13px;font-weight:500;line-height:1.2}
+@container token-market (max-width:1150px){.nomo-index .nt-full-name{display:none}.nomo-index .nt-token-header{gap:16px}.nomo-index .nt-header-metrics{gap:18px;padding-left:16px}.nomo-index .nt-header-cap{padding-left:16px}.nomo-index .nt-header-cap>div{flex-direction:column;gap:3px}.nomo-index .nt-header-cap{gap:3px}}
+@container token-market (max-width:920px){.nomo-index .nt-token-header{flex-wrap:wrap;gap:12px 18px}.nomo-index .nt-full-name{display:block}.nomo-index .nt-header-cap>div{flex-direction:row;gap:7px}.nomo-index .nt-header-metrics{flex:0 0 100%;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;border-left:0;border-top:1px solid #26272a;padding:10px 0 0}}
+@container token-market (max-width:520px){.nomo-index .nt-token-header{padding:10px;gap:12px 10px}.nomo-index .nt-identity{gap:8px;flex:1}.nomo-index .nt-full-name{display:none}.nomo-index .nt-name h1{font-size:16px}.nomo-index .nt-contract{font-size:9px}.nomo-index .nt-subtitle{gap:6px}.nomo-index .nt-token-origin{font-size:0;gap:0}.nomo-index .nt-header-cap{padding-left:10px}.nomo-index .nt-header-cap>div{flex-direction:column;gap:2px}.nomo-index .nt-header-cap strong{font-size:17px}.nomo-index .nt-header-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.nomo-index .nt-header-metrics strong{font-size:12px}}
+@media(max-width:760px){.nomo-index .nt-market>.nta-activity{height:540px;flex:0 0 auto}.nomo-index .nt-workspace{min-height:0}}

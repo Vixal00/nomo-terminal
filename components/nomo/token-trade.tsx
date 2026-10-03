@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { ArrowDown, Check, GearSix, SlidersHorizontal, Wallet, X } from "@phosphor-icons/react";
 import { compact, priceText, type Token } from "./data";
 import type { useQuickBuySettings } from "./quick-buy-settings";
@@ -31,8 +31,8 @@ export function TokenTrade({ token, wallet, quickBuy, onPresets, amountRef, buyF
   const settingsTrigger = useRef<HTMLButtonElement>(null);
   const lastBuyFocusRequest = useRef(buyFocusRequest);
   const buyFocusPending = useRef(false);
-  const fieldId = useId();
-  const slippageId = useId();
+  const fieldId = `token-amount-${token.id}`;
+  const slippageId = `token-slippage-${token.id}`;
   const holding = wallet.connected ? wallet.tokenBalance(token.id) : 0;
   const available = wallet.connected ? side === "Buy" ? wallet.balance : holding : 0;
   const amount = side === "Buy" ? quickBuy.amount : sellAmount;

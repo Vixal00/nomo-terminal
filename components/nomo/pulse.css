@@ -47,8 +47,10 @@
 .nomo-index .npu-token-card{position:relative;display:grid;grid-template-columns:68px minmax(0,1fr) 124px;gap:5px 12px;align-items:center;padding:10px 12px 11px;border-bottom:1px solid #29292d;background:#121214;min-width:0}
 .nomo-index .npu-token-card:hover{background:#19191c}
 .nomo-index .npu-token-card>.ni-token-identity{display:contents}
-.nomo-index .npu-token-card .ni-token-identity-avatar{grid-column:1;grid-row:1/3;align-self:center;flex-basis:68px;width:68px;height:68px;border-radius:7px;box-shadow:0 0 0 1px #34383a}
+.nomo-index .npu-token-card .ni-token-identity-avatar{grid-column:1;grid-row:1/3;align-self:center;flex-basis:68px;width:68px;height:68px;margin-bottom:10px;border-radius:7px;box-shadow:0 0 0 1px #34383a}
 .nomo-index .npu-token-card .ni-token-identity-avatar>.nm-avatar{border-radius:7px!important}
+.nomo-index .npu-token-card .ni-token-identity-badges{height:24px;gap:4px;padding:3px 4px;bottom:-13px;right:-2px;border-radius:5px}
+.nomo-index .npu-token-card .ni-token-identity-badges>i{height:13px}
 .nomo-index .npu-token-card .ni-token-identity-body{grid-column:2;grid-row:1;gap:6px;align-self:center;min-width:0}
 .nomo-index .npu-token-card .ni-token-identity-heading{gap:6px;min-width:0;height:21px}
 .nomo-index .npu-token-card .ni-token-identity-symbol{font-size:15px;line-height:21px}

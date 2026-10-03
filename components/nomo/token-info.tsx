@@ -79,7 +79,7 @@ export function TokenDetails({token}:{token:Token}) {
   return <section className="nm-token-details" aria-label="Token information">
     <h3>Token information <span><LaunchpadIcon name={token.launchpad} size={13}/>{token.launchpad}</span></h3>
     <div className="nm-token-detail-grid">
-      {signals.map(({key,label,icon:Icon,description})=><div key={key} title={`${description}.`}><span><Icon size={13} weight="bold" aria-hidden="true"/>{label}</span><strong>{token[key].toFixed(1)}%</strong></div>)}
+      {signals.map(({key,label,icon:Icon,description,warn,bad})=><div key={key} title={`${description}.`}><span><Icon size={13} weight="bold" aria-hidden="true"/>{label}</span><strong data-tone={signalTone(token[key],warn,bad)}>{token[key].toFixed(1)}%</strong></div>)}
       {extraSignals.map(({key,label,icon:Icon,description,value})=><div key={key} title={description}><span><Icon size={13} weight="regular" aria-hidden="true"/>{label}</span><strong>{value(token)}</strong></div>)}
       <div><span><TrendUp size={13} weight="bold" aria-hidden="true"/>ATH market cap</span><strong>{money(token.athMcap)}</strong></div><div><span><Receipt size={13} weight="bold" aria-hidden="true"/>Total fees</span><strong>{money(token.fees)}</strong></div>
     </div>

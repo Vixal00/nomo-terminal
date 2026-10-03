@@ -35,3 +35,5 @@
 .nomo-index .ni-hide-pair{display:grid;place-items:center;width:18px;height:26px;color:#656971;flex-shrink:0;border-radius:3px}
 .nomo-index .ni-hide-pair:hover{background:#222427;color:#c2c7bc}
 @media(max-width:600px){.nomo-index .ndf-panel{gap:6px}.nomo-index .ndf-chip{font-size:10px;padding:0 7px}.nomo-index .ndf-menu{width:210px}.nomo-index .ndf-popover[data-popup="hidden"]{position:static}.nomo-index .ndf-hidden-menu{left:0;right:auto;top:100%}.nomo-index .ni-table th.ni-quick-buy-head,.nomo-index .ni-table td.ni-quick-buy-cell{width:112px}.nomo-index .ni-row-actions{gap:3px}.nomo-index .ndf-inputs input{width:57px}}
+.ndf-origin-stack{display:flex;align-items:center;gap:3px}
+.ndf-origin-stack img,.ndf-chain-option>img{border-radius:4px;object-fit:cover}

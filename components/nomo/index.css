@@ -46,6 +46,8 @@
 .nomo-index .ni-feature-change>span{color:#777780;font-size:10px;line-height:13px}
 .nomo-index .ni-spotlight-art{position:absolute;left:11px;top:-7px;bottom:0;width:102px;overflow:hidden;pointer-events:none}
 .nomo-index .ni-spotlight-art>img{display:block;width:102px;height:auto;max-width:none}
+.nomo-index .ni-spotlight-art>img.ni-spotlight-face{position:absolute;left:0;top:0;width:96%;aspect-ratio:1;height:auto;object-fit:cover;border-radius:50%;transform:rotate(40deg) scaleX(.8);filter:brightness(.86)}
+.nomo-index .ni-spotlight-art>img.ni-spotlight-rim{position:relative;width:100%;height:auto}
 /* Respond to the content width after a sidebar takes its space. */
 .nomo-index .ni-main{container-type:inline-size;container-name:nomo-discover}
 .nomo-index .ni-feature-name{flex:0 1 auto;min-width:0}
@@ -193,5 +195,26 @@
 .nomo-index .ni-table .ni-quick-buy{height:33px;font-size:12px;padding:0 9px}
 .nomo-index .ni-table .ni-star>svg{width:17px;height:17px}
 .nomo-index .ni-table .ni-chart-cell .nm-spark{width:112px;height:33px}
-@media(min-width:601px){.nomo-index .ni-table{min-width:1480px}.nomo-index .ni-table .ni-token-cell{width:280px;min-width:280px}.nomo-index .ni-table th.ni-info-head{width:246px}.nomo-index .ni-table .ni-trend-head{width:154px}.nomo-index .ni-table th.ni-quick-buy-head{width:142px}}
+@media(min-width:601px){.nomo-index .ni-table{min-width:1326px}.nomo-index .ni-table .ni-token-cell{width:280px;min-width:280px}.nomo-index .ni-table th.ni-info-head{width:246px}.nomo-index .ni-table .ni-trend-head{width:154px}.nomo-index .ni-table th.ni-quick-buy-head{width:142px}}
 @media(max-width:600px){.nomo-index .ni-table td{height:90px}.nomo-index .ni-table .ni-token-cell{min-width:0}.nomo-index .ni-table .ni-token-identity{gap:10px}.nomo-index .ni-table .ni-token-identity-symbol{font-size:14px}.nomo-index .ni-table .ni-token-identity-copy{display:none}.nomo-index .ni-table .ni-metric-primary{font-size:12px}.nomo-index .ni-table .ni-token-identity-secondary{font-size:11px}.nomo-index .ni-table .ni-quick-buy{padding:0 5px;font-size:11px}.nomo-index .ni-table .ni-mobile-change{font-size:11px}}
+
+/* Give the removed Trend column's space to the token metrics and actions. */
+@media(min-width:601px){
+  .nomo-index .ni-table{min-width:1460px}
+  .nomo-index .ni-table th.ni-info-head{width:360px;padding-left:24px;padding-right:24px}
+  .nomo-index .ni-table .ni-token-info{padding-left:24px;padding-right:24px}
+  .nomo-index .ni-table .ni-token-info .nm-token-signals.is-chips{width:100%;gap:7px}
+  .nomo-index .ni-table .ni-token-info .nm-signal-line{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
+  .nomo-index .ni-table .ni-token-info .nm-signal-chip{justify-content:center;min-width:0;height:26px;padding:0 5px;gap:5px}
+  .nomo-index .ni-table th.ni-quick-buy-head{width:160px}
+  .nomo-index .ni-table .ni-row-actions{gap:12px}
+}
+
+.nomo-index .ni-table .ni-origin-cell{width:26px;padding:0 4px;text-align:center}
+.nomo-index .ni-origin-avatar{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:0;border-radius:3px;overflow:hidden;background:#191a1d}
+.nomo-index .ni-origin-avatar img{display:block;width:15px;height:15px;object-fit:cover;border-radius:3px}
+.nomo-index .ni-origin-avatar:hover,.nomo-index .ni-origin-avatar[aria-pressed=true]{outline:1px solid #9db889;outline-offset:2px}
+.nomo-index .ni-name-star{display:grid;place-items:center;flex:0 0 20px;width:20px;height:23px;padding:0;color:#686b75}
+.nomo-index .ni-name-star:hover{color:#b6c8a8}
+.nomo-index .ni-name-star.starred{color:#d4df97}
+@media(max-width:600px){.nomo-index .ni-table .ni-origin-cell{width:23px;padding:0 2px}.nomo-index .ni-origin-avatar{width:15px;height:15px}.nomo-index .ni-origin-avatar img{width:15px;height:15px}.nomo-index .ni-table .ni-token-identity{gap:8px}.nomo-index .ni-table .ni-token-identity-heading{gap:3px}.nomo-index .ni-name-star{width:16px;flex-basis:16px}.nomo-index .ni-name-star>svg{width:14px;height:14px}.nomo-index .ni-table th.ni-quick-buy-head,.nomo-index .ni-table td.ni-quick-buy-cell{width:92px}.nomo-index .ni-table .ni-hide-pair{display:none}}

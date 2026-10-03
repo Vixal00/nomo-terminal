@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { ArrowLeft, Check, CopySimple, Star } from "@phosphor-icons/react";
 import { type Token, TIMEFRAMES, changeForTime, compact, money, percent, priceText } from "./data";
 import { TokenAvatar } from "./shared";
-import { LaunchpadIcon, SolanaIcon } from "./brand-icons";
+import { LaunchpadIcon, MarketChainIcon } from "./brand-icons";
 import { TokenDetails } from "./token-info";
 import { type PreviewWallet } from "./wallet";
 import { type useQuickBuySettings } from "./quick-buy-settings";
@@ -61,16 +61,33 @@ function MarketStats({ token }: { token: Token }) {
   const sells = Math.round(token.sells * share);
   const total = buys + sells;
   const buyShare = total ? buys / total : .5;
+  const volume = token.volume * share;
+  // Authored market simulation: transaction sizes and repeat traders differ by side.
+  const marketSeed = [...token.id].reduce((sum, character) => sum + character.charCodeAt(0), 0);
+  const buyVolumeShare = .4 + marketSeed % 22 / 100;
+  const buyers = Math.min(buys, Math.round(buys * (.4 + marketSeed % 13 / 100)));
+  const sellers = Math.min(sells, Math.round(sells * (.48 + marketSeed % 11 / 100)));
+  const sharedTraders = Math.round(Math.min(buyers, sellers) * .22);
+  const traders = buyers + sellers - sharedTraders;
   return <section className="nt-stats nt-rail-section" aria-label="Market statistics">
-    <h2>Market activity</h2>
+    <div className="nt-section-heading"><h2>Market activity</h2><span>{window}</span></div>
     <div className="nt-stat-windows" role="group" aria-label="Statistics timeframe">
       {TIMEFRAMES.map(time => <button type="button" key={time} aria-pressed={window === time} onClick={() => setWindow(time)}><span>{time}</span><strong className={changeForTime(token, time) >= 0 ? "nm-positive" : "nm-negative"}>{percent(changeForTime(token, time))}</strong></button>)}
     </div>
-    <div className="nt-stat-totals"><div><span>Volume</span><strong>{money(token.volume * share)}</strong></div><div><span>Transactions</span><strong>{compact(total)}</strong></div><div><span>Buy / sell ratio</span><strong>{sells ? (buys / sells).toFixed(2) : buys ? "—" : "0.00"}</strong></div></div>
-    <div className="nt-pressure-labels"><span><i/>{compact(buys)} buys</span><span>{compact(sells)} sells<i/></span></div>
-    <div className="nt-pressure-track" aria-label={`${Math.round(buyShare * 100)} percent buys`}><span style={{ width: `${buyShare * 100}%` }}/></div>
-    <div className="nt-pressure-values"><span>{money(token.volume * share * buyShare)}</span><span>{money(token.volume * share * (1 - buyShare))}</span></div>
+    <div className="nt-stat-breakdown">
+      <MarketSplit label="Transactions" total={compact(total)} buyLabel="Buys" sellLabel="Sells" buyValue={compact(buys)} sellValue={compact(sells)} share={buyShare}/>
+      <MarketSplit label="Volume" total={money(volume)} buyLabel="Buy volume" sellLabel="Sell volume" buyValue={money(volume * buyVolumeShare)} sellValue={money(volume * (1 - buyVolumeShare))} share={buyVolumeShare}/>
+      <MarketSplit label="Traders" total={compact(traders)} buyLabel="Buyers" sellLabel="Sellers" buyValue={compact(buyers)} sellValue={compact(sellers)} share={buyers + sellers ? buyers / (buyers + sellers) : .5}/>
+    </div>
+    <div className="nt-stat-ratio"><span>Buy / sell ratio</span><strong>{sells ? (buys / sells).toFixed(2) : buys ? "—" : "0.00"}</strong></div>
   </section>;
+}
+
+function MarketSplit({ label, total, buyLabel, sellLabel, buyValue, sellValue, share }: { label: string; total: string; buyLabel: string; sellLabel: string; buyValue: string; sellValue: string; share: number }) {
+  return <div className="nt-stat-split">
+    <div className="nt-stat-total" title={label === "Traders" ? "Unique simulated wallets. A wallet may appear on both sides." : undefined}><span>{label}</span><strong>{total}</strong></div>
+    <div className="nt-stat-sides"><div><span>{buyLabel}</span><span>{sellLabel}</span></div><div><strong>{buyValue}</strong><strong>{sellValue}</strong></div><div className="nt-stat-bar" aria-label={`${label}: ${Math.round(share * 100)}% buys, ${Math.round((1 - share) * 100)}% sells`}><i style={{ flex: share }}/><i style={{ flex: 1 - share }}/></div></div>
+  </div>;
 }
 
 export function TokenDetail({ token, wallet, quickBuy, starred, onStar, onPresets, amountRef, buyFocusRequest }: Props) {
@@ -80,14 +97,17 @@ export function TokenDetail({ token, wallet, quickBuy, starred, onStar, onPreset
       <div className="nt-market">
         <header className="nt-token-header">
           <div className="nt-identity">
-            <span className="nt-avatar"><TokenAvatar token={token} variant="square" size={42}/><span className="nt-launchpad" title={token.launchpad}><LaunchpadIcon name={token.launchpad} size={12}/></span></span>
-            <div><div className="nt-name"><h1>{token.symbol}</h1><ContractCopy token={token}/><button type="button" className={`nt-star ${starred ? "is-starred" : ""}`} onClick={onStar} aria-pressed={starred} aria-label={`${starred ? "Remove" : "Add"} ${token.symbol} ${starred ? "from" : "to"} watchlist`}><Star size={15} weight={starred ? "fill" : "regular"}/></button></div><div className="nt-subtitle"><span>{token.name}</span><span>{token.age}</span><span className="nt-network"><SolanaIcon size={10}/>Solana</span></div></div>
+            <span className="nt-avatar"><TokenAvatar token={token} variant="square" size={44}/><span className="nt-launchpad" title={token.launchpad}><LaunchpadIcon name={token.launchpad} size={11}/></span></span>
+            <div><div className="nt-name"><h1>{token.symbol}</h1><button type="button" className={`nt-star ${starred ? "is-starred" : ""}`} onClick={onStar} aria-pressed={starred} aria-label={`${starred ? "Remove" : "Add"} ${token.symbol} ${starred ? "from" : "to"} watchlist`}><Star size={14} weight={starred ? "fill" : "regular"}/></button><span className="nt-full-name" title={token.name}>{token.name}</span></div><div className="nt-subtitle"><span className="nt-token-age">{token.age}</span><ContractCopy token={token}/><span className="nt-token-origin" title={`${token.chain} · ${token.launchpad}`}><MarketChainIcon chain={token.chain} size={11}/>{token.chain}</span></div></div>
           </div>
+          <div className="nt-header-cap" title={`All-time high market cap ${money(token.athMcap)}`}><span>Market cap</span><div><strong>{money(token.mcap)}</strong><small className={token.change24h >= 0 ? "nm-positive" : "nm-negative"}>{percent(token.change24h)}</small></div></div>
           <div className="nt-header-metrics">
-            <div><span>Price</span><strong>{priceText(token.price)}</strong><small className={token.change24h >= 0 ? "nm-positive" : "nm-negative"}>{percent(token.change24h)} <span>24h</span></small></div>
-            <div><span>Market cap</span><strong>{money(token.mcap)}</strong><small>ATH {money(token.athMcap)}</small></div>
-            <div><span>Liquidity</span><strong>{money(token.liquidity)}</strong><small>{token.launchpad}</small></div>
-            <div><span>Holders</span><strong>{compact(token.holders)}</strong><small>{token.totalSupply >= 1e9 ? `${token.totalSupply / 1e9}B` : compact(token.totalSupply)} supply</small></div>
+            <div><span>Price</span><strong>{priceText(token.price)}</strong></div>
+            <div><span>Liquidity</span><strong>{money(token.liquidity)}</strong></div>
+            <div><span>24h volume</span><strong>{money(token.volume)}</strong></div>
+            <div><span>Total fees</span><strong>{money(token.fees)}</strong></div>
+            <div><span>Supply</span><strong>{token.totalSupply >= 1e9 ? `${token.totalSupply / 1e9}B` : compact(token.totalSupply)}</strong></div>
+            <div><span>Holders</span><strong>{compact(token.holders)}</strong></div>
           </div>
         </header>
         <TokenChart key={token.id} token={token}/>

@@ -69,7 +69,7 @@ export function FeatureFire({ className = "" }: { className?: string }) {
         context.fillRect(-1, -1, 2, 2);
         context.restore();
       };
-      bloom(coinWidth * (0.68 + intensity * 0.08) * breath, intensity * 0.6);
+      bloom(coinWidth * (0.57 + intensity * 0.03) * breath, intensity * 0.12);
       context.restore();
     };
 
@@ -108,7 +108,7 @@ export function FeatureFire({ className = "" }: { className?: string }) {
       const rectangle = layer.getBoundingClientRect();
       width = rectangle.width;
       height = rectangle.height;
-      const artwork = host.querySelector(".ni-spotlight-art img")?.getBoundingClientRect();
+      const artwork = host.querySelector(".ni-spotlight-rim")?.getBoundingClientRect();
       if (artwork) {
         coinWidth = artwork.width;
         coinCenterX = artwork.left - rectangle.left + artwork.width / 2;
@@ -116,8 +116,8 @@ export function FeatureFire({ className = "" }: { className?: string }) {
       }
       layer.style.setProperty("--nm-glow-x", `${coinCenterX}px`);
       layer.style.setProperty("--nm-glow-y", `${coinCenterY}px`);
-      layer.style.setProperty("--nm-glow-radius", `${coinWidth * (0.68 + IDLE * 0.08)}px`);
-      layer.style.setProperty("--nm-glow-active-radius", `${coinWidth * 0.76}px`);
+      layer.style.setProperty("--nm-glow-radius", `${coinWidth * (0.57 + IDLE * 0.03)}px`);
+      layer.style.setProperty("--nm-glow-active-radius", `${coinWidth * 0.6}px`);
       ratio = Math.min(window.devicePixelRatio || 1, 1.75);
       canvas.width = Math.max(1, Math.ceil(width * ratio));
       canvas.height = Math.max(1, Math.ceil(height * ratio));
@@ -158,7 +158,7 @@ export function FeatureFire({ className = "" }: { className?: string }) {
     window.addEventListener("resize", resize);
     reduced.addEventListener("change", onPreference);
     resizeObserver.observe(host);
-    const artworkImage = host.querySelector(".ni-spotlight-art img");
+    const artworkImage = host.querySelector(".ni-spotlight-rim");
     if (artworkImage) resizeObserver.observe(artworkImage);
     intersectionObserver.observe(host);
     resize();

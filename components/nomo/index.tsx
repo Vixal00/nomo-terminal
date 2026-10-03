@@ -10,7 +10,7 @@ import {
   Binoculars, Check, Compass, EyeSlash, Fire, IntersectSquare, MagnifyingGlass, Plus, PlusCircle, Trophy, XLogo,
   SlidersHorizontal, Star, Wallet, X, Lightning, RocketLaunch, Waveform,
 } from "@phosphor-icons/react";
-import { type Token, compact, money, percent, priceText, TIMEFRAMES } from "./data";
+import { type Token, compact, money, percent, priceText, TIMEFRAMES, TOKEN_PORTRAITS, ORIGIN_AVATARS, ORIGIN_LAUNCHPADS } from "./data";
 import { Sparkline, useDiscover, useEntrance } from "./shared";
 import { TokenSignals } from "./token-info";
 import { NearIcon, SolanaIcon } from "./brand-icons";
@@ -36,6 +36,7 @@ const CreatePairWorkspace = dynamic(() => import("./create-pair").then(module =>
 const BridgeWorkspace = dynamic(() => import("./bridge").then(module => module.BridgeWorkspace));
 import { NearPairsWorkspace } from "./near-pairs";
 const TerminalDock = dynamic(() => import("./terminal-dock").then(module => module.TerminalDock));
+const CommunityPanel = dynamic(() => import("./community-panel").then(module => module.CommunityPanel));
 const TokenDetail = dynamic(() => import("./token-detail").then(module => module.TokenDetail));
 
 type Panel = "settings" | "tracker" | "presets" | "wallet" | "portfolio" | "bridge" | "about" | "pairs" | null;
@@ -117,7 +118,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       rank: index + 1,
       token: item,
       fdv: item.price * item.totalSupply,
-      artwork: item.image.replace("-64.webp", ".webp"),
+      artwork: TOKEN_PORTRAITS[item.id] || item.image,
     }));
 
   return <div className={`nomo nomo-index${tokenId ? " nomo-token" : ""}`} ref={entrance}>
@@ -156,7 +157,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       <div className="ni-featured" data-enter>
         {featured.map(item => <button className="ni-feature" key={item.token.id} onClick={() => token(item.token)}>
           <FeatureFire/>
-          <span className="ni-spotlight-art" aria-hidden="true"><img src={item.artwork} alt=""/></span>
+          <span className="ni-spotlight-art" aria-hidden="true"><img className="ni-spotlight-face" src={item.artwork} alt=""/><img className="ni-spotlight-rim" src="/nomo/coin-overlay.webp" alt=""/></span>
           <div className="ni-feature-label"><span><span className="ni-feature-rank">#{item.rank}</span> by FDV</span><ArrowUpRight size={13}/></div>
           <div className="ni-feature-content"><div className="ni-feature-name"><strong>{item.token.symbol}</strong><span>{item.token.name}</span></div><div className="ni-feature-chart"><Sparkline token={item.token} width={100} height={27}/></div><div className="ni-feature-change"><strong className={changeClass(d.change(item.token))}>{percent(d.change(item.token))}</strong><span>{money(item.fdv)} FDV</span></div></div>
         </button>)}
@@ -179,10 +180,10 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
         {filters && <DiscoverFilters value={marketFilters} onChange={setMarketFilters} tokens={d.tokens} time={d.time} hidden={hiddenPairIds} onRestore={id => setHiddenPairIds(ids => ids.filter(item => item !== id))} onRestoreAll={() => setHiddenPairIds([])} onReset={resetFilters} onClose={() => setFilters(false)}/>}
         <div className="ni-table-scroll" {...d.feedInteractionProps}>
           <table className="ni-table">
-            <thead><tr><th className="ni-star-cell" aria-label="Watchlist"/><th className="ni-token-cell">Token</th><th className="ni-cap-head"><button onClick={() => sort("mcap")}>Market cap {d.sort === "mcap" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-price-head"><span className="ni-th-label">Price</span></th><th className="ni-change-head"><button onClick={() => sort("change")}>{d.time} {d.sort === "change" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-volume-head"><button onClick={() => sort("volume")}>Volume {d.time} {d.sort === "volume" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-liquidity-head"><span className="ni-th-label">Liquidity</span></th><th className="ni-holders-head"><span className="ni-th-label">Holders</span></th><th className="ni-info-head"><span className="ni-th-label">Token info</span></th><th className="ni-trend-head">Trend</th><th className="ni-quick-buy-head">Quick buy</th></tr></thead>
+            <thead><tr><th className="ni-origin-cell" aria-label="Origin launchpad"/><th className="ni-token-cell">Token</th><th className="ni-cap-head"><button onClick={() => sort("mcap")}>Market cap {d.sort === "mcap" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-price-head"><span className="ni-th-label">Price</span></th><th className="ni-change-head"><button onClick={() => sort("change")}>{d.time} {d.sort === "change" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-volume-head"><button onClick={() => sort("volume")}>Volume {d.time} {d.sort === "volume" ? <ArrowDown size={11}/> : <CaretDown size={10}/>}</button></th><th className="ni-liquidity-head"><span className="ni-th-label">Liquidity</span></th><th className="ni-holders-head"><span className="ni-th-label">Holders</span></th><th className="ni-info-head"><span className="ni-th-label">Token info</span></th><th className="ni-quick-buy-head">Quick buy</th></tr></thead>
             <tbody>{rows.map(item => <tr key={item.id} {...tokenNavigation(item, token)} className="nm-feed-item" data-feed-id={item.id} data-feed-seq={item.updatedAtTick || 0} data-feed-direction={item.direction || 1}>
-              <td className="ni-star-cell"><button className={d.stars.includes(item.id) ? "ni-star starred" : "ni-star"} onClick={() => d.toggleStar(item.id)} aria-label={`${d.stars.includes(item.id) ? "Remove" : "Add"} ${item.symbol} ${d.stars.includes(item.id) ? "from" : "to"} watchlist`} aria-pressed={d.stars.includes(item.id)}><Star size={14} weight={d.stars.includes(item.id) ? "fill" : "regular"}/></button></td>
-              <td className="ni-token-cell"><TokenIdentity token={item} onSelect={token} variant="discover"/></td>
+              <td className="ni-origin-cell"><button type="button" className="ni-origin-avatar" title={`Origin launchpad: ${item.originLaunchpad}`} aria-label={`Filter by ${item.originLaunchpad} launchpad`} aria-pressed={marketFilters.origins.length === 1 && marketFilters.origins[0] === item.originLaunchpad} onClick={() => { setFilters(true); setMarketFilters(current => ({ ...current, origins: current.origins.length === 1 && current.origins[0] === item.originLaunchpad ? [...ORIGIN_LAUNCHPADS] : [item.originLaunchpad] })); }}><img src={ORIGIN_AVATARS[item.originLaunchpad]} width="15" height="15" alt={item.originLaunchpad}/></button></td>
+              <td className="ni-token-cell"><TokenIdentity token={item} onSelect={token} variant="discover" trailing={<button type="button" className={`ni-name-star${d.stars.includes(item.id) ? " starred" : ""}`} onClick={() => d.toggleStar(item.id)} aria-label={`${d.stars.includes(item.id) ? "Remove" : "Add"} ${item.symbol} ${d.stars.includes(item.id) ? "from" : "to"} watchlist`} aria-pressed={d.stars.includes(item.id)}><Star size={16} weight={d.stars.includes(item.id) ? "fill" : "regular"}/></button>}/></td>
               <td className="ni-value nm-tick-value"><span className="ni-metric-primary">{money(item.mcap)}</span><small className="ni-cell-secondary ni-cap-ath">ATH {money(item.athMcap)}</small><small className={`ni-mobile-change ${changeClass(d.change(item))}`}>{percent(d.change(item))}<small>{d.time}</small></small><span className="ni-cap-bar"><i style={{width: `${Math.max(5, Math.min(100, item.mcap / 4820000 * 100))}%`}}/></span></td>
               <td className="ni-value ni-price nm-tick-value"><span className="ni-metric-primary">{priceText(item.price)}</span></td>
               <td className={`ni-percent ni-change-cell nm-tick-value ni-selected-time ${changeClass(d.change(item))}`}><span className="ni-metric-primary">{percent(d.change(item))}</span></td>
@@ -190,7 +191,6 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
               <td className="ni-value ni-liquidity-cell nm-tick-value"><span className="ni-metric-primary">{money(item.liquidity)}</span><small className="ni-cell-secondary">{money(item.fees)} fees</small></td>
               <td className="ni-holders"><span className="ni-metric-primary">{compact(item.holders)}</span></td>
               <td className="ni-token-info"><TokenSignals token={item} compact variant="chips"/></td>
-              <td className="ni-chart-cell"><Sparkline token={item} width={96} height={25}/></td>
               <td className="ni-quick-buy-cell"><div className="ni-row-actions"><button className="ni-hide-pair" type="button" aria-label={`Hide ${item.symbol} pair`} title="Hide pair" onClick={() => setHiddenPairIds(ids => [...ids, item.id])}><EyeSlash size={13}/></button><button className="ni-quick-buy" disabled={!!quickError} aria-label={wallet.connected ? `Quick buy ${item.symbol} for $${quickValid ? amountText(quickSpend) : "0"}` : `Connect wallet to buy ${item.symbol}`} title={quickError || `Buy ${item.symbol}`} onClick={() => quickBuy(item)}><Lightning size={12} weight="fill" aria-hidden="true"/><span>{wallet.connected ? `Buy $${quickValid ? compact(quickSpend) : "—"}` : "Connect"}</span></button></div></td>
             </tr>)}</tbody>
           </table>
@@ -199,6 +199,7 @@ export default function IndexDiscover({ tokenId, workspace }: { tokenId?: string
       </section>
     </main>}
     </div></div>
+    <CommunityPanel tokens={d.tokens} history={wallet.history} onSelect={token}/>
     <TradeToast result={tradeResult} onDismiss={dismissTradeResult}/>
     <TokenSearch open={searchOpen} onClose={() => setSearchOpen(false)} tokens={d.tokens} stars={d.stars} onSelect={token}/>
     <TerminalBar

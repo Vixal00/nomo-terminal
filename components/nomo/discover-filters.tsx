@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ArrowCounterClockwise, CaretDown, ChartBar, CurrencyDollar, EyeSlash, MagnifyingGlass, X } from "@phosphor-icons/react";
-import { MARKET_CHAINS, type Token } from "./data";
+import { MARKET_CHAINS, ORIGIN_AVATARS, ORIGIN_LAUNCHPADS, type Token } from "./data";
 import { MarketChainIcon } from "./brand-icons";
 import { parseMarketBound, type MarketFilters } from "./market-filters";
 import "./discover-filters.css";
@@ -20,22 +20,23 @@ type Props = {
 };
 
 export function DiscoverFilters({ value, onChange, tokens, time, hidden, onRestore, onRestoreAll, onReset, onClose }: Props) {
-  const [popup, setPopup] = useState<"chains" | "hidden" | null>(null);
+  const [popup, setPopup] = useState<"chains" | "origins" | "hidden" | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const chainButton = useRef<HTMLButtonElement>(null);
   const hiddenButton = useRef<HTMLButtonElement>(null);
+  const originButton = useRef<HTMLButtonElement>(null);
   const id = useId();
   useEffect(() => {
     if (!popup) return;
     const outside = (event: PointerEvent) => { if (!root.current?.querySelector(`[data-popup="${popup}"]`)?.contains(event.target as Node)) setPopup(null); };
     const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { event.preventDefault(); (popup === "chains" ? chainButton : hiddenButton).current?.focus(); setPopup(null); }
+      if (event.key === "Escape") { event.preventDefault(); (popup === "chains" ? chainButton : popup === "origins" ? originButton : hiddenButton).current?.focus(); setPopup(null); }
     };
     document.addEventListener("pointerdown", outside);
     document.addEventListener("keydown", escape);
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [popup]);
-  const update = (field: keyof Omit<MarketFilters, "chains">, text: string) => onChange({ ...value, [field]: text });
+  const update = (field: keyof Omit<MarketFilters, "chains" | "origins">, text: string) => onChange({ ...value, [field]: text });
   const togglePopup = (next: typeof popup) => setPopup(current => current === next ? null : next);
 
   return <div ref={root} className="ndf-panel" role="region" aria-label="Market filters">
@@ -48,6 +49,10 @@ export function DiscoverFilters({ value, onChange, tokens, time, hidden, onResto
         <div className="ndf-menu-heading"><span>Networks</span><button type="button" onClick={() => onChange({ ...value, chains: value.chains.length === MARKET_CHAINS.length ? [] : [...MARKET_CHAINS] })}>{value.chains.length === MARKET_CHAINS.length ? "Clear all" : "Select all"}</button></div>
         {MARKET_CHAINS.map(chain => <label className="ndf-chain-option" key={chain}><input type="checkbox" checked={value.chains.includes(chain)} onChange={() => onChange({ ...value, chains: value.chains.includes(chain) ? value.chains.filter(item => item !== chain) : MARKET_CHAINS.filter(item => item === chain || value.chains.includes(item)) })}/><MarketChainIcon chain={chain} size={15}/><span>{chain}</span><small>{tokens.filter(token => token.chain === chain).length}</small></label>)}
       </div>}
+    </div>
+    <div className="ndf-popover" data-popup="origins">
+      <button ref={originButton} className="ndf-chip ndf-origins" type="button" aria-expanded={popup === "origins"} aria-controls={`${id}-origins`} onClick={() => togglePopup("origins")}><span className="ndf-origin-stack" aria-hidden="true">{value.origins.map(origin => <img src={ORIGIN_AVATARS[origin]} key={origin} width="17" height="17" alt=""/>)}</span><span>{value.origins.length === 1 ? value.origins[0] : value.origins.length ? "Launchpads" : "No launchpads"}</span><CaretDown size={11}/></button>
+      {popup === "origins" && <div id={`${id}-origins`} className="ndf-menu" role="group" aria-label="Filter origin launchpads"><div className="ndf-menu-heading"><span>Origin launchpad</span><button type="button" onClick={() => onChange({ ...value, origins: value.origins.length === ORIGIN_LAUNCHPADS.length ? [] : [...ORIGIN_LAUNCHPADS] })}>{value.origins.length === ORIGIN_LAUNCHPADS.length ? "Clear all" : "Select all"}</button></div>{ORIGIN_LAUNCHPADS.map(origin => <label className="ndf-chain-option" key={origin}><input type="checkbox" checked={value.origins.includes(origin)} onChange={() => onChange({ ...value, origins: value.origins.includes(origin) ? value.origins.filter(item => item !== origin) : ORIGIN_LAUNCHPADS.filter(item => item === origin || value.origins.includes(item)) })}/><img src={ORIGIN_AVATARS[origin]} width="22" height="22" alt=""/><span>{origin}</span><small>{tokens.filter(token => token.originLaunchpad === origin).length}</small></label>)}</div>}
     </div>
     <FilterFields label="Market cap" icon={<CurrencyDollar size={13}/>} fields={[{ name: "minimum", value: value.capMin, onChange: text => update("capMin", text) }, { name: "maximum", value: value.capMax, onChange: text => update("capMax", text) }]} numeric/>
     <FilterFields label={`Volume ${time}`} icon={<ChartBar size={13}/>} fields={[{ name: "minimum", value: value.volumeMin, onChange: text => update("volumeMin", text) }, { name: "maximum", value: value.volumeMax, onChange: text => update("volumeMax", text) }]} numeric/>

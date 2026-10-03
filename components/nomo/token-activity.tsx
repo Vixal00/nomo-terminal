@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowDownLeft, ArrowUpRight, Check, ClockCounterClockwise, CopySimple } from "@phosphor-icons/react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { ArrowDownLeft, ArrowUpRight, Check, ClockCounterClockwise, CopySimple, Pause, Play } from "@phosphor-icons/react";
 import { compact, money, priceText, type Token } from "./data";
 import { createTokenActivity } from "./token-detail-fixtures";
 import "./token-activity.css";
 import { usePreviewWallet } from "./wallet";
+import { createTradeStream, advanceTradeStream, type StreamTrade } from "./token-trade-stream";
 
 const tabs = ["Trades", "Holders", "Top traders", "My activity"] as const;
 type ActivityTab = typeof tabs[number];
@@ -56,12 +57,30 @@ function TokenActivityPanel({ token }: { token: Token }) {
   const ownTrades = wallet.history.filter(entry => entry.tokenId === token.id && (entry.type === "Buy" || entry.type === "Sell"));
   const [tab, setTab] = useState<ActivityTab>("Trades");
   const [filter, setFilter] = useState<TradeFilter>("All");
-  const id = useId();
+  const [stream, setStream] = useState(() => createTradeStream(token, 0));
+  const [now, setNow] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const stopped = paused || hovered || focused || scrolled;
+  const latestToken = useRef(token);
+  latestToken.current = token;
+  const id = `token-activity-${token.id}`;
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  // The keyed panel owns one immutable trade snapshot for this token. Market
-  // ticks may revalue holdings, but must never rewrite historical trade rows.
+  // Holdings revalue with the market; completed tape trades retain their prices.
   const [snapshot] = useState(() => ({ ...createTokenActivity(token), price: token.price }));
+  useEffect(() => { const at = Date.now(); setNow(at); setStream(createTradeStream(latestToken.current, at)); }, []);
+  useEffect(() => {
+    if (stopped || tab !== "Trades") return;
+    const timer = window.setInterval(() => {
+      if (document.hidden) return;
+      const at = Date.now(); setNow(at);
+      setStream(current => advanceTradeStream(current, latestToken.current, at));
+    }, 1500);
+    return () => window.clearInterval(timer);
+  }, [stopped, tab]);
   const fixtures = useMemo(() => ({
     holders: snapshot.holders.map(holder => ({ ...holder, value: holder.quantity * token.price })),
     traders: snapshot.traders.map(trader => {
@@ -69,10 +88,12 @@ function TokenActivityPanel({ token }: { token: Token }) {
       return { ...trader, balance, pnl: trader.sold + balance - trader.bought };
     }).sort((a, b) => b.pnl - a.pnl),
   }), [snapshot, token.price]);
-  const trades = snapshot.trades.filter(trade => filter === "All" || trade.side === filter.toLowerCase());
+  const ownRows: StreamTrade[] = ownTrades.map(entry => ({ id: `own-${entry.id}`, side: entry.type === "Buy" ? "buy" : "sell", amount: entry.value, quantity: entry.amount, price: entry.value / entry.amount, wallet: "You", at: entry.at, own: true }));
+  const trades = [...stream.rows, ...ownRows].sort((a, b) => b.at - a.at).filter(trade => filter === "All" || trade.side === filter.toLowerCase()).slice(0, 100);
   const activeIndex = tabs.indexOf(tab);
   const selectTab = (next: ActivityTab) => {
     setTab(next);
+    setHovered(false); setFocused(false); setScrolled(false);
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   };
   const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -98,14 +119,14 @@ function TokenActivityPanel({ token }: { token: Token }) {
       {tab === "Trades" && <>
         <div className="nta-table-toolbar">
           <div className="nta-filter" role="group" aria-label="Filter trades by side">{(["All", "Buy", "Sell"] as const).map(value => <button type="button" key={value} aria-pressed={filter === value} className={filter === value ? "is-active" : ""} onClick={() => { setFilter(value); if (scrollRef.current) scrollRef.current.scrollTop = 0; }}>{value}</button>)}</div>
-          <span className="nta-table-note">Snapshot</span>
+          <button type="button" className={`nta-stream-control${stopped ? " is-paused" : ""}`} aria-label={paused ? "Resume trade stream" : "Pause trade stream"} aria-pressed={paused} onClick={() => setPaused(!paused)} title="Simulated transactions. Pauses while you hover, focus, or scroll the table.">{stopped ? <Play size={11}/> : <Pause size={11}/>}<span>{paused ? "Paused" : stopped ? "On hold" : "Updating"}</span></button>
         </div>
-        <div className="nta-table-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label="Recent trades table">
-          <table className="nta-table"><caption className="nta-sr-only">Snapshot of {token.symbol} trades; ages are measured at the time of the snapshot</caption><thead><tr><th scope="col">Age at snapshot</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">{token.symbol}</th><th scope="col">Price</th><th scope="col">Wallet</th></tr></thead><tbody>
-            {trades.map(trade => <tr key={trade.id}>
-              <td className="nta-age">{trade.ageSeconds < 60 ? `${trade.ageSeconds}s` : `${Math.floor(trade.ageSeconds / 60)}m`} ago</td>
+        <div className="nta-table-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label="Recent trades table" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }} onScroll={event => setScrolled(event.currentTarget.scrollTop > 4)}>
+          <table className="nta-table"><caption className="nta-sr-only">Simulated {token.symbol} transactions and your local wallet trades</caption><thead><tr><th scope="col">Age</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">{token.symbol}</th><th scope="col">Price</th><th scope="col">Wallet</th></tr></thead><tbody>
+            {trades.map(trade => <tr key={trade.id} className={now - trade.at < 1800 && !stopped ? `nta-arrival is-${trade.side}-arrival` : undefined}>
+              <td className="nta-age">{Math.max(0, Math.floor((now - trade.at) / 1000)) < 60 ? `${Math.max(0, Math.floor((now - trade.at) / 1000))}s` : `${Math.floor((now - trade.at) / 60000)}m`} ago</td>
               <td><span className={`nta-side is-${trade.side}`}>{trade.side === "buy" ? <ArrowDownLeft size={11} aria-hidden="true" /> : <ArrowUpRight size={11} aria-hidden="true" />}{trade.side === "buy" ? "Buy" : "Sell"}</span></td>
-              <td className={`nta-number is-${trade.side}`}>{dollarText(trade.amount)}</td><td className="nta-number">{compact(trade.quantity)}</td><td className="nta-number nta-price">{priceText(trade.price)}</td><td><WalletCopy address={trade.wallet} /></td>
+              <td className={`nta-number is-${trade.side}`}>{dollarText(trade.amount)}</td><td className="nta-number">{compact(trade.quantity)}</td><td className="nta-number nta-price">{priceText(trade.price)}</td><td>{trade.own ? <span className="nta-own-wallet">You</span> : <WalletCopy address={trade.wallet} />}</td>
             </tr>)}
           </tbody></table>
         </div>

@@ -2,6 +2,9 @@
 export type MarketStage = "New" | "Graduating" | "Established";
 export const MARKET_CHAINS = ["Solana", "NEAR", "Ethereum", "Base", "Robinhood Chain"] as const;
 export type MarketChain = typeof MARKET_CHAINS[number];
+export const ORIGIN_LAUNCHPADS = ["Rhea Finance", "Ninu", "Nearly"] as const;
+export type OriginLaunchpad = typeof ORIGIN_LAUNCHPADS[number];
+export const ORIGIN_AVATARS: Record<OriginLaunchpad, string> = { "Rhea Finance": "/nomo/launchpads/rhea-finance.jpg", Ninu: "/nomo/launchpads/ninu.jpg", Nearly: "/nomo/launchpads/nearly.jpg" };
 export const TIMEFRAMES = ["1m", "5m", "30m", "1h", "24h"] as const;
 export type Token = {
   id: string; symbol: string; name: string; image: string; color: string; chain: MarketChain;
@@ -12,7 +15,7 @@ export type Token = {
   top10Pct: number; devPct: number; snipersPct: number; bundlersPct: number;
   /** Illustrative wallet tags and listing status, not measured on-chain classifications. */
   insidersPct: number; freshWalletPct: number; phishingPct: number; dexPaid: boolean; botTraders: number;
-  athMcap: number; fees: number; launchpad: string; contract: string;
+  athMcap: number; fees: number; launchpad: string; originLaunchpad: OriginLaunchpad; contract: string;
 };
 /** Flat placeholder portraits already included in the copied asset library. */
 export const TOKEN_PORTRAITS: Record<string, string> = {
@@ -81,7 +84,7 @@ export const TOKENS: Token[] = seeds.map(([symbol,name,art,price,mcap,volume,cha
   phishingPct:Number((i%3===0?0:(i*2.3)%13).toFixed(1)),
   dexPaid:i%4!==2,botTraders:Math.round(holders*(.08+((i*7)%38)/100)),
   athMcap:Math.round(mcap*(1.08+(i%6)*.19)),fees:Math.round(volume*.008),
-  launchpad:stage==="Established"?"Raydium":"Pump.fun",contract:`${["7xKp","9mQ2","4rTb","8vNc","3pWf","6hDs"][i%6]}${"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".slice(i,i+36)}pump`,
+  launchpad:stage==="Established"?"Raydium":"Pump.fun",originLaunchpad:ORIGIN_LAUNCHPADS[i%ORIGIN_LAUNCHPADS.length],contract:`${["7xKp","9mQ2","4rTb","8vNc","3pWf","6hDs"][i%6]}${"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".slice(i,i+36)}pump`,
   points:Array.from({length:30},(_,j)=>Number((25+Math.sin(j*.71+i)*8+Math.cos(j*1.91+i)*5+j*(change24h>0 ? 1.2 : -.5)).toFixed(4))),
   });
 });
