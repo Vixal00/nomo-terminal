@@ -1,9 +1,9 @@
-.nomo-index .nt-trade{min-width:0;border:1px solid #292730;border-radius:7px;background:#131217;font-size:11px;font-variant-numeric:tabular-nums;overflow:visible}
+.nomo-index .nt-trade{min-width:0;border:1px solid #292532;border-radius:7px;background:#0f0e13;font-size:11px;font-variant-numeric:tabular-nums;overflow:visible}
 .nomo-index .nt-trade button,.nomo-index .nt-trade input{font:inherit}
 .nomo-index .nt-trade button{cursor:pointer}
 .nomo-index .nt-trade button:disabled{cursor:default;opacity:.38}
 .nomo-index .nt-trade button:focus-visible,.nomo-index .nt-trade input:focus-visible{outline:1px solid #726e87;outline-offset:2px}
-.nomo-index .nt-trade-position{padding:14px 15px;border-bottom:1px solid #292730}
+.nomo-index .nt-trade-position{padding:14px 15px;border-bottom:1px solid #292532}
 .nomo-index .nt-trade-position-title{display:flex;align-items:center;gap:6px;color:#a5a3ad;font-size:11px}
 .nomo-index .nt-trade-position-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:12px}
 .nomo-index .nt-trade-position-grid>div{display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -11,54 +11,54 @@
 .nomo-index .nt-trade-position-grid strong{font-size:14px;font-weight:500;color:#dedee1;overflow-wrap:anywhere}
 .nomo-index .nt-trade-position-grid small{font-size:10px;font-weight:400;color:#94929e}
 .nomo-index .nt-trade-form{padding:14px 15px 12px}
-.nomo-index .nt-trade-sides{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border:1px solid #2a2831;background:#101013;border-radius:5px}
+.nomo-index .nt-trade-sides{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border:1px solid #2a2534;background:#0d0c10;border-radius:5px}
 .nomo-index .nt-trade-sides button{height:29px;border:0;border-radius:3px;background:transparent;color:#8d8a98;font-size:12px;font-weight:500;transition:background .15s,color .15s}
 .nomo-index .nt-trade-sides button:hover{color:#dddde0}
-.nomo-index .nt-trade-sides .is-active.is-buy{background:#2f2d37;color:#d4dfc4}
-.nomo-index .nt-trade-sides .is-active.is-sell{background:#39282b;color:#e6abb6}
+.nomo-index .nt-trade-sides .is-active.is-buy{background:#2f2a3a;color:#d9f9aa}
+.nomo-index .nt-trade-sides .is-active.is-sell{background:#2d2938;color:#ff92a6}
 .nomo-index .nt-trade-order-type{display:flex;align-items:center;justify-content:space-between;margin:16px 0 22px;color:#e1e0e4;font-size:11px}
 .nomo-index .nt-trade-order-type>span{position:relative}
 .nomo-index .nt-trade-settings{position:relative}
 .nomo-index .nt-trade-settings>button{display:flex;align-items:center;gap:5px;border:0;padding:3px 0 3px 6px;color:#94929e;background:none;font-size:10px}
 .nomo-index .nt-trade-settings>button:hover{color:#dddde0}
-.nomo-index .nt-trade-slippage{position:absolute;z-index:15;right:0;top:calc(100% + 7px);width:218px;padding:12px;border:1px solid #373540;border-radius:5px;background:#1f1e25;box-shadow:0 8px 26px #00000066}
+.nomo-index .nt-trade-slippage{position:absolute;z-index:15;right:0;top:calc(100% + 7px);width:218px;padding:12px;border:1px solid #373144;border-radius:5px;background:#1f1c27;box-shadow:0 8px 26px #00000066}
 .nomo-index .nt-trade-slippage-title{display:flex;justify-content:space-between;align-items:center;color:#d6d6da;font-size:11px}
 .nomo-index .nt-trade-slippage-title button{display:grid;place-items:center;border:0;background:none;padding:2px;color:#908e9a}
-.nomo-index .nt-trade-slippage-input{display:flex;align-items:center;gap:6px;margin-top:11px;border:1px solid #3a3844;border-radius:4px;padding:7px 9px;background:#141318}
+.nomo-index .nt-trade-slippage-input{display:flex;align-items:center;gap:6px;margin-top:11px;border:1px solid #3a3448;border-radius:4px;padding:7px 9px;background:#100f14}
 .nomo-index .nt-trade-slippage-input input{min-width:0;width:100%;border:0;background:none;color:#dddde0;outline:none;font-size:12px}
 .nomo-index .nt-trade-slippage-input span{color:#736f88}
-.nomo-index .nt-trade-slippage-input input[aria-invalid=true]{color:#e199a6}
+.nomo-index .nt-trade-slippage-input input[aria-invalid=true]{color:#ff7b93}
 .nomo-index .nt-trade-slippage p{margin:8px 0 0;color:#92909c;font-size:10px;line-height:1.5}
 .nomo-index .nt-trade-amount-label{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px;color:#b7b6be}
 .nomo-index .nt-trade-amount-label>span{font-size:9px;color:#706c84}
 .nomo-index .nt-trade-amount-label strong{font-weight:400;color:#a4a2ad;margin-left:3px}
-.nomo-index .nt-trade-amount{display:flex;align-items:center;gap:7px;border:1px solid #31303a;border-radius:5px;background:#101013;padding:10px 11px;transition:border-color .15s}
+.nomo-index .nt-trade-amount{display:flex;align-items:center;gap:7px;border:1px solid #322d3d;border-radius:5px;background:#0d0c10;padding:10px 11px;transition:border-color .15s}
 .nomo-index .nt-trade-amount:focus-within{border-color:#656277}
-.nomo-index .nt-trade-amount.has-error{border-color:#73414a}
+.nomo-index .nt-trade-amount.has-error{border-color:#803442}
 .nomo-index .nt-trade-dollar{font-size:15px;color:#a1a0aa;opacity:.5}
 .nomo-index .nt-trade-amount input{min-width:0;width:100%;font-size:18px;line-height:22px;color:#e9e8eb;background:none;border:0;padding:0;outline:none;box-shadow:none}
 .nomo-index .nt-trade input[type=number]{appearance:textfield;-moz-appearance:textfield}
 .nomo-index .nt-trade input::-webkit-outer-spin-button,.nomo-index .nt-trade input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .nomo-index .nt-trade-unit{font-size:10px;color:#9a98a3;max-width:65px;overflow:hidden;text-overflow:ellipsis}
-.nomo-index .nt-trade-amount>button{background:#26242d;color:#bab9c1;border:0;border-radius:3px;padding:4px 6px;font-size:9px}
+.nomo-index .nt-trade-amount>button{background:#26222f;color:#bab9c1;border:0;border-radius:3px;padding:4px 6px;font-size:9px}
 .nomo-index .nt-trade-amount-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 26px;gap:5px;margin-top:7px}
-.nomo-index .nt-trade-amount-presets>button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:27px;border:1px solid #2a2832;border-radius:4px;background:#1b1a1f;color:#9795a1;font-size:10px;padding:3px}
+.nomo-index .nt-trade-amount-presets>button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:27px;border:1px solid #2a2634;border-radius:4px;background:#16141a;color:#9795a1;font-size:10px;padding:3px}
 .nomo-index .nt-trade-amount-presets>button>span{font-size:8px;color:#6d6980}
 .nomo-index .nt-trade-amount-presets>button>strong{font-weight:400}
-.nomo-index .nt-trade-amount-presets>button[aria-pressed=true]{background:#27262e;border-color:#393743;color:#cdd8bd}
+.nomo-index .nt-trade-amount-presets>button[aria-pressed=true]{background:#272331;border-color:#393347;color:#d4f89d}
 .nomo-index .nt-trade-amount-presets>button[aria-pressed=true]>span{color:#9a98a3}
 .nomo-index .nt-trade-amount-presets>button:hover:not(:disabled){border-color:#524f60}
 .nomo-index .nt-trade-amount-presets.is-sell{grid-template-columns:repeat(4,minmax(0,1fr))}
-.nomo-index .nt-trade-amount-presets.is-sell>button[aria-pressed=true]{background:#2a2831;border-color:#594045;color:#e299a7}
+.nomo-index .nt-trade-amount-presets.is-sell>button[aria-pressed=true]{background:#2a2534;border-color:#594045;color:#ff7c94}
 .nomo-index .nt-trade-estimate{display:flex;flex-direction:column;gap:10px;margin:22px 0 19px}
 .nomo-index .nt-trade-estimate>div{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:10px}
 .nomo-index .nt-trade-estimate>div>span:first-child{color:#807e8c;flex-shrink:0}
 .nomo-index .nt-trade-estimate>div>span:last-child{color:#adabb5;text-align:right;overflow-wrap:anywhere}
 .nomo-index .nt-trade-estimate strong{font-size:11px;font-weight:400;color:#d3d2d8;text-align:right;overflow-wrap:anywhere}
-.nomo-index .nt-trade-submit{width:100%;min-height:36px;border:1px solid #c5cfb5;border-radius:5px;background:#c5cfb5;color:#1e2317;font-size:12px;font-weight:600;transition:background .15s}
-.nomo-index .nt-trade-submit:hover:not(:disabled){background:#d4ddc6}
-.nomo-index .nt-trade-submit.is-sell{background:#df919f;border-color:#df919f;color:#2c181c}
-.nomo-index .nt-trade-submit.is-sell:hover:not(:disabled){background:#e8afba}
+.nomo-index .nt-trade-submit{width:100%;min-height:36px;border:1px solid #ccf68e;border-radius:5px;background:#ccf68e;color:#1f2713;font-size:12px;font-weight:600;transition:background .15s}
+.nomo-index .nt-trade-submit:hover:not(:disabled){background:#d9f9aa}
+.nomo-index .nt-trade-submit.is-sell{background:#ff718b;border-color:#ff718b;color:#311318}
+.nomo-index .nt-trade-submit.is-sell:hover:not(:disabled){background:#ff98ab}
 .nomo-index .nt-private-swap{margin-top:10px}
 .nomo-index .nt-private-swap-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:34px;border:1px solid #503766;border-radius:5px;background:#21182c;color:#cfbae8;font-size:12px;font-weight:500;transition:background .15s,border-color .15s}
 .nomo-index .nt-private-swap-button:hover:not(:disabled){background:#2d203d;border-color:#77509b}
@@ -67,16 +67,16 @@
 .nomo-index .nt-private-swap>p{display:flex;align-items:center;justify-content:center;gap:4px;margin:9px 0 3px;color:#716d86;font-size:8px;line-height:10px}
 .nomo-index .nt-private-swap>p>img{width:45px;height:9px;object-fit:contain;opacity:.8}
 .nomo-index .nt-trade-hint{margin:8px 0 0;color:#94929f;font-size:10px;line-height:1.5}
-.nomo-index .nt-trade-hint.is-error{color:#db8594}
+.nomo-index .nt-trade-hint.is-error{color:#ff617e}
 .nomo-index .nt-trade-disclosure{margin:9px 0 0;text-align:center;color:#706c83;font-size:9px;line-height:1.5}
-.nomo-index .nt-trade-confirmation{margin-top:15px;padding:12px;border:1px solid #31303a;border-radius:5px;background:#1b1a1f}
-.nomo-index .nt-trade-confirmation-title{display:flex;align-items:center;gap:5px;color:#bdcaaa}
+.nomo-index .nt-trade-confirmation{margin-top:15px;padding:12px;border:1px solid #322d3d;border-radius:5px;background:#16141a}
+.nomo-index .nt-trade-confirmation-title{display:flex;align-items:center;gap:5px;color:#c6f57f}
 .nomo-index .nt-trade-confirmation-title strong{font-weight:500;font-size:11px}
 .nomo-index .nt-trade-confirmation-title button{margin-left:auto;padding:2px;border:0;background:none;color:#918f9c;display:grid;place-items:center}
 .nomo-index .nt-trade-confirmation-swap{display:flex;flex-direction:column;gap:5px;align-items:center;padding:13px 0;color:#b2b0b9;font-size:12px;overflow-wrap:anywhere;text-align:center}
 .nomo-index .nt-trade-confirmation-swap svg{color:#5f5b70}
-.nomo-index .nt-trade-confirmation-swap strong{font-weight:500;color:#d9e1cc}
-.nomo-index .nt-trade-confirmation-min{display:flex;justify-content:space-between;gap:10px;color:#878592;font-size:9px;padding-top:9px;border-top:1px solid #312f3a}
+.nomo-index .nt-trade-confirmation-swap strong{font-weight:500;color:#ddf9b4}
+.nomo-index .nt-trade-confirmation-min{display:flex;justify-content:space-between;gap:10px;color:#878592;font-size:9px;padding-top:9px;border-top:1px solid #312c3d}
 .nomo-index .nt-trade-confirmation-min>span:last-child{text-align:right}
 .nomo-index .nt-trade-confirmation p{margin:10px 0 0;font-size:9px;line-height:1.5;color:#8e8b99}
 @media(prefers-reduced-motion:reduce){.nomo-index .nt-trade-sides button,.nomo-index .nt-trade-amount,.nomo-index .nt-trade-submit{transition:none}}

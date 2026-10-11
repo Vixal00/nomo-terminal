@@ -1,72 +1,72 @@
-.nomo .nc-toggle{position:fixed;left:0;top:calc(var(--ni-navigation-height,90px) + 8px + (100dvh - var(--ni-navigation-height,90px) - 94px) * var(--nc-position,.12));z-index:31;display:grid;place-items:center;width:32px;height:48px;padding:0;background:#1a191f;border:1px solid #3a3844;border-left:0;border-radius:0 8px 8px 0;color:#9b99a5;box-shadow:0 3px 15px #00000033;touch-action:none;cursor:grab}
-.nomo .nc-toggle:hover{background:#24232a;color:var(--nm-green)}
-.nomo .nc-panel{--nc-height:min(680px,calc(100dvh - var(--ni-navigation-height,90px) - 46px - env(safe-area-inset-bottom,0px)));position:fixed;left:0;top:calc(var(--ni-navigation-height,90px) + 8px + (100dvh - var(--ni-navigation-height,90px) - 46px - env(safe-area-inset-bottom,0px) - var(--nc-height)) * var(--nc-position,.12));height:var(--nc-height);z-index:34;width:420px;max-width:calc(100vw - 12px);display:flex;flex-direction:column;overflow:hidden;background:#141317;border:1px solid #33323d;border-left:0;border-radius:0 10px 10px 0;box-shadow:18px 0 60px #00000055;color:#d7d7db;animation:nc-reveal .18s ease-out}
+.nomo .nc-toggle{position:fixed;left:0;top:calc(var(--ni-navigation-height,90px) + 8px + (100dvh - var(--ni-navigation-height,90px) - 94px) * var(--nc-position,.12));z-index:31;display:grid;place-items:center;width:32px;height:48px;padding:0;background:#15131a;border:1px solid #3a3448;border-left:0;border-radius:0 8px 8px 0;color:#9b99a5;box-shadow:0 3px 15px #00000033;touch-action:none;cursor:grab}
+.nomo .nc-toggle:hover{background:#24202d;color:var(--nm-green)}
+.nomo .nc-panel{--nc-height:min(680px,calc(100dvh - var(--ni-navigation-height,90px) - 46px - env(safe-area-inset-bottom,0px)));position:fixed;left:0;top:calc(var(--ni-navigation-height,90px) + 8px + (100dvh - var(--ni-navigation-height,90px) - 46px - env(safe-area-inset-bottom,0px) - var(--nc-height)) * var(--nc-position,.12));height:var(--nc-height);z-index:34;width:420px;max-width:calc(100vw - 12px);display:flex;flex-direction:column;overflow:hidden;background:#100e13;border:1px solid #342f40;border-left:0;border-radius:0 10px 10px 0;box-shadow:18px 0 60px #00000055;color:#d7d7db;animation:nc-reveal .18s ease-out}
 .nomo .nc-panel.is-expanded{width:600px}
-.nomo .nc-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:57px;padding:0 18px;background:#17161c;border-bottom:1px solid #2c2a34;flex-shrink:0}
+.nomo .nc-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:57px;padding:0 18px;background:#131117;border-bottom:1px solid #2c2737;flex-shrink:0}
 .nomo .nc-header>div{display:flex;align-items:center;gap:10px}
-.nomo .nc-header>div>svg{color:#bdcba9}
+.nomo .nc-header>div>svg{color:#c6f57f}
 .nomo .nc-header h2{font-size:15px;font-weight:550;letter-spacing:-.2px}
 .nomo .nc-header>div:last-child{gap:3px}
 .nomo .nc-icon{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:5px;background:transparent;color:#888693;padding:0}
-.nomo .nc-icon:hover{background:#26252d;color:#d6d6da}
+.nomo .nc-icon:hover{background:#262230;color:#d6d6da}
 .nomo .nc-panel button:focus-visible,.nomo .nc-toggle:focus-visible{outline:1px solid #adbb99;outline-offset:-3px}
-.nomo .nc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:49px;padding:0 18px;border-bottom:1px solid #2c2a34;flex-shrink:0}
+.nomo .nc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:49px;padding:0 18px;border-bottom:1px solid #2c2737;flex-shrink:0}
 .nomo .nc-tabs>button{display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-bottom:2px solid transparent;background:none;color:#888694;font-size:13px;margin-bottom:-1px}
 .nomo .nc-tabs>button:hover{color:#d3d2d8}
-.nomo .nc-tabs>button[aria-selected=true]{border-bottom-color:#bbc9a6;color:#dedde1}
-.nomo .nc-tabs>button[aria-selected=true]>svg{color:#bbc9a6}
+.nomo .nc-tabs>button[aria-selected=true]{border-bottom-color:#c4f57a;color:#dedde1}
+.nomo .nc-tabs>button[aria-selected=true]>svg{color:#c4f57a}
 .nomo .nc-content{display:flex;flex:1;flex-direction:column;min-height:0;overflow:hidden}
-.nomo .nc-room,.nomo .nc-feed-toolbar{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 18px;border-bottom:1px solid #24232b;flex-shrink:0;font-size:12px;color:#bcbbc2}
+.nomo .nc-room,.nomo .nc-feed-toolbar{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 18px;border-bottom:1px solid #25212d;flex-shrink:0;font-size:12px;color:#bcbbc2}
 .nomo .nc-room small{color:#726e86;font-size:10px}
-.nomo .nc-messages,.nomo .nc-activity{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#35333e transparent}
+.nomo .nc-messages,.nomo .nc-activity{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#352f42 transparent}
 .nomo .nc-messages{padding:22px 18px 20px}
 .nomo .nc-conversation-note{display:flex;align-items:center;gap:10px;margin:22px 0;color:#726e86;font-size:10px}
-.nomo .nc-conversation-note:before,.nomo .nc-conversation-note:after{content:"";height:1px;background:#28272f;flex:1}
+.nomo .nc-conversation-note:before,.nomo .nc-conversation-note:after{content:"";height:1px;background:#282432;flex:1}
 .nomo .nc-message{display:block;margin:0 0 23px;min-width:0}
 .nomo .nc-message>img,.nomo .nc-self-avatar{width:32px;height:32px;flex:0 0 32px;border-radius:50%;object-fit:cover}
-.nomo .nc-self-avatar{display:grid;place-items:center;background:#2c3222;border:1px solid #465036}
+.nomo .nc-self-avatar{display:grid;place-items:center;background:#272331;border:1px solid #3f384e}
 .nomo .nc-message>div{flex:1;min-width:0}
 .nomo .nc-message header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px;min-height:19px}
 .nomo .nc-message-author{display:flex;align-items:center;gap:7px;min-width:0}
 .nomo .nc-message-author>img,.nomo .nc-message-author>.nc-self-avatar{width:19px;height:19px;flex:0 0 19px;border-radius:50%;object-fit:cover}
-.nomo .nc-message strong{color:#c8d2b8;font-size:12px;font-weight:550}
+.nomo .nc-message strong{color:#cff793;font-size:12px;font-weight:550}
 .nomo .nc-message time{color:#716d85;font-size:10px;font-variant-numeric:tabular-nums}
 .nomo .nc-message p{font-size:13px;line-height:1.65;color:#b7b6be;overflow-wrap:anywhere;white-space:pre-wrap}
 .nomo .nc-message.is-own p{color:#cecdd3}
-.nomo .nc-composer{flex-shrink:0;padding:15px 18px 13px;border-top:1px solid #2c2a34;background:#16161a}
+.nomo .nc-composer{flex-shrink:0;padding:15px 18px 13px;border-top:1px solid #2c2737;background:#121116}
 .nomo .nc-composer>label{display:block;font-size:11px;color:#9694a0;margin:0 0 9px}
-.nomo .nc-composer-input{border:1px solid #373541;border-radius:8px;background:#1c1b22;overflow:hidden}
+.nomo .nc-composer-input{border:1px solid #373244;border-radius:8px;background:#1d1a23;overflow:hidden}
 .nomo .nc-composer-input:focus-within{border-color:#615e72}
 .nomo .nc-composer textarea{display:block;resize:none;width:100%;min-height:76px;padding:12px 12px 6px;background:none;border:0;outline:none;color:#dedde1;font:inherit;font-size:13px;line-height:1.5}
 .nomo .nc-composer textarea::placeholder{color:#6f6b82}
 .nomo .nc-composer-input>div{display:flex;align-items:center;justify-content:space-between;padding:0 8px 8px 12px}
 .nomo .nc-composer-input>div>span{font-size:10px;color:#736f88;font-variant-numeric:tabular-nums}
-.nomo .nc-composer button{display:flex;align-items:center;gap:8px;height:30px;padding:0 12px;border:1px solid #5a6549;border-radius:5px;background:#333c26;color:#cdddb5;font-size:11px;font-weight:550}
-.nomo .nc-composer button:hover:not(:disabled){background:#43502f;border-color:#7d8e64}
-.nomo .nc-composer button:disabled{background:#232229;border-color:#34323e;color:#7b7988;opacity:1}
+.nomo .nc-composer button{display:flex;align-items:center;gap:8px;height:30px;padding:0 12px;border:1px solid #5a6549;border-radius:5px;background:#35441e;color:#d2f79b;font-size:11px;font-weight:550}
+.nomo .nc-composer button:hover:not(:disabled){background:#455c23;border-color:#7d8e64}
+.nomo .nc-composer button:disabled{background:#23202c;border-color:#342f41;color:#7b7988;opacity:1}
 .nomo .nc-composer>p,.nomo .nc-feed-note{color:#77728c;font-size:10px;line-height:1.5}
 .nomo .nc-composer>p{margin-top:10px}
 .nomo .nc-feed-toolbar>span{display:flex;align-items:center;gap:8px}
-.nomo .nc-feed-toolbar i{width:5px;height:5px;background:#b9cb9d;border-radius:50%}
+.nomo .nc-feed-toolbar i{width:5px;height:5px;background:#c1f573;border-radius:50%}
 .nomo .nc-feed-toolbar i.is-paused{background:#817f8d}
-.nomo .nc-trade{display:flex;align-items:center;gap:9px;width:100%;padding:11px 16px;border:0;border-bottom:1px solid #28272f;background:none;text-align:left}
-.nomo .nc-trade:hover{background:#1b1a1f}
+.nomo .nc-trade{display:flex;align-items:center;gap:9px;width:100%;padding:11px 16px;border:0;border-bottom:1px solid #282432;background:none;text-align:left}
+.nomo .nc-trade:hover{background:#16141a}
 .nomo .nc-trader-avatar{position:relative;flex:0 0 28px;width:28px;height:28px}
 .nomo .nc-trader-avatar>img{width:28px;height:28px;border-radius:50%;object-fit:cover}
 .nomo .nc-trader-avatar>.nc-self-avatar{width:28px;height:28px}
-.nomo .nc-trader-avatar>i{position:absolute;right:-2px;bottom:-1px;display:grid;place-items:center;width:13px;height:13px;border:2px solid #141317;border-radius:50%;background:#c1d6a1;color:#293419}
+.nomo .nc-trader-avatar>i{position:absolute;right:-2px;bottom:-1px;display:grid;place-items:center;width:13px;height:13px;border:2px solid #100e13;border-radius:50%;background:#c7f681;color:#2b3d10}
 .nomo .nc-trade-body{display:flex;flex:1;flex-direction:column;min-width:0;gap:4px}
 .nomo .nc-trade-top,.nomo .nc-trade-value{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .nomo .nc-trade-top>span{font-size:11px;color:#a9a7b1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nomo .nc-trade-top>time{font-size:10px;color:#747088;white-space:nowrap}
 .nomo .nc-trade-value>span{display:flex;align-items:center;gap:8px}
-.nomo .nc-trade-value strong{font-size:18px;line-height:1.1;letter-spacing:-.3px;font-weight:550;color:#c8dca9;font-variant-numeric:tabular-nums}
-.nomo .nc-trade-value small{font-size:10px;color:#acbd92}
+.nomo .nc-trade-value strong{font-size:18px;line-height:1.1;letter-spacing:-.3px;font-weight:550;color:#cdf78e;font-variant-numeric:tabular-nums}
+.nomo .nc-trade-value small{font-size:10px;color:#b7f35c}
 .nomo .nc-trade-token{font-size:11px;color:#cfced3;font-weight:550}
 .nomo .nc-trade-token img{width:16px;height:16px;border-radius:50%;object-fit:cover}
 .nomo .nc-trade-detail{display:flex;flex-wrap:wrap;gap:4px 8px;color:#83808f;font-size:10px;font-variant-numeric:tabular-nums}
 .nomo .nc-trade-detail>span{color:#67637a}
-.nomo .nc-feed-note{flex-shrink:0;border-top:1px solid #2c2a34;padding:13px 18px;background:#16161a}
+.nomo .nc-feed-note{flex-shrink:0;border-top:1px solid #2c2737;padding:13px 18px;background:#121116}
 .nomo .nc-feed-empty{padding:35px 18px;color:#9997a3;font-size:12px}
 @keyframes nc-reveal{from{opacity:.5;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:700px){.nomo .nc-toggle{width:30px}.nomo .nc-panel,.nomo .nc-panel.is-expanded{width:420px}.nomo .nc-expand{display:none}}

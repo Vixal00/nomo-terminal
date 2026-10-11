@@ -22,6 +22,10 @@ const coins = [
   { name: "octo", x: 103, bottom: 233, size: 166, angle: 18 },
 ];
 
+// Sparkles [left %, bottom px, size px] and soap-bubble orbs, from the header art.
+const sparkles = [[33, 250, 16], [62, 300, 12], [69, 150, 20], [29, 120, 11], [56, 330, 9], [42, 290, 13]];
+const orbs = [[37, 205, 22], [64, 235, 16], [31, 300, 12], [71, 90, 18]];
+
 export function LandingCoins() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const beltRef = useRef<HTMLDivElement>(null);
@@ -151,9 +155,20 @@ export function LandingCoins() {
         ))}
       </div>
       <div className="nl-coin nl-coin--nomo">
+        <i className="nl-ring nl-ring--back" />
         <div ref={centerRef} className="nl-center-tilt">
           <img src="/nomo/nomo-coin.webp" alt="" width={816} height={792} fetchPriority="high" draggable={false} />
+          <i className="nl-coin-sheen" />
         </div>
+        <i className="nl-ring nl-ring--front" />
+      </div>
+      <div className="nl-social">
+        <span className="nl-bubble nl-bubble--lfg">lfg</span>
+        <span className="nl-bubble nl-bubble--copy">copying you</span>
+        <span className="nl-bubble nl-bubble--ape">aping $SHROOM</span>
+        <span className="nl-pnl">+420.69%</span>
+        {sparkles.map((s, i) => <i key={i} className="nl-sparkle" style={{ left: `${s[0]}%`, bottom: `${s[1]}px`, "--sparkle-size": `${s[2]}px`, "--sparkle-delay": `${-i * 0.7}s` } as CSSProperties} />)}
+        {orbs.map((o, i) => <i key={i} className="nl-orb" style={{ left: `${o[0]}%`, bottom: `${o[1]}px`, "--orb-size": `${o[2]}px`, "--float-delay": `${-i * 1.3}s` } as CSSProperties} />)}
       </div>
     </div>
   );
