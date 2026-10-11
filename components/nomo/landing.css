@@ -1,9 +1,9 @@
 .nomo-landing {
   position: relative;
-  --nl-canvas: #101011;
+  --nl-canvas: #0b0b0e;
   --nl-text: #c5cfb5;
-  --nl-muted: #99999e;
-  --nl-green: #1cf431;
+  --nl-muted: #9896a1;
+  --nl-green: #b8f25c;
   display: flex;
   flex-direction: column;
   min-height: 100svh;
@@ -21,7 +21,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: radial-gradient(ellipse at 35% 68%, #1d301b 0%, #152015 27%, #101011 67%);
+  background: radial-gradient(ellipse at 35% 68%, #28301b 0%, #1c2015 27%, #0b0b0e 67%);
 }
 
 .nl-background-canvas {
@@ -43,7 +43,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 32%, #1010117a 0%, #1010112e 48%, transparent 75%), linear-gradient(180deg, #10101122, #10101116 55%, #101011bb);
+  background: radial-gradient(ellipse at 50% 32%, #0f0f127a 0%, #0f0f122e 48%, transparent 75%), linear-gradient(180deg, #0f0f1222, #0f0f1216 55%, #0f0f12bb);
 }
 
 .nomo-landing *,
@@ -58,7 +58,7 @@
 }
 
 .nomo-landing a:focus-visible {
-  outline: 1px solid #777780;
+  outline: 1px solid #736f88;
   outline-offset: 4px;
 }
 
@@ -98,11 +98,11 @@
   place-items: center;
   width: 38px;
   height: 42px;
-  color: #a9a9ac;
+  color: #a7a5b0;
 }
 
 .nl-x-link:hover {
-  color: #ecece8;
+  color: #e9e9eb;
 }
 
 .nl-header-cta {
@@ -111,18 +111,18 @@
   justify-content: center;
   min-height: 42px;
   padding: 0 18px;
-  border: 1px solid #3b3b3e;
+  border: 1px solid #383643;
   border-radius: 7px;
-  background: #10101170;
-  color: #ecece8;
+  background: #0f0f1270;
+  color: #e9e9eb;
   font-size: 13px;
   font-weight: 500;
   transition: background-color 180ms ease, border-color 180ms ease;
 }
 
 .nl-header-cta:hover {
-  border-color: #65665f;
-  background: #202122;
+  border-color: #5c596c;
+  background: #1f1e24;
 }
 
 .nl-hero {
@@ -181,7 +181,7 @@
   border: 1px solid transparent;
   border-radius: 8px;
   background: var(--nl-green);
-  color: #0d210e;
+  color: #19210d;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
@@ -190,7 +190,7 @@
 }
 
 .nl-cta:hover {
-  background: #54ff64;
+  background: #b8f261;
   transform: translateY(-2px);
 }
 
@@ -246,7 +246,7 @@
   width: 100%;
   height: auto;
   max-width: none;
-  filter: drop-shadow(0 20px 18px #0004);
+  filter: drop-shadow(0 20px 18px #00000044);
 }
 
 .nl-coin--nomo {
@@ -271,9 +271,9 @@
   gap: 24px;
   min-height: 62px;
   padding: 18px 44px;
-  border-top: 1px solid #232325;
+  border-top: 1px solid #222028;
   background: var(--nl-canvas);
-  color: #85858b;
+  color: #83818f;
   font-size: 11px;
   line-height: 1.5;
 }
@@ -442,5 +442,5 @@
     transition: none !important;
   }
 }
-.nl-cta.nl-cta-secondary{border-color:#3b3b3e;background:#101011a6;color:#ecece8}
-.nl-cta.nl-cta-secondary:hover{border-color:#65665f;background:#202122}
+.nl-cta.nl-cta-secondary{border-color:#383643;background:#0f0f12a6;color:#e9e9eb}
+.nl-cta.nl-cta-secondary:hover{border-color:#5c596c;background:#1f1e24}

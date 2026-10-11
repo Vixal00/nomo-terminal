@@ -64,7 +64,7 @@ export function FeatureFire({ className = "" }: { className?: string }) {
         gradient.addColorStop(0.58, `rgba(34, 166, 62, ${opacity * 0.4})`);
         gradient.addColorStop(0.8, `rgba(29, 141, 54, ${opacity * 0.055})`);
         gradient.addColorStop(0.95, `rgba(29, 141, 54, ${opacity * 0.005})`);
-        gradient.addColorStop(1, "rgba(29, 141, 54, 0)");
+        gradient.addColorStop(1, "rgba(97,144,26,0)");
         context.fillStyle = gradient;
         context.fillRect(-1, -1, 2, 2);
         context.restore();

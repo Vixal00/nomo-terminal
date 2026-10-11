@@ -47,8 +47,8 @@ export function useFeedMotion(ref: RefObject<HTMLDivElement | null>, tick: numbe
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const rootRect = root.getBoundingClientRect();
     const styles = getComputedStyle(root);
-    const positive = styles.getPropertyValue("--nm-green").trim() || "#1cf431";
-    const negative = styles.getPropertyValue("--nm-red").trim() || "#ee7783";
+    const positive = styles.getPropertyValue("--nm-green").trim() || "#b8f25c";
+    const negative = styles.getPropertyValue("--nm-red").trim() || "#ff7a93";
     const nextPositions = new Map<HTMLElement, Position>();
     const rows = root.querySelectorAll<HTMLElement>("[data-feed-id]");
     rows.forEach(node => {

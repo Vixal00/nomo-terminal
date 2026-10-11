@@ -3,6 +3,7 @@ import { XLogo } from "@phosphor-icons/react/dist/ssr";
 import { LandingBackground } from "./landing-background";
 import { LandingCoins } from "./landing-coins";
 import "./landing.css";
+import "./brand.css";
 
 export default function NomoLanding() {
   return (
