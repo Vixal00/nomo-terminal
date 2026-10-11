@@ -165,7 +165,7 @@ export function LandingCoins() {
       <div className="nl-social">
         <span className="nl-bubble nl-bubble--lfg">lfg</span>
         <span className="nl-bubble nl-bubble--copy">copying you</span>
-        <span className="nl-bubble nl-bubble--ape">aping $SHROOM</span>
+        <span className="nl-bubble nl-bubble--ape">aping $NOMO</span>
         <span className="nl-pnl">+420.69%</span>
         {sparkles.map((s, i) => <i key={i} className="nl-sparkle" style={{ left: `${s[0]}%`, bottom: `${s[1]}px`, "--sparkle-size": `${s[2]}px`, "--sparkle-delay": `${-i * 0.7}s` } as CSSProperties} />)}
         {orbs.map((o, i) => <i key={i} className="nl-orb" style={{ left: `${o[0]}%`, bottom: `${o[1]}px`, "--orb-size": `${o[2]}px`, "--float-delay": `${-i * 1.3}s` } as CSSProperties} />)}
