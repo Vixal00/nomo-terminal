@@ -535,12 +535,24 @@ html .nomo-index .ni-feature:hover {
   background: radial-gradient(120% 140% at 0% 50%, rgba(184, 242, 92, 0.14), rgba(155, 123, 255, 0.08) 50%, transparent 80%);
   box-shadow: inset 0 0 0 1px rgba(184, 242, 92, 0.35);
 }
-/* On hover the coin's face turns a little inside its rim and the coin
-   glows. Nothing scales or moves, so the art never leaves its frame. */
-html .nomo-index .ni-feature .ni-spotlight-art { transition: filter 0.2s; }
-html .nomo-index .ni-feature .ni-spotlight-art > img.ni-spotlight-face { transition: transform 0.4s cubic-bezier(.3, 1.8, .5, 1), filter 0.2s; }
-html .nomo-index .ni-feature:hover .ni-spotlight-art { filter: drop-shadow(0 0 12px rgba(184, 242, 92, 0.5)); }
-html .nomo-index .ni-feature:hover .ni-spotlight-art > img.ni-spotlight-face { transform: rotate(48deg) scaleX(.8); filter: brightness(1); }
+/* On hover the coin grows and tilts. The rim and its face move as one
+   coin: the face keeps its own tilt and turns around the rim's centre.
+   The art used to be clipped on every side, so a bigger coin got cut
+   off; now only the bottom is clipped (where the coin sits in the card)
+   and it can grow up and out. */
+html .nomo-index .ni-feature .ni-spotlight-art {
+  overflow: visible;
+  clip-path: inset(-60px -60px 0 -60px);
+  transition: filter 0.2s;
+}
+html .nomo-index .ni-feature .ni-spotlight-art > img { transition: transform 0.4s cubic-bezier(.3, 1.6, .5, 1), filter 0.2s; }
+html .nomo-index .ni-feature .ni-spotlight-art > img.ni-spotlight-rim { transform-origin: 50% 50%; }
+html .nomo-index .ni-feature:hover .ni-spotlight-art { filter: drop-shadow(0 0 14px rgba(184, 242, 92, 0.5)); }
+html .nomo-index .ni-feature:hover .ni-spotlight-art > img.ni-spotlight-rim { transform: rotate(-8deg) scale(1.1); }
+html .nomo-index .ni-feature:hover .ni-spotlight-art > img.ni-spotlight-face {
+  transform: translate(2.083%, 2.083%) rotate(-8deg) scale(1.1) translate(-2.083%, -2.083%) rotate(40deg) scaleX(.8);
+  filter: brightness(1);
+}
 html .nomo-index .ni-feature-change { text-shadow: var(--nm-glow-lime); }
 
 /* ==================================================================
