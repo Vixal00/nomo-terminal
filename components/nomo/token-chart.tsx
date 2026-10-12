@@ -14,8 +14,8 @@ type Interval = typeof INTERVALS[number];
 type Metric = "price" | "mcap";
 type Bar = { time: UTCTimestamp; open: number; high: number; low: number; close: number; volume: number };
 const SECONDS: Record<Interval, number> = { "1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400 };
-const GREEN = "#1cf431";
-const RED = "#ee7783";
+const GREEN = "#c4ff5e";
+const RED = "#ff5f80";
 
 function ageSeconds(age: string) {
   const match = age.match(/^(\d+(?:\.\d+)?)([smhd])$/);
@@ -93,17 +93,17 @@ export function TokenChart({ token, quoteCurrency = "USD", quoteUsdValue = 1, in
     if (!host) return;
     const instance = createChart(host, {
       width: host.clientWidth, height: host.clientHeight,
-      layout: { background: { type: ColorType.Solid, color: "#101011" }, textColor: "#75757f", fontSize: 10, fontFamily: getComputedStyle(host).fontFamily },
-      grid: { vertLines: { color: "#1d1d20" }, horzLines: { color: "#222225" } },
-      rightPriceScale: { borderColor: "#28282c", scaleMargins: { top: .12, bottom: .22 }, minimumWidth: 66 },
-      timeScale: { borderColor: "#28282c", timeVisible: true, secondsVisible: false, rightOffset: 6, barSpacing: 6, minBarSpacing: 2, fixLeftEdge: false },
-      crosshair: { mode: CrosshairMode.Normal, vertLine: { color: "#57575f", style: LineStyle.Dashed, labelBackgroundColor: "#303035" }, horzLine: { color: "#57575f", style: LineStyle.Dashed, labelBackgroundColor: "#303035" } },
+      layout: { background: { type: ColorType.Solid, color: "#08070b" }, textColor: "#7d76a0", fontSize: 10, fontFamily: getComputedStyle(host).fontFamily },
+      grid: { vertLines: { color: "#16131f" }, horzLines: { color: "#1c1828" } },
+      rightPriceScale: { borderColor: "#27262e", scaleMargins: { top: .12, bottom: .22 }, minimumWidth: 66 },
+      timeScale: { borderColor: "#27262e", timeVisible: true, secondsVisible: false, rightOffset: 6, barSpacing: 6, minBarSpacing: 2, fixLeftEdge: false },
+      crosshair: { mode: CrosshairMode.Normal, vertLine: { color: "#9b7bff", style: LineStyle.Dashed, labelBackgroundColor: "#3a2f5c" }, horzLine: { color: "#9b7bff", style: LineStyle.Dashed, labelBackgroundColor: "#3a2f5c" } },
       handleScroll: { vertTouchDrag: false },
       localization: { locale: "en-US" },
     });
     chart.current = instance;
-    const candleSeries = instance.addSeries(CandlestickSeries, { upColor: GREEN, downColor: RED, borderVisible: false, wickUpColor: GREEN, wickDownColor: RED, priceLineColor: "#467948", priceLineStyle: LineStyle.Dashed, priceLineWidth: 1 });
-    const lineSeries = instance.addSeries(LineSeries, { color: GREEN, lineWidth: 2, visible: false, crosshairMarkerRadius: 3, priceLineColor: "#467948", priceLineStyle: LineStyle.Dashed });
+    const candleSeries = instance.addSeries(CandlestickSeries, { upColor: GREEN, downColor: RED, borderVisible: false, wickUpColor: GREEN, wickDownColor: RED, priceLineColor: "#b8f25c", priceLineStyle: LineStyle.Dashed, priceLineWidth: 1 });
+    const lineSeries = instance.addSeries(LineSeries, { color: GREEN, lineWidth: 2, visible: false, crosshairMarkerRadius: 3, priceLineColor: "#b8f25c", priceLineStyle: LineStyle.Dashed });
     const volumeSeries = instance.addSeries(HistogramSeries, { priceScaleId: "volume", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
     volumeSeries.priceScale().applyOptions({ scaleMargins: { top: .84, bottom: 0 }, visible: false });
     candles.current = candleSeries;
@@ -153,7 +153,7 @@ export function TokenChart({ token, quoteCurrency = "USD", quoteUsdValue = 1, in
     const range = chart.current.timeScale().getVisibleLogicalRange();
     candles.current.setData(bars.current.map(bar => ({ time: bar.time, open: bar.open * factor, high: bar.high * factor, low: bar.low * factor, close: bar.close * factor })));
     line.current.setData(bars.current.map(bar => ({ time: bar.time, value: bar.close * factor })));
-    volume.current.setData(bars.current.map(bar => ({ time: bar.time, value: bar.volume / quoteValue, color: bar.close >= bar.open ? "#24633188" : "#7b3c4688" })));
+    volume.current.setData(bars.current.map(bar => ({ time: bar.time, value: bar.volume / quoteValue, color: bar.close >= bar.open ? "#b8f25c5c" : "#ff5f805c" })));
     setReading(bars.current.at(-1) ?? null);
     if (historyChanged) chart.current.timeScale().fitContent();
     else if (range) chart.current.timeScale().setVisibleLogicalRange(range);
@@ -169,7 +169,7 @@ export function TokenChart({ token, quoteCurrency = "USD", quoteUsdValue = 1, in
     const factor = (currentMetric.current === "mcap" ? token.totalSupply : 1) / quoteValue;
     candles.current.update({ time: updated.time, open: updated.open * factor, high: updated.high * factor, low: updated.low * factor, close: updated.close * factor });
     line.current.update({ time: updated.time, value: updated.close * factor });
-    volume.current.update({ time: updated.time, value: updated.volume / quoteValue, color: updated.close >= updated.open ? "#24633188" : "#7b3c4688" });
+    volume.current.update({ time: updated.time, value: updated.volume / quoteValue, color: updated.close >= updated.open ? "#b8f25c5c" : "#ff5f805c" });
     if (!hoveredTime.current || hoveredTime.current === updated.time) setReading(updated);
   }, [token.price, token.volume, token.totalSupply, quoteValue]);
 

@@ -1,36 +1,36 @@
 .nomo-index{padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
-.nomo-index .ni-terminal-bar{position:fixed;bottom:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;gap:18px;height:calc(30px + env(safe-area-inset-bottom,0px));padding:0 20px env(safe-area-inset-bottom,0px);border-top:1px solid #303034;background:#141415;color:#85858e;font-size:9px;white-space:nowrap}
+.nomo-index .ni-terminal-bar{position:fixed;bottom:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;gap:18px;height:calc(30px + env(safe-area-inset-bottom,0px));padding:0 20px env(safe-area-inset-bottom,0px);border-top:1px solid #2f2a3a;background:#0f0e13;color:#858291;font-size:9px;white-space:nowrap}
 .nomo-index .ni-terminal-shortcuts,.nomo-index .ni-terminal-status{display:flex;align-items:center;min-width:0;height:100%}
 .nomo-index .ni-terminal-shortcuts{gap:3px}
-.nomo-index .ni-terminal-shortcuts>button{display:flex;align-items:center;justify-content:center;gap:5px;flex:none;height:24px;padding:0 7px;border-radius:3px;font-size:9px;color:#a2a3aa;transition:background .15s,color .15s}
-.nomo-index .ni-terminal-shortcuts>button:hover{background:#262629;color:#e0e3da}
-.nomo-index .ni-terminal-shortcuts>button[aria-pressed="true"]{color:#c8d4bd}
-.nomo-index .ni-terminal-shortcuts>button:focus-visible,.nomo-index .ni-terminal-connection:focus-visible{outline:1px solid #9ebe8f;outline-offset:1px}
-.nomo-index .ni-terminal-shortcuts>button small{padding:0 3px;border-radius:2px;background:#282a26;color:#a7b19f;font-size:8px}
+.nomo-index .ni-terminal-shortcuts>button{display:flex;align-items:center;justify-content:center;gap:5px;flex:none;height:24px;padding:0 7px;border-radius:3px;font-size:9px;color:#a2a1ab;transition:background .15s,color .15s}
+.nomo-index .ni-terminal-shortcuts>button:hover{background:#25212e;color:#dddde0}
+.nomo-index .ni-terminal-shortcuts>button[aria-pressed="true"]{color:#d2f79a}
+.nomo-index .ni-terminal-shortcuts>button:focus-visible,.nomo-index .ni-terminal-connection:focus-visible{outline:1px solid #b6f35a;outline-offset:1px}
+.nomo-index .ni-terminal-shortcuts>button small{padding:0 3px;border-radius:2px;background:#25222e;color:#a5a3ad;font-size:8px}
 .nomo-index .ni-terminal-status{gap:16px;margin-left:auto;flex:none}
 .nomo-index .ni-terminal-volume{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.nomo-index .ni-terminal-volume strong{font-weight:500;color:#b8bcb2}
-.nomo-index .ni-terminal-connection{display:flex;align-items:center;gap:6px;height:16px;padding-left:16px;border-left:1px solid #303034;color:#929b8b;cursor:help}
-.nomo-index .ni-terminal-connection>i{width:4px;height:4px;flex:none;border-radius:50%;background:#9ab88a}
+.nomo-index .ni-terminal-volume strong{font-weight:500;color:#b4b3bb}
+.nomo-index .ni-terminal-connection{display:flex;align-items:center;gap:6px;height:16px;padding-left:16px;border-left:1px solid #2f2a3a;color:#8f8d99;cursor:help}
+.nomo-index .ni-terminal-connection>i{width:4px;height:4px;flex:none;border-radius:50%;background:#b1f250}
 @media(max-width:800px){.nomo-index .ni-terminal-bar{padding-left:12px;padding-right:12px;gap:10px}.nomo-index .ni-terminal-shortcuts{gap:0}.nomo-index .ni-terminal-shortcuts>button{padding:0 5px}.nomo-index .ni-terminal-status{gap:10px}.nomo-index .ni-terminal-connection{padding-left:10px}}
 @media(max-width:600px){.nomo-index .ni-terminal-bar{padding-left:7px;padding-right:9px;gap:8px}.nomo-index .ni-terminal-shortcuts>button{width:27px;padding:0}.nomo-index .ni-terminal-shortcuts>button>span,.nomo-index .ni-terminal-shortcuts>button>small{display:none}.nomo-index .ni-terminal-shortcuts>button>svg{width:13px;height:13px}.nomo-index .ni-terminal-status{gap:9px;font-size:8px}.nomo-index .ni-terminal-volume{gap:4px}.nomo-index .ni-terminal-connection{padding-left:9px;gap:5px}.nomo-index .ni-connection-label{display:none}}
 @media(prefers-reduced-motion:reduce){.nomo-index .ni-terminal-shortcuts>button{transition:none}}
-.nomo-index .ni-market-ticker{position:relative;z-index:8;display:flex;align-items:center;height:34px;min-width:0;border-bottom:1px solid #29292d;background:#131314;color:#97979f}
-.nomo-index .ni-ticker-controls{position:relative;display:flex;align-items:center;gap:0;flex:none;align-self:stretch;padding:0 12px 0 15px;border-right:1px solid #2a2a2e}
-.nomo-index .ni-ticker-mode{display:grid;place-items:center;width:25px;height:25px;color:#676973;border-radius:3px}
-.nomo-index .ni-ticker-mode:hover{color:#bec2b8;background:#202123}
-.nomo-index .ni-ticker-mode.is-on{color:#d4e4c9}
-.nomo-index .ni-ticker-mode:focus-visible{outline:1px solid #a6c996;outline-offset:-1px}
+.nomo-index .ni-market-ticker{position:relative;z-index:8;display:flex;align-items:center;height:34px;min-width:0;border-bottom:1px solid #282432;background:#0f0d12;color:#9795a1}
+.nomo-index .ni-ticker-controls{position:relative;display:flex;align-items:center;gap:0;flex:none;align-self:stretch;padding:0 12px 0 15px;border-right:1px solid #292533}
+.nomo-index .ni-ticker-mode{display:grid;place-items:center;width:25px;height:25px;color:#666278;border-radius:3px}
+.nomo-index .ni-ticker-mode:hover{color:#bab9c1;background:#1f1c27}
+.nomo-index .ni-ticker-mode.is-on{color:#ddf9b4}
+.nomo-index .ni-ticker-mode:focus-visible{outline:1px solid #bdf46b;outline-offset:-1px}
 .nomo-index .ni-ticker-viewport{flex:1;min-width:0;height:100%;overflow:hidden}
 .nomo-index .ni-ticker-track{display:flex;width:max-content;height:100%;transform:translateX(0)}
 .nomo-index .ni-ticker-set{display:flex;align-items:center;gap:24px;flex:none;width:max-content;height:100%;list-style:none;padding:0 24px 0 0;margin:0}
 .nomo-index .ni-ticker-set>li{flex:none}
-.nomo-index .ni-ticker-chip{display:flex;align-items:center;gap:5px;height:26px;color:#aaabb2;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:left}
+.nomo-index .ni-ticker-chip{display:flex;align-items:center;gap:5px;height:26px;color:#aba9b3;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:left}
 .nomo-index .ni-ticker-chip:hover>strong{text-decoration:underline;text-underline-offset:3px}
-.nomo-index .ni-ticker-chip:focus-visible{outline:1px solid #a6c996;outline-offset:2px;background:#1e241b}
+.nomo-index .ni-ticker-chip:focus-visible{outline:1px solid #bdf46b;outline-offset:2px;background:#1d1a25}
 .nomo-index .ni-ticker-chip .nm-avatar{flex:none;border-radius:4px!important}
-.nomo-index .ni-ticker-chip>strong{color:#dadbd7;font-size:11px;font-weight:550}
-.nomo-index .ni-ticker-value{color:#777983}
+.nomo-index .ni-ticker-chip>strong{color:#d7d7db;font-size:11px;font-weight:550}
+.nomo-index .ni-ticker-value{color:#75708a}
 .nomo-index .ni-ticker-viewport[data-moving="true"] .ni-ticker-track{animation:ni-ticker-loop var(--ni-ticker-duration,120s) linear infinite}
 .nomo-index .ni-ticker-viewport:hover .ni-ticker-track{animation-play-state:paused}
 .nomo-index .ni-ticker-viewport[data-moving="false"] .ni-ticker-track{padding-left:12px}
@@ -38,18 +38,18 @@
 .nomo-index .ni-market-ticker.is-keyboard .ni-ticker-viewport{overflow-x:auto;scrollbar-width:none}
 .nomo-index .ni-market-ticker.is-keyboard .ni-ticker-track{animation:none;transform:none}
 .nomo-index .ni-market-ticker.is-keyboard .ni-ticker-copy{display:none}
-.nomo-index .ni-ticker-empty{display:flex;align-items:center;height:100%;padding-left:12px;font-size:10px;color:#777982;white-space:nowrap}
-.nomo-index .ni-ticker-settings{position:absolute;z-index:2;top:calc(100% + 6px);left:14px;width:min(264px,calc(100vw - 28px));padding:12px;background:#1b1b1e;border:1px solid #3a3b40;border-radius:6px;box-shadow:0 10px 30px #0005}
+.nomo-index .ni-ticker-empty{display:flex;align-items:center;height:100%;padding-left:12px;font-size:10px;color:#747089;white-space:nowrap}
+.nomo-index .ni-ticker-settings{position:absolute;z-index:2;top:calc(100% + 6px);left:14px;width:min(264px,calc(100vw - 28px));padding:12px;background:#16141a;border:1px solid #393347;border-radius:6px;box-shadow:0 10px 30px #00000055}
 .nomo-index .ni-ticker-settings>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .nomo-index .ni-ticker-settings>div+div{margin-top:10px}
-.nomo-index .ni-ticker-settings>div>span{color:#a5a7ae;font-size:10px}
-.nomo-index .ni-ticker-settings [role="group"]{display:flex;gap:2px;padding:2px;background:#131315;border:1px solid #303135;border-radius:4px}
-.nomo-index .ni-ticker-settings button{height:23px;padding:0 6px;border-radius:2px;color:#858891;font-size:9px;white-space:nowrap}
-.nomo-index .ni-ticker-settings button[aria-pressed="true"]{background:#2a3025;color:#d0dfc5}
-.nomo-index .ni-ticker-settings button:hover{color:#e3e7df}
-.nomo-index .ni-ticker-settings button:focus-visible{outline:1px solid #a6c996;outline-offset:1px}
+.nomo-index .ni-ticker-settings>div>span{color:#a6a4af;font-size:10px}
+.nomo-index .ni-ticker-settings [role="group"]{display:flex;gap:2px;padding:2px;background:#0f0e12;border:1px solid #2f2a3b;border-radius:4px}
+.nomo-index .ni-ticker-settings button{height:23px;padding:0 6px;border-radius:2px;color:#868492;font-size:9px;white-space:nowrap}
+.nomo-index .ni-ticker-settings button[aria-pressed="true"]{background:#282431;color:#daf9ab}
+.nomo-index .ni-ticker-settings button:hover{color:#e2e1e5}
+.nomo-index .ni-ticker-settings button:focus-visible{outline:1px solid #bdf46b;outline-offset:1px}
 @keyframes ni-ticker-loop{to{transform:translateX(-50%)}}
 @media(max-width:800px){.nomo-index .ni-ticker-controls{padding-left:10px;padding-right:10px}}
 @media(max-width:600px){.nomo-index .ni-market-ticker{height:32px}.nomo-index .ni-ticker-controls{padding-left:7px;padding-right:8px}.nomo-index .ni-ticker-mode{width:23px}.nomo-index .ni-ticker-set{gap:22px;padding-right:22px}.nomo-index .ni-ticker-settings{left:7px;width:min(264px,calc(100vw - 28px))}.nomo-index .ni-ticker-empty{font-size:9px}}
 @media(prefers-reduced-motion:reduce),(hover:none){.nomo-index .ni-ticker-viewport{overflow-x:auto;scrollbar-width:none}.nomo-index .ni-ticker-track,.nomo-index .ni-ticker-viewport[data-moving="true"] .ni-ticker-track{animation:none;transform:none}.nomo-index .ni-ticker-copy{display:none}}
-.nomo-index .ni-terminal-connection>i{background:#858b82;box-shadow:none}
+.nomo-index .ni-terminal-connection>i{background:#827f8e;box-shadow:none}

@@ -1,0 +1,621 @@
+/* ------------------------------------------------------------------
+nomo brand layer
+   Styling only. Loaded after every other nomo stylesheet so it can
+   restyle without touching a single layout rule: no sizes,
+no grid,
+no spacing changes live here,
+only colour,
+type,
+radius and light.
+
+   Palette (see the nomo brand guide):
+     ink     #0b0b0e   the ground
+     lime    #b8f25c   pump: up,
+buy,
+primary actions
+     pink    #ff7a93   rekt: down,
+sell,
+losses
+     holo    lime -> cyan -> violet, used as light, never as a fill
+   Type:
+     Fredoka  headlines and titles (the letters from the chrome art)
+     Nunito   interface text
+     Geist Mono stays for numbers so tables keep their columns
+------------------------------------------------------------------- */
+html .nomo,
+html .nomo-landing {
+  --nm-lime: #b8f25c;
+  --nm-lime-hi: #e4ffad;
+  --nm-lime-lo: #8fd13a;
+  --nm-pink: #ff7a93;
+  --nm-cyan: #6ee7ff;
+  --nm-violet: #9b7bff;
+  --nm-ink: #111111;
+  --nm-holo: linear-gradient(90deg, #b8f25c 0%, #6ee7ff 50%, #9b7bff 100%);
+  --nm-focus: var(--nm-lime);
+  font-family: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+}
+
+/* Numbers keep the mono so prices, PnL and tables stay aligned. */
+html .nomo .nm-mono { font-family: var(--font-geist-mono), ui-monospace, monospace; }
+
+/* Headlines and panel titles in Fredoka. */
+html .nomo h1,
+html .nomo h2,
+html .nomo-landing h1 {
+  font-family: var(--font-fredoka), var(--font-nunito), ui-rounded, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+html .nomo-index .ni-title-row h1 { font-weight: 600; letter-spacing: -0.2px; }
+
+/* Signal colours get a little light behind them. */
+html .nomo .nm-positive { text-shadow: 0 0 14px rgba(184, 242, 92, 0.22); }
+html .nomo .nm-negative { text-shadow: 0 0 14px rgba(255, 122, 147, 0.18); }
+
+/* ---------- primary actions: glossy lime pills ---------- */
+html .nomo-index .ni-primary-button,
+html .nomo-index .ni-wallet,
+html .nomo .nm-wallet-trigger:not(.is-connected),
+html .nomo-lens .lens-connect-trade,
+html .nomo-index .nb-primary,
+html .nomo-index .nc-primary,
+html .nomo-index .ni-preset-actions > .ni-primary-button,
+html .nomo-index .nld-follow,
+html .nomo-index .np-create-link,
+html .nomo-index .np-primary,
+html .nomo-index .pf-primary,
+html .nomo-index .npu-button.npu-primary,
+html .nomo-index .nt-trade-submit,
+html .nomo-index .ntk-primary,
+html .nomo-index .ntk-add-wallet-submit,
+html .nomo-index .nw-primary {
+  border-radius: 999px;
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--nm-lime-hi) 0%, var(--nm-lime) 46%, var(--nm-lime-lo) 100%);
+  color: var(--nm-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -2px 0 rgba(48, 92, 4, 0.35),
+    0 0 22px rgba(184, 242, 92, 0.28);
+  transition: box-shadow 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+}
+html .nomo-index .ni-primary-button:hover,
+html .nomo-index .ni-wallet:hover,
+html .nomo .nm-wallet-trigger:not(.is-connected):hover,
+html .nomo-lens .lens-connect-trade:hover,
+html .nomo-index .nb-primary:hover:not(:disabled),
+html .nomo-index .nc-primary:hover:not(:disabled),
+html .nomo-index .ni-preset-actions > .ni-primary-button:hover:not(:disabled),
+html .nomo-index .nld-follow:hover:not(:disabled),
+html .nomo-index .np-create-link:hover:not(:disabled),
+html .nomo-index .np-primary:hover:not(:disabled),
+html .nomo-index .pf-primary:hover:not(:disabled),
+html .nomo-index .npu-button.npu-primary:hover:not(:disabled),
+html .nomo-index .nt-trade-submit:hover:not(:disabled),
+html .nomo-index .ntk-primary:hover:not(:disabled),
+html .nomo-index .ntk-add-wallet-submit:hover:not(:disabled),
+html .nomo-index .nw-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #efffcc 0%, #c6f772 46%, #9ade45 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 0 rgba(48, 92, 4, 0.35),
+    0 0 30px rgba(184, 242, 92, 0.45);
+}
+
+/* Quick buy: pill with a lime edge that lights up on hover. */
+html .nomo-index .ni-quick-buy {
+  border-radius: 999px;
+  border-color: rgba(184, 242, 92, 0.38);
+  color: var(--nm-lime);
+}
+html .nomo-index .ni-quick-buy:hover:not(:disabled) {
+  border-color: var(--nm-lime);
+  background: rgba(184, 242, 92, 0.12);
+  color: #f2ffdc;
+  box-shadow: 0 0 16px rgba(184, 242, 92, 0.25);
+}
+
+/* ---------- navigation ---------- */
+/* Active tab underline: lime with a glow, like the neon in the art. */
+html .nomo-index .ni-nav > button.active::after,
+html .nomo-index .ni-views > button.active::after,
+html .nomo-lens .lens-view-tabs > button[aria-selected="true"]::after,
+html .nomo-index .nta-tabs > button.is-active::after,
+html .nomo-index .nld-detail-tabs > button[aria-selected="true"]::after,
+html .nomo-index .ntk-tabs > button.active::after,
+html .nomo-index .pf-chart-metrics > button[aria-pressed="true"]::after,
+html .nomo-index .pf-positions-tabs > button[aria-pressed="true"]::after,
+html .nomo-index .nt-stat-windows > button[aria-pressed="true"]::after {
+  border-radius: 2px;
+  background: var(--nm-lime);
+  box-shadow: 0 0 10px rgba(184, 242, 92, 0.8), 0 0 2px rgba(184, 242, 92, 1);
+}
+
+/* A holographic hairline under the top bar, the one place the
+lime -> cyan -> violet light from the chrome artwork shows up. */
+html .nomo-index .ni-market-ticker {
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, rgba(184, 242, 92, 0.55), rgba(110, 231, 255, 0.4) 50%, rgba(155, 123, 255, 0.5)) 1;
+}
+
+/* Little status dots glow. */
+html .nm-footer i,
+html .nomo-index .ni-new-dot,
+html .nomo-index .ni-filter-button i {
+  box-shadow: 0 0 6px rgba(184, 242, 92, 0.9);
+}
+
+/* ---------- landing ---------- */
+/* The landing's chrome mode lives in landing.css. */
+html .nl-cta { font-family: var(--font-fredoka), var(--font-nunito), sans-serif; font-weight: 600; letter-spacing: 0; }
+
+/* Scrollbars pick up the ink and lime. */
+html .nomo * { scrollbar-color: #34313f transparent; }
+html .nomo ::selection,
+html .nomo-landing ::selection { background: rgba(184, 242, 92, 0.85); color: #111; }
+
+/* Switches that are on read as lime. */
+html .nomo-index .ntk-toggle[aria-checked="true"] > span,
+html .nomo-index .ni-setting-switch[aria-checked="true"] > span,
+html .nomo-index .nc-quote-option > input:checked + .nc-quote-card .nc-quote-check {
+  background: var(--nm-lime);
+  box-shadow: 0 0 10px rgba(184, 242, 92, 0.45);
+}
+
+/* ---------- buy / sell ---------- */
+/* Buy lights up lime, sell lights up pink: the market's two moods. */
+html .nomo-index .nt-trade-sides .is-active.is-buy,
+html .nomo-index .np-trade-sides > button.is-buy {
+  border-color: rgba(184, 242, 92, 0.45);
+  background: rgba(184, 242, 92, 0.14);
+  color: var(--nm-lime);
+}
+html .nomo-index .nt-trade-sides .is-active.is-sell,
+html .nomo-index .np-trade-sides > button.is-sell {
+  border-color: rgba(255, 122, 147, 0.45);
+  background: rgba(255, 122, 147, 0.14);
+  color: var(--nm-pink);
+}
+html .nomo-index .nt-trade-submit.is-sell,
+html .nomo-index .np-trade-submit.is-sell {
+  border-radius: 999px;
+  border-color: transparent;
+  background: linear-gradient(180deg, #ffd0d9 0%, #ff7a93 46%, #e8566f 100%);
+  color: var(--nm-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 0 rgba(110, 10, 30, 0.3),
+    0 0 22px rgba(255, 122, 147, 0.3);
+}
+html .nomo-index .nt-trade-submit.is-sell:hover:not(:disabled),
+html .nomo-index .np-trade-submit.is-sell:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffe0e6 0%, #ff8fa4 46%, #f0647c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(110, 10, 30, 0.3),
+    0 0 30px rgba(255, 122, 147, 0.45);
+}
+html .nomo-index .np-trades td.np-side-buy { color: var(--nm-lime); }
+html .nomo-index .np-trades td.np-side-sell { color: var(--nm-pink); }
+
+/* A faint holographic wash behind the terminal, the chrome art's light
+   leaking in from the corners. Panels keep their solid fills, so it only
+   shows in the gutters and never under numbers. */
+html .nomo {
+  background:
+    radial-gradient(1100px 520px at 100% 0%, rgba(155, 123, 255, 0.075), transparent 70%),
+    radial-gradient(900px 420px at 0% 0%, rgba(184, 242, 92, 0.05), transparent 70%),
+    var(--nm-bg);
+  background-attachment: fixed;
+}
+
+/* ==================================================================
+   TRENCHER MODE
+   The chrome header's light, turned up: neon lime for pumps and buys,
+   hot pink for rekt, cyan and violet as the holo edge light. Still
+   styling only: glows, gradients, borders, motion. No layout.
+   ================================================================== */
+html .nomo {
+  --nm-glow-lime: 0 0 12px rgba(184, 242, 92, 0.55), 0 0 2px rgba(184, 242, 92, 0.9);
+  --nm-glow-pink: 0 0 12px rgba(255, 101, 129, 0.5), 0 0 2px rgba(255, 101, 129, 0.85);
+  --nm-holo-edge: linear-gradient(90deg, rgba(184, 242, 92, 0.9), rgba(110, 231, 255, 0.75) 50%, rgba(155, 123, 255, 0.9));
+}
+
+/* The ground: deeper ink, stronger holo bloom, and a faint dot grid like
+   the terminal is printed on the chrome art's black. */
+html .nomo {
+  background:
+    radial-gradient(1200px 600px at 105% -10%, rgba(155, 123, 255, 0.16), transparent 65%),
+    radial-gradient(900px 500px at -5% -10%, rgba(184, 242, 92, 0.1), transparent 65%),
+    radial-gradient(800px 500px at 50% 120%, rgba(110, 231, 255, 0.07), transparent 70%),
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.2px) 0 0 / 22px 22px,
+    var(--nm-bg);
+  background-attachment: fixed;
+}
+
+/* Signal numbers glow like LEDs. */
+html .nomo .nm-positive { color: var(--nm-lime); text-shadow: 0 0 10px rgba(184, 242, 92, 0.55); }
+html .nomo .nm-negative { color: #ff6581; text-shadow: 0 0 10px rgba(255, 101, 129, 0.45); }
+
+/* ---------- top bar ---------- */
+html .nomo-index .ni-header {
+  background: linear-gradient(180deg, rgba(20, 17, 30, 0.96), rgba(11, 10, 15, 0.96));
+  border-bottom: 1px solid transparent;
+  border-image: var(--nm-holo-edge) 1;
+  box-shadow: 0 1px 24px rgba(155, 123, 255, 0.14);
+}
+html .nomo-index .ni-logo img {
+  filter: drop-shadow(0 0 10px rgba(184, 242, 92, 0.35)) drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+}
+html .nomo-index .ni-nav > button.active,
+html .nomo-index .ni-nav > a.active { color: var(--nm-lime); text-shadow: 0 0 12px rgba(184, 242, 92, 0.55); }
+html .nomo-index .ni-nav > button.active svg,
+html .nomo-index .ni-nav > a.active svg { filter: drop-shadow(0 0 6px rgba(184, 242, 92, 0.7)); }
+html .nomo-index .ni-nav > button.active::after { height: 3px; background: var(--nm-holo-edge); box-shadow: 0 0 14px rgba(184, 242, 92, 0.7), 0 0 28px rgba(110, 231, 255, 0.35); }
+html .nomo-index .ni-market-ticker {
+  background: linear-gradient(90deg, rgba(184, 242, 92, 0.06), rgba(110, 231, 255, 0.04) 50%, rgba(155, 123, 255, 0.07));
+  border-image: var(--nm-holo-edge) 1;
+}
+
+/* ---------- page titles: chrome type with holo light ---------- */
+html .nomo-index .ni-title-row h1,
+html .nomo-index .npu-heading h1,
+html .nomo .ni-title-row h1 {
+  background: linear-gradient(180deg, #ffffff 0%, #e8e5f3 45%, #a9a3c2 70%, #f6f4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(155, 123, 255, 0.45)) drop-shadow(0 0 2px rgba(184, 242, 92, 0.35));
+}
+
+/* ---------- panels: violet-edged black glass ---------- */
+html .nomo-index .npu-board,
+html .nomo-index .ni-table,
+html .nomo-index .ni-markets {
+  box-shadow: 0 0 0 1px rgba(155, 123, 255, 0.14), 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(155, 123, 255, 0.06);
+}
+html .nomo-index .npu-column-header {
+  background: linear-gradient(180deg, rgba(30, 25, 44, 0.9), rgba(16, 14, 22, 0.9));
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, rgba(155, 123, 255, 0.5) 30%, rgba(110, 231, 255, 0.4) 70%, transparent) 1;
+}
+html .nomo-index .npu-column-title > svg { color: var(--nm-cyan); filter: drop-shadow(0 0 5px rgba(110, 231, 255, 0.7)); }
+html .nomo-index .npu-column-title h2 { font-family: var(--font-fredoka), sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.01em; }
+html .nomo-index .npu-count,
+html .nomo .ntd-count { background: rgba(155, 123, 255, 0.16); color: #cbbcff; box-shadow: inset 0 0 0 1px rgba(155, 123, 255, 0.3); }
+
+/* ---------- token cards & rows: light up when you hover ---------- */
+html .nomo-index .npu-token-card { background: rgba(14, 12, 19, 0.92); transition: background 0.15s, box-shadow 0.15s; }
+html .nomo-index .npu-token-card:hover,
+html .nomo-index .ni-table tbody tr:hover {
+  background: linear-gradient(90deg, rgba(184, 242, 92, 0.1), rgba(110, 231, 255, 0.04) 45%, rgba(155, 123, 255, 0.06));
+  box-shadow: inset 3px 0 0 var(--nm-lime), inset 0 0 0 1px rgba(184, 242, 92, 0.22), inset 14px 0 24px -14px rgba(184, 242, 92, 0.6);
+}
+html .nomo-index .npu-token-card .ni-token-identity-avatar { box-shadow: 0 0 0 1px rgba(155, 123, 255, 0.4), 0 0 14px rgba(155, 123, 255, 0.18); }
+html .nomo-index .npu-token-card:hover .ni-token-identity-avatar {
+  box-shadow: 0 0 0 1.5px var(--nm-lime), 0 0 18px rgba(184, 242, 92, 0.45);
+}
+html .nomo-index .npu-token-card .ni-token-identity-symbol,
+html .nomo-index .ni-table .ni-token-name { font-family: var(--font-fredoka), sans-serif; font-weight: 600; letter-spacing: 0.01em; }
+html .nomo-index .npu-token-card:hover .ni-token-identity-symbol { color: #f4ffe2; text-shadow: 0 0 12px rgba(184, 242, 92, 0.6); }
+/* fresh tokens flash in */
+html .nomo-index .npu-token-card.npu-token-arriving,
+html .nomo-index .npu-token-arriving { animation: nm-arrive 1.4s ease-out; }
+@keyframes nm-arrive {
+  0% { background: rgba(184, 242, 92, 0.28); box-shadow: inset 0 0 0 1px var(--nm-lime), 0 0 30px rgba(184, 242, 92, 0.4); }
+  100% { background: rgba(14, 12, 19, 0.92); box-shadow: none; }
+}
+
+/* signal chips: pump in neon lime, rekt in hot pink */
+html .nomo .nm-signal-chip[data-tone="ok"] {
+  background: rgba(184, 242, 92, 0.12);
+  border-color: rgba(184, 242, 92, 0.45);
+  color: var(--nm-lime);
+  box-shadow: 0 0 10px rgba(184, 242, 92, 0.16), inset 0 0 8px rgba(184, 242, 92, 0.08);
+  text-shadow: 0 0 8px rgba(184, 242, 92, 0.5);
+}
+html .nomo .nm-signal-chip[data-tone="bad"] {
+  background: rgba(255, 101, 129, 0.12);
+  border-color: rgba(255, 101, 129, 0.5);
+  color: #ff7a93;
+  box-shadow: 0 0 10px rgba(255, 101, 129, 0.18), inset 0 0 8px rgba(255, 101, 129, 0.08);
+  text-shadow: 0 0 8px rgba(255, 101, 129, 0.5);
+}
+
+/* the bonding curve fills with holo light, and glows lime once it's done */
+html .nomo-index .npu-migration-progress { background: rgba(155, 123, 255, 0.12); }
+html .nomo-index .npu-migration-progress > i {
+  background: linear-gradient(90deg, #9b7bff, #6ee7ff 55%, #b8f25c);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(110, 231, 255, 0.7);
+}
+html .nomo-index .npu-migration-progress.is-complete > i { background: var(--nm-lime); box-shadow: 0 0 12px rgba(184, 242, 92, 0.9); }
+
+/* ---------- quick buys: neon pills that ignite ---------- */
+html .nomo-index .npu-buy,
+html .nomo-index .ni-quick-buy {
+  border-radius: 999px;
+  border: 1px solid rgba(184, 242, 92, 0.65);
+  background: linear-gradient(180deg, rgba(184, 242, 92, 0.2), rgba(184, 242, 92, 0.07));
+  color: #e4ffad;
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(184, 242, 92, 0.22), inset 0 1px 0 rgba(228, 255, 173, 0.25);
+  text-shadow: 0 0 8px rgba(184, 242, 92, 0.6);
+  transition: background 0.14s, box-shadow 0.14s, color 0.14s, transform 0.14s;
+}
+html .nomo-index .npu-buy svg,
+html .nomo-index .ni-quick-buy svg { color: var(--nm-lime); filter: drop-shadow(0 0 4px rgba(184, 242, 92, 0.9)); }
+html .nomo-index .npu-buy:hover:not(:disabled),
+html .nomo-index .ni-quick-buy:hover:not(:disabled) {
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--nm-lime-hi) 0%, var(--nm-lime) 46%, var(--nm-lime-lo) 100%);
+  color: var(--nm-ink);
+  text-shadow: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 26px rgba(184, 242, 92, 0.6);
+  transform: scale(1.04);
+}
+html .nomo-index .npu-buy:hover:not(:disabled) svg,
+html .nomo-index .ni-quick-buy:hover:not(:disabled) svg { color: var(--nm-ink); filter: none; }
+
+/* Primary pills get a chrome shimmer sweeping across them. */
+html .nomo-index .ni-wallet,
+html .nomo .nm-wallet-trigger:not(.is-connected),
+html .nomo-index .nt-trade-submit:not(.is-sell),
+html .nomo-index .npu-button.npu-primary,
+html .nomo-index .ni-primary-button {
+  background:
+    linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.55) 48%, transparent 60%) -200% 0 / 250% 100% no-repeat,
+    linear-gradient(180deg, var(--nm-lime-hi) 0%, var(--nm-lime) 46%, var(--nm-lime-lo) 100%);
+  animation: nm-shimmer 4.5s ease-in-out infinite;
+  font-weight: 700;
+}
+@keyframes nm-shimmer { 0%, 55% { background-position: -200% 0, 0 0; } 100% { background-position: 200% 0, 0 0; } }
+html .nomo-index .nt-trade-submit:not(.is-sell) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -2px 0 rgba(48, 92, 4, 0.35), 0 0 30px rgba(184, 242, 92, 0.45), 0 0 70px rgba(184, 242, 92, 0.15);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+/* Buy / sell toggle: the active side is lit, not just tinted. */
+html .nomo-index .nt-trade-sides .is-active.is-buy,
+html .nomo-index .np-trade-sides > button.is-buy {
+  background: linear-gradient(180deg, rgba(184, 242, 92, 0.28), rgba(184, 242, 92, 0.1));
+  border-color: var(--nm-lime);
+  color: #f2ffdc;
+  box-shadow: inset 0 0 0 1px rgba(184, 242, 92, 0.85), 0 0 18px rgba(184, 242, 92, 0.35), inset 0 0 14px rgba(184, 242, 92, 0.25);
+  text-shadow: 0 0 10px rgba(184, 242, 92, 0.7);
+}
+html .nomo-index .nt-trade-sides .is-active.is-sell,
+html .nomo-index .np-trade-sides > button.is-sell {
+  background: linear-gradient(180deg, rgba(255, 101, 129, 0.28), rgba(255, 101, 129, 0.1));
+  border-color: #ff6581;
+  color: #ffe3e9;
+  box-shadow: inset 0 0 0 1px rgba(255, 101, 129, 0.85), 0 0 18px rgba(255, 101, 129, 0.35), inset 0 0 14px rgba(255, 101, 129, 0.25);
+  text-shadow: 0 0 10px rgba(255, 101, 129, 0.7);
+}
+
+/* Inputs: violet glass, lime light when focused. */
+html .nomo-index .ni-search,
+html .nomo-index .npu-search,
+html .nomo-index .ni-amount-input,
+html .nomo-index .npu-column-amount {
+  background: rgba(24, 20, 34, 0.75);
+  border-color: rgba(155, 123, 255, 0.28);
+}
+html .nomo-index .ni-search:focus-within,
+html .nomo-index .npu-search:focus-within,
+html .nomo-index .ni-amount-input:focus-within,
+html .nomo-index .npu-column-amount:focus-within {
+  border-color: var(--nm-lime);
+  box-shadow: 0 0 0 3px rgba(184, 242, 92, 0.14), 0 0 18px rgba(184, 242, 92, 0.25);
+}
+html .nomo-index .npu-column-amount svg { color: var(--nm-lime); filter: drop-shadow(0 0 4px rgba(184, 242, 92, 0.8)); }
+
+/* ---------- social: chat like the bubbles in the art ---------- */
+html .nomo .nc-panel {
+  background: linear-gradient(180deg, rgba(22, 18, 32, 0.97), rgba(10, 9, 14, 0.97));
+  border-color: rgba(155, 123, 255, 0.4);
+  box-shadow: 18px 0 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(155, 123, 255, 0.18);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+html .nomo .nc-toggle { border-color: rgba(184, 242, 92, 0.55); color: var(--nm-lime); box-shadow: 0 0 18px rgba(184, 242, 92, 0.25); }
+html .nomo .nc-message p {
+  display: inline-block;
+  padding: 7px 11px;
+  border-radius: 14px 14px 14px 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+html .nomo .nc-message.is-own p {
+  border-radius: 14px 14px 4px 14px;
+  background: linear-gradient(180deg, rgba(184, 242, 92, 0.24), rgba(184, 242, 92, 0.1));
+  border-color: rgba(184, 242, 92, 0.5);
+  color: #f2ffdc;
+  box-shadow: inset 0 1px 0 rgba(228, 255, 173, 0.25), 0 0 16px rgba(184, 242, 92, 0.18);
+}
+html .nomo .nc-tabs > button[aria-selected="true"] { border-bottom-color: var(--nm-lime); color: #f2ffdc; text-shadow: 0 0 10px rgba(184, 242, 92, 0.5); }
+html .nomo .nc-composer-input { border-color: rgba(155, 123, 255, 0.3); background: rgba(28, 23, 40, 0.8); border-radius: 14px; }
+html .nomo .nc-composer-input:focus-within { border-color: var(--nm-lime); box-shadow: 0 0 18px rgba(184, 242, 92, 0.2); }
+html .nomo .nc-composer button:not(:disabled) {
+  border-radius: 999px;
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--nm-lime-hi), var(--nm-lime) 46%, var(--nm-lime-lo));
+  color: var(--nm-ink);
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(184, 242, 92, 0.4);
+}
+html .nomo .nc-trade:hover { background: linear-gradient(90deg, rgba(184, 242, 92, 0.1), transparent); box-shadow: inset 3px 0 0 var(--nm-lime); }
+html .nomo .nc-trader-avatar > i { background: var(--nm-lime); box-shadow: 0 0 8px rgba(184, 242, 92, 0.8); }
+
+/* ---------- live dots breathe ---------- */
+html .nm-footer i,
+html .nomo-index .ni-new-dot,
+html .nomo-index .ni-filter-button i,
+html .nomo .nc-feed-toolbar i:not(.is-paused) {
+  background: var(--nm-lime);
+  animation: nm-pulse 1.6s ease-in-out infinite;
+}
+@keyframes nm-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 242, 92, 0.9), 0 0 0 0 rgba(184, 242, 92, 0.5); }
+  50% { box-shadow: 0 0 10px rgba(184, 242, 92, 1), 0 0 0 4px rgba(184, 242, 92, 0); }
+}
+
+/* ---------- token page ---------- */
+html .nomo-index .nt-trade,
+html .nomo-index .ntk-panel,
+html .nomo-index .nt-position {
+  box-shadow: 0 0 0 1px rgba(155, 123, 255, 0.2), 0 0 40px rgba(155, 123, 255, 0.08);
+}
+
+/* Footer dock: ink glass with a holo top edge. */
+html .nomo .nm-footer {
+  background: rgba(10, 9, 14, 0.9);
+  border-top: 1px solid transparent;
+  border-image: var(--nm-holo-edge) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html .nomo *, html .nomo *::before, html .nomo *::after { animation: none !important; }
+  html .nomo-index .npu-buy:hover:not(:disabled), html .nomo-index .ni-quick-buy:hover:not(:disabled) { transform: none; }
+}
+
+/* ==================================================================
+   GRADIENT STROKES
+   The main panels get a holo border: lime -> cyan -> violet, drifting
+   slowly around the edge. Done with a padding-box fill over a
+   border-box gradient, so no element changes size or position.
+   ================================================================== */
+html .nomo-index .npu-board,
+html .nomo-index .ni-featured,
+html .nomo-index .nt-rail,
+html .nomo-index .ntc-chart,
+html .nomo-index .nt-token-header,
+html .nomo-index .nta-activity,
+html .nomo-index .pf-chart,
+html .nomo-index .pf-positions,
+html .nomo-index .ntk-monitor-card,
+html .nomo-index .nb-meteor-card,
+html .nomo-index .nc-form,
+html .nomo-index .np-trade-panel,
+html .nomo-index .nld-table-scroll,
+html .nomo-index .ntk-table-scroll {
+  --nm-fill: #0e0c13;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--nm-fill), var(--nm-fill)) padding-box,
+    linear-gradient(120deg,
+      rgba(184, 242, 92, 0.95), rgba(110, 231, 255, 0.6) 18%, rgba(155, 123, 255, 0.35) 34%,
+      rgba(155, 123, 255, 0.8) 50%, rgba(110, 231, 255, 0.4) 66%, rgba(184, 242, 92, 0.5) 82%,
+      rgba(184, 242, 92, 0.95)) border-box;
+  background-size: 100% 100%, 300% 300%;
+  animation: nm-stroke 14s linear infinite;
+}
+html .nomo-index .ni-featured,
+html .nomo-index .np-trade-panel { --nm-fill: #110f17; }
+html .nomo-index .ntc-chart { --nm-fill: #08070b; }
+html .nomo-index .nt-trade { border-color: transparent; background: transparent; }
+@keyframes nm-stroke { from { background-position: 0 0, 0% 50%; } to { background-position: 0 0, 300% 50%; } }
+
+/* Gradient strokes on the small stuff: inputs, filter pills, chips. */
+html .nomo-index .ni-filter-button,
+html .nomo-index .npu-filter-trigger,
+html .nomo-index .nta-filter {
+  border-color: transparent;
+  background: linear-gradient(#141119, #141119) padding-box, linear-gradient(90deg, rgba(184, 242, 92, 0.5), rgba(155, 123, 255, 0.5)) border-box;
+}
+
+/* Featured cards: the rank glows and each card lights its own holo. */
+html .nomo-index .ni-feature-rank { color: var(--nm-lime); text-shadow: var(--nm-glow-lime); font-family: var(--font-fredoka), sans-serif; font-weight: 700; }
+html .nomo-index .ni-feature { transition: background 0.2s, box-shadow 0.2s; }
+html .nomo-index .ni-feature:hover {
+  background: radial-gradient(120% 140% at 0% 50%, rgba(184, 242, 92, 0.14), rgba(155, 123, 255, 0.08) 50%, transparent 80%);
+  box-shadow: inset 0 0 0 1px rgba(184, 242, 92, 0.35);
+}
+/* On hover the coin grows and tilts. The rim and its face move as one
+   coin: the face keeps its own tilt and turns around the rim's centre.
+   The art used to be clipped on every side, so a bigger coin got cut
+   off; now only the bottom is clipped (where the coin sits in the card)
+   and it can grow up and out. */
+html .nomo-index .ni-feature .ni-spotlight-art {
+  overflow: visible;
+  clip-path: inset(-60px -60px 0 -60px);
+  transition: filter 0.2s;
+}
+html .nomo-index .ni-feature .ni-spotlight-art > img { transition: transform 0.4s cubic-bezier(.3, 1.6, .5, 1), filter 0.2s; }
+html .nomo-index .ni-feature .ni-spotlight-art > img.ni-spotlight-rim { transform-origin: 50% 50%; }
+html .nomo-index .ni-feature:hover .ni-spotlight-art { filter: drop-shadow(0 0 14px rgba(184, 242, 92, 0.5)); }
+html .nomo-index .ni-feature:hover .ni-spotlight-art > img.ni-spotlight-rim { transform: rotate(-8deg) scale(1.1); }
+html .nomo-index .ni-feature:hover .ni-spotlight-art > img.ni-spotlight-face {
+  transform: translate(2.083%, 2.083%) rotate(-8deg) scale(1.1) translate(-2.083%, -2.083%) rotate(40deg) scaleX(.8);
+  filter: brightness(1);
+}
+html .nomo-index .ni-feature-change { text-shadow: var(--nm-glow-lime); }
+
+/* ==================================================================
+   SMALL FUN MOTION
+   Short, quick and only on interaction or for things that are live,
+   so nothing moves under the cursor while you're reading numbers.
+   ================================================================== */
+
+/* Token avatars wobble a little when the row is hovered. */
+html .nomo-index .npu-token-card .ni-token-identity-avatar,
+html .nomo-index .ni-table .ni-token-identity-avatar { transition: transform 0.3s cubic-bezier(.3, 1.8, .5, 1), box-shadow 0.2s; }
+html .nomo-index .npu-token-card:hover .ni-token-identity-avatar,
+html .nomo-index .ni-table tbody tr:hover .ni-token-identity-avatar { transform: rotate(-4deg) scale(1.05); }
+
+/* Buy buttons squish when pressed. */
+html .nomo-index .npu-buy:active:not(:disabled),
+html .nomo-index .ni-quick-buy:active:not(:disabled),
+html .nomo-index .nt-trade-submit:active:not(:disabled),
+html .nomo-index .ni-primary-button:active:not(:disabled) { transform: scale(0.94); transition-duration: 0.06s; }
+
+/* Starring a token pops the star with a lime burst. */
+html .nomo-index .ni-star svg,
+html .nomo-index .npu-star svg { transition: transform 0.25s cubic-bezier(.3, 2, .5, 1), filter 0.2s; }
+html .nomo-index .ni-star:hover svg,
+html .nomo-index .npu-star:hover svg { transform: scale(1.25) rotate(-12deg); }
+html .nomo-index .is-starred svg { animation: nm-star 0.5s cubic-bezier(.3, 2, .5, 1); filter: drop-shadow(0 0 6px rgba(184, 242, 92, 0.8)); color: var(--nm-lime); }
+@keyframes nm-star { 0% { transform: scale(0.4) rotate(-40deg); } 60% { transform: scale(1.4) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* Nav icons hop on hover. */
+html .nomo-index .ni-nav > button svg,
+html .nomo-index .ni-nav > a svg { transition: transform 0.3s cubic-bezier(.3, 2, .5, 1); }
+html .nomo-index .ni-nav > button:hover svg,
+html .nomo-index .ni-nav > a:hover svg { transform: translateY(-2px) rotate(-8deg) scale(1.12); }
+
+/* The logo's bull gives a little nod on hover. */
+html .nomo-index .ni-logo img { transition: transform 0.35s cubic-bezier(.3, 2, .5, 1), filter 0.2s; }
+html .nomo-index .ni-logo:hover img { transform: rotate(-3deg) scale(1.05); filter: drop-shadow(0 0 14px rgba(184, 242, 92, 0.7)); }
+
+/* The bonding curve bar has light running through it. */
+html .nomo-index .npu-migration-progress > i {
+  background-size: 200% 100%;
+  animation: nm-flow 2.4s linear infinite;
+  background-image: linear-gradient(90deg, #9b7bff, #6ee7ff 25%, #b8f25c 50%, #6ee7ff 75%, #9b7bff);
+}
+html .nomo-index .npu-migration-progress.is-complete > i { background-image: none; animation: nm-ready 1.6s ease-in-out infinite; }
+@keyframes nm-flow { to { background-position: -200% 0; } }
+@keyframes nm-ready { 50% { box-shadow: 0 0 18px rgba(184, 242, 92, 1); } }
+
+/* Toggles slide with a bit of spring. */
+html .nomo-index .ntk-toggle > span,
+html .nomo-index .ni-setting-switch > span { transition: transform 0.25s cubic-bezier(.3, 1.8, .5, 1), background 0.2s; }
+
+/* Toasts land with a bounce and a lime flash. */
+html .nomo-index .ntr-toast { animation: nm-toast 0.5s cubic-bezier(.3, 1.6, .5, 1); box-shadow: 0 0 30px rgba(184, 242, 92, 0.25), 0 20px 50px rgba(0, 0, 0, 0.5); }
+@keyframes nm-toast { from { transform: translateY(14px) scale(0.92); opacity: 0; } }
+
+/* Tabs: the glowing underline slides in. */
+html .nomo-index .ni-nav > button.active::after,
+html .nomo-index .ni-views > button.active::after,
+html .nomo-index .nta-tabs > button.is-active::after,
+html .nomo-index .ntk-tabs > button.active::after { animation: nm-underline 0.35s cubic-bezier(.3, 1.4, .5, 1); transform-origin: center; }
+@keyframes nm-underline { from { transform: scaleX(0.2); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html .nomo-index *, html .nomo-index *::after { animation: none !important; transition: none !important; }
+}

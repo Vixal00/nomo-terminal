@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { XLogo } from "@phosphor-icons/react/dist/ssr";
-import { LandingBackground } from "./landing-background";
 import { LandingCoins } from "./landing-coins";
 import "./landing.css";
+import "./brand.css";
 
+/* The landing in the brand's chrome mode: black ground, a holographic
+   burst of lime -> cyan -> violet light behind the bull coin, glassy chat
+   bubbles and a glowing PnL pill, like the X header. */
 export default function NomoLanding() {
   return (
     <div className="nomo-landing">
-      <LandingBackground />
+      <div className="nl-background nl-holo" aria-hidden="true">
+        <i className="nl-holo-rays" />
+        <i className="nl-holo-bloom" />
+        <i className="nl-holo-grid" />
+      </div>
       <header className="nl-header">
         <Link className="nl-logo" href="/" aria-label="Nomo home">
           <img src="/nomo/nomo-logo.svg" alt="Nomo" width={130} height={25} />
@@ -20,11 +27,15 @@ export default function NomoLanding() {
 
       <main className="nl-hero">
         <div className="nl-copy">
-          <h1>Find your<br />next move.</h1>
-          <p>A world of tokens.<br className="nl-mobile-break" /> A place to make it yours.</p>
+          <h1>
+            <span className="nl-h1-chrome">don&apos;t trade</span>
+            <br />
+            <span className="nl-h1-pill">alone.</span>
+          </h1>
+          <p>The social trading app for memes.<br className="nl-mobile-break" /> See what your friends are aping and copy the moves that hit.</p>
           <div className="nl-hero-actions">
             <Link className="nl-cta" href="/discover/index">Start trading</Link>
-            <Link className="nl-cta nl-cta-secondary" href="/discover/index">Explore launches</Link>
+            <Link className="nl-cta nl-cta-secondary" href="/pulse">Explore launches</Link>
           </div>
         </div>
 

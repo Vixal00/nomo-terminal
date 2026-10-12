@@ -15,6 +15,25 @@ const Republica = localFont({
   fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
 });
 
+/* nomo brand faces. Fredoka is the display face (headlines, the hero,
+   page titles): chunky and rounded, the same letters as the brand's
+   chrome artwork. Nunito is the UI face, rounded to sit beside it. Both
+   are variable, so every weight the terminal asks for is a real one. */
+const Fredoka = localFont({
+  src: "./fonts/fredoka-variable.woff2",
+  variable: "--font-fredoka",
+  display: "swap",
+  weight: "300 700",
+  fallback: ["ui-rounded", "system-ui", "sans-serif"],
+});
+const Nunito = localFont({
+  src: "./fonts/nunito-variable.woff2",
+  variable: "--font-nunito",
+  display: "swap",
+  weight: "200 1000",
+  fallback: ["ui-rounded", "system-ui", "sans-serif"],
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Nomo — Find your next move",
@@ -25,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#101011",
+  themeColor: "#0b0b0e",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -37,7 +56,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       lang="en"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} ${Republica.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${Republica.variable} ${Fredoka.variable} ${Nunito.variable}`}
     >
       <head>
         {/* Blocking, in the head, because the network decides the accent.

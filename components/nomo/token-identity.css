@@ -1,33 +1,33 @@
 .ni-token-identity{position:relative;display:flex;align-items:center;gap:9px;min-width:0;width:100%;min-height:36px;text-align:left}
 .ni-token-identity .ni-token-identity-avatar{position:relative;display:block;flex:0 0 36px;width:36px;height:36px;padding:0;border:0;border-radius:6px;background:none;overflow:visible}
 .ni-token-identity .ni-token-identity-avatar>.nm-avatar{display:block}
-.ni-token-identity .ni-token-identity-badges{position:absolute;right:-2px;bottom:-6px;display:flex;align-items:center;justify-content:center;gap:2px;height:13px;padding:1px 2px;box-sizing:border-box;border:1px solid #454d3f;border-radius:4px;background:#191c19;box-shadow:0 1px 3px #0008;pointer-events:none}
-.ni-token-identity .ni-token-identity-badges>i{width:1px;height:6px;background:#42453e}
+.ni-token-identity .ni-token-identity-badges{position:absolute;right:-2px;bottom:-6px;display:flex;align-items:center;justify-content:center;gap:2px;height:13px;padding:1px 2px;box-sizing:border-box;border:1px solid #413f4d;border-radius:4px;background:#141218;box-shadow:0 1px 3px #00000088;pointer-events:none}
+.ni-token-identity .ni-token-identity-badges>i{width:1px;height:6px;background:#3d374c}
 .ni-token-identity .ni-token-identity-badges>span>span{display:none}
 .ni-token-identity .ni-token-identity-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:1px;min-width:0;flex:1}
 .ni-token-identity .ni-token-identity-name{display:block;justify-self:start;min-width:0;max-width:100%;padding:0;border:0;border-radius:2px;background:none;text-align:left}
 .ni-token-identity .ni-token-identity-heading{display:flex;align-items:center;gap:5px;min-width:0;height:16px;white-space:nowrap}
-.ni-token-identity .ni-token-identity-symbol{display:block;flex-shrink:0;padding:0;border:0;border-radius:2px;background:none;color:#f3f4f1;font-size:12px;font-weight:650;letter-spacing:.05px;line-height:16px}
+.ni-token-identity .ni-token-identity-symbol{display:block;flex-shrink:0;padding:0;border:0;border-radius:2px;background:none;color:#f2f2f3;font-size:12px;font-weight:650;letter-spacing:.05px;line-height:16px}
 .ni-token-identity .ni-token-identity-symbol>strong{font-weight:inherit}
-.ni-token-identity .ni-token-identity-new{width:4px;height:4px;margin-left:-1px;margin-right:-1px;background:var(--nm-green,#1cf431);border-radius:50%;flex-shrink:0}
+.ni-token-identity .ni-token-identity-new{width:4px;height:4px;margin-left:-1px;margin-right:-1px;background:var(--nm-green,#b6f35b);border-radius:50%;flex-shrink:0}
 .ni-token-identity .ni-token-identity-address{display:block;min-width:0;max-width:68px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:inherit;font-size:10px;font-weight:400;line-height:15px;font-variant-numeric:tabular-nums}
 .ni-token-identity .ni-token-identity-address-full{display:block;overflow:hidden;text-overflow:ellipsis}
 .ni-token-identity .ni-token-identity-address-short{display:none}
-.ni-token-identity .ni-token-identity-secondary{display:flex;align-items:center;gap:7px;min-width:0;line-height:14px;font-size:10px;font-weight:400;color:#7e8089;white-space:nowrap}
+.ni-token-identity .ni-token-identity-secondary{display:flex;align-items:center;gap:7px;min-width:0;line-height:14px;font-size:10px;font-weight:400;color:#7f7c8b;white-space:nowrap}
 .ni-token-identity .ni-token-identity-secondary>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.ni-token-identity .ni-token-identity-age{flex-shrink:0;color:#5f626b;font-size:10px;font-variant-numeric:tabular-nums}
-.ni-token-identity .ni-token-identity-copy{position:relative;display:inline-flex;align-items:center;gap:4px;flex:0 1 auto;min-width:17px;height:18px;padding:0 2px;border:0;border-radius:4px;background:none;color:#72757e;transition:color .2s ease}
-.ni-token-identity .ni-token-identity-copy:hover .ni-copy-glyph{color:#b5bac2}
+.ni-token-identity .ni-token-identity-age{flex-shrink:0;color:#5e5b6f;font-size:10px;font-variant-numeric:tabular-nums}
+.ni-token-identity .ni-token-identity-copy{position:relative;display:inline-flex;align-items:center;gap:4px;flex:0 1 auto;min-width:17px;height:18px;padding:0 2px;border:0;border-radius:4px;background:none;color:#706c84;transition:color .2s ease}
+.ni-token-identity .ni-token-identity-copy:hover .ni-copy-glyph{color:#b9b7c0}
 .ni-token-identity .ni-token-identity-copy-icon{position:relative;display:block;flex:0 0 13px;width:13px;height:13px}
 .ni-token-identity .ni-token-identity-copy-icon>svg{position:absolute;inset:0;transition:opacity .14s ease,transform .14s ease,color .16s ease}
 .ni-token-identity .ni-copy-glyph{opacity:1;transform:scale(1)}
 .ni-token-identity .ni-copy-check{opacity:0;transform:scale(.9)}
-.ni-token-identity[data-copy-state="success"] .ni-token-identity-copy{color:var(--nm-green,#1cf431)}
+.ni-token-identity[data-copy-state="success"] .ni-token-identity-copy{color:var(--nm-green,#b6f35b)}
 .ni-token-identity[data-copy-state="success"] .ni-copy-glyph{opacity:0;transform:scale(.9)}
 .ni-token-identity[data-copy-state="success"] .ni-copy-check{opacity:1;transform:scale(1)}
-.ni-token-identity[data-copy-state="error"] .ni-token-identity-copy{color:#e8a0a8}
-.ni-token-identity .ni-token-identity-feedback{position:absolute;right:0;bottom:calc(100% + 4px);z-index:3;padding:3px 6px;border:1px solid #3a5a42;border-radius:4px;background:#1e3124;color:#b7ebbe;font-size:9px;font-weight:500;line-height:13px;white-space:nowrap;pointer-events:none;box-shadow:0 3px 10px #0003;animation:ni-token-identity-feedback 1.8s ease-out both}
-.ni-token-identity[data-copy-state="error"] .ni-token-identity-feedback{color:#e8b6bd;border-color:#69434c;background:#33242a}
+.ni-token-identity[data-copy-state="error"] .ni-token-identity-copy{color:#ff899f}
+.ni-token-identity .ni-token-identity-feedback{position:absolute;right:0;bottom:calc(100% + 4px);z-index:3;padding:3px 6px;border:1px solid #4f652f;border-radius:4px;background:#2b3817;color:#d9f9a9;font-size:9px;font-weight:500;line-height:13px;white-space:nowrap;pointer-events:none;box-shadow:0 3px 10px #00000033;animation:ni-token-identity-feedback 1.8s ease-out both}
+.ni-token-identity[data-copy-state="error"] .ni-token-identity-feedback{color:#ff9fb1;border-color:#723a44;background:#292532}
 .ni-token-identity .ni-token-identity-announcement{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @keyframes ni-token-identity-feedback{0%{opacity:0;transform:translateY(3px)}12%,80%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-2px)}}
 @media(max-width:600px){.ni-token-identity{gap:7px}.ni-token-identity .ni-token-identity-heading{gap:4px}.ni-token-identity .ni-token-identity-address-full{display:none}.ni-token-identity .ni-token-identity-address-short{display:block;overflow:hidden;text-overflow:ellipsis}.ni-token-identity .ni-token-identity-secondary{gap:5px}}
